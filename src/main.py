@@ -47,7 +47,6 @@ np.random.seed(42)
 )
 @click.option("--scratch", default=False, is_flag=True, type=bool)
 @click.option("--feature_extract", default=False, type=bool, is_flag=True)
-@click.option("--n_classes", default=2, type=int)
 @click.option("--frac_val", default=0.2, type=float)
 @click.option("--k_fold", default=-1, type=int)
 @click.option("--debug", default=2, type=int)
@@ -58,6 +57,7 @@ np.random.seed(42)
     help="Path to save model",
 )
 @click.option("--multi_input", is_flag=True, default=False, type=bool)
+@click.option("--double_img", is_flag=True, default=False, type=bool)
 @click.option("--output_tab", default=3, type=int)
 def main(
     csv_file,
@@ -66,12 +66,12 @@ def main(
     model_name: str,
     scratch: bool,
     feature_extract: bool,
-    n_classes: int,
     frac_val: float,
     k_fold: int,
     debug: int,
     path: str,
     multi_input: bool,
+    double_img: bool,
     output_tab: int,
 ):
 
@@ -103,10 +103,10 @@ def main(
     if k_fold >= 2:
         folds = init_k_fold(data, k_fold)
 
-        model_name = bk_model_name
-
         for index, (train, val) in enumerate(folds):
             print("Fold:", index + 1)
+
+            model_name = bk_model_name
 
             train[numerical_columns] = min_max_scaler.fit_transform(
                 train[numerical_columns]
@@ -115,11 +115,11 @@ def main(
             val[numerical_columns] = min_max_scaler.transform(val[numerical_columns])
 
             model, input_size = init_model(
-                bk_model_name,
+                model_name,
                 pretrained,
                 feature_extract,
-                n_classes,
                 multi_input,
+                double_img,
                 output_tab,
                 ft_size,
             )
@@ -139,6 +139,7 @@ def main(
                 device,
                 debug,
                 numerical_columns,
+                double_img,
             )
             dataloaders_dict = {}
             dataloaders_dict["train"] = dataloader_train
@@ -164,13 +165,16 @@ def main(
             else:
                 model_name += "_single_intput"
 
+            if double_img:
+                model_name += "_double_img"
+
             model_name = model_name + "_" + str(index + 1) + "k_fold"
 
             torch.save(model.state_dict(), path + model_name + ".pth")
 
             torch.save(
                 dataloader_train,
-                "../models/train_dataloader_" + model_name +  ".pth",
+                "../models/train_dataloader_" + model_name + ".pth",
             )
             torch.save(
                 dataloader_val,
@@ -186,8 +190,8 @@ def main(
             model_name,
             pretrained,
             feature_extract,
-            n_classes,
             multi_input,
+            double_img,
             output_tab,
             ft_size,
         )
@@ -215,13 +219,16 @@ def main(
             device,
             debug,
             numerical_columns,
+            double_img,
         )
-
 
         if multi_input:
             model_name += "_multi_input_non_fold"
         else:
             model_name += "_single_intput_non_fold"
+
+        if double_img:
+            model_name += "_double_img"
 
         torch.save(
             dataloader_train,
@@ -267,6 +274,9 @@ def main(
         bk_model_name += "_multi_input"
     else:
         bk_model_name += "_single_intput"
+
+    if double_img:
+        bk_model_name += "_double_img"
 
     if k_fold > 1:
         bk_model_name += "_k_fold"

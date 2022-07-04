@@ -2,6 +2,7 @@ import torch
 import numpy as np
 import torch.nn as nn
 import torch.optim as optim
+import copy
 from torchvision import models, transforms
 
 from torchvision import transforms
@@ -10,19 +11,34 @@ from torchvision import transforms
 class MultiInputModel(nn.Module):
     """docstring for MultiInputModel."""
 
-    def __init__(self, features_img, input_tab, output_tab, in_features, n_classes):
+    def __init__(
+        self,
+        features_img_1,
+        features_img_2,
+        input_tab,
+        output_tab,
+        in_features,
+    ):
         super(MultiInputModel, self).__init__()
-        self.features_img = features_img
+        self.features_img_1 = features_img_1
+        self.features_img_2 = features_img_2
         self.tab_mlp = nn.Sequential(
             nn.Linear(input_tab, output_tab), nn.ReLU(inplace=True)
         )
-        self.concat_mlp = nn.Linear(in_features + output_tab, n_classes)
+        self.mul_img_features = 1 if self.features_img_2 is None else 2
+        self.concat_mlp = nn.Linear(self.mul_img_features * in_features + output_tab, 1)
 
-    def forward(self, img, tab):
-        output_img = self.features_img(img)
+    def forward(self, img_1, img_2, tab):
+        output_img = self.features_img_1(img_1)
         output_tab = self.tab_mlp(tab)
 
-        output_img_tab = torch.cat((output_img.squeeze(), output_tab), dim=1)
+        if self.mul_img_features == 1:
+            output_img_tab = torch.cat((output_img.squeeze(), output_tab), dim=1)
+        else:
+            output_img_2 = self.features_img_2(img_2)
+            output_img_tab = torch.cat(
+                (output_img.squeeze(), output_img_2.squeeze(), output_tab), dim=1
+            )
 
         output = self.concat_mlp(output_img_tab)
 
@@ -96,8 +112,8 @@ def init_model(
     model_name: str,
     pretrained: bool,
     feature_extract: bool,
-    n_classes: int,
     multi_input: bool,
+    double_img: bool,
     output_tab: int,
     ft_size: int,
 ):
@@ -109,12 +125,16 @@ def init_model(
         if multi_input:
             features = nn.Sequential(*list(model.children()))[:-1]
             in_features = 784
+            if double_img:
+                features_2 = copy.deepcopy(features)
+            else:
+                features_2 = None
             model = MultiInputModel(
-                features, ft_size, output_tab, in_features, n_classes
+                features, features_2, ft_size, output_tab, in_features
             )
         else:
             num_ftrs = model.fc.in_features
-            model.fc = nn.Linear(num_ftrs, n_classes)
+            model.fc = nn.Linear(num_ftrs, 1)
         input_size = 224
 
     if model_name == "mobile":
@@ -124,12 +144,16 @@ def init_model(
         if multi_input:
             features = nn.Sequential(*list(model.children()))[:-1]
             in_features = 784
+            if double_img:
+                features_2 = copy.deepcopy(features)
+            else:
+                features_2 = None
             model = MultiInputModel(
-                features, ft_size, output_tab, in_features, n_classes
+                features, features_2, ft_size, output_tab, in_features, 1
             )
         else:
             num_ftrs = model.classifier[-1].in_features
-            model.classifier[-1] = nn.Linear(num_ftrs, n_classes)
+            model.classifier[-1] = nn.Linear(num_ftrs, 1)
         input_size = 224
 
     if model_name == "efficient":
@@ -139,12 +163,20 @@ def init_model(
         if multi_input:
             features = nn.Sequential(*list(model.children()))[:-1]
             in_features = 784
+            if double_img:
+                features_2 = copy.deepcopy(features)
+            else:
+                features_2 = None
             model = MultiInputModel(
-                features, ft_size, output_tab, in_features, n_classes
+                features,
+                features_2,
+                ft_size,
+                output_tab,
+                in_features,
             )
         else:
             num_ftrs = model.classifier[-1].in_features
-            model.classifier[-1] = nn.Linear(num_ftrs, n_classes)
+            model.classifier[-1] = nn.Linear(num_ftrs, 1)
         input_size = 224
 
     if model_name == "shuffle":
@@ -154,12 +186,16 @@ def init_model(
         if multi_input:
             features = nn.Sequential(*list(model.children()))[:-1]
             in_features = 784
+            if double_img:
+                features_2 = copy.deepcopy(features)
+            else:
+                features_2 = None
             model = MultiInputModel(
-                features, ft_size, output_tab, in_features, n_classes
+                features, features_2, ft_size, output_tab, in_features
             )
         else:
             num_ftrs = model.fc.in_features
-            model.classifier[-1] = nn.Linear(num_ftrs, n_classes)
+            model.classifier[-1] = nn.Linear(num_ftrs, 1)
         input_size = 224
 
     return model, input_size

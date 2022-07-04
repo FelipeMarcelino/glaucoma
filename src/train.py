@@ -47,13 +47,15 @@ def train_model(
             true_epoch = []
 
             # Iterate over data.
-            for imgs, ft_numerical, labels in dataloaders[phase]:
-                imgs = imgs.to(device)
+            for imgs_photo_1, imgs_photo_2, ft_numerical, labels in dataloaders[phase]:
+                imgs_photo_1 = imgs_photo_1.to(device)
+                imgs_photo_2 = imgs_photo_2.to(device)
                 ft_numerical = ft_numerical.to(device)
                 labels = labels.to(device)
 
                 # zero the parameter gradients
                 optimizer.zero_grad()
+                labels = labels.unsqueeze(1).float()
 
                 # forward
                 # track history if only in train
@@ -65,21 +67,25 @@ def train_model(
                     if is_inception and phase == "train":
                         # From https://discuss.pytorch.org/t/how-to-optimize-inception-model-with-auxiliary-classifiers/7958
                         if multi_input:
-                            outputs, aux_outputs = model(imgs, ft_numerical)
+                            outputs, aux_outputs = model(
+                                imgs_photo_1, imgs_photo_1, ft_numerical
+                            )
                         else:
-                            outputs, aux_outputs = model(imgs)
+                            outputs, aux_outputs = model(imgs_photo_1)
 
                         loss1 = criterion(outputs, labels)
                         loss2 = criterion(aux_outputs, labels)
                         loss = loss1 + 0.4 * loss2
                     else:
                         if multi_input:
-                            outputs = model(imgs, ft_numerical)
+                            outputs = model(imgs_photo_1, imgs_photo_2, ft_numerical)
                         else:
-                            outputs = model(imgs)
+                            outputs = model(imgs_photo_1)
+
                         loss = criterion(outputs, labels)
 
-                    _, preds = torch.max(outputs, 1)
+                        sigmoid_outputs = torch.sigmoid(outputs)
+                        preds = (sigmoid_outputs > 0.5).float()
 
                     # backward + optimize only if in training phase
                     if phase == "train":
@@ -87,7 +93,7 @@ def train_model(
                         optimizer.step()
 
                 # statistics
-                running_loss += loss.item() * imgs.size(0)
+                running_loss += loss.item() * imgs_photo_1.size(0)
                 running_corrects += torch.sum(preds == labels.data)
                 pred_epoch.extend(list(preds.cpu().detach().numpy()))
                 true_epoch.extend(list(labels.data.cpu().detach().numpy()))
@@ -150,16 +156,22 @@ def pre_train(
     device,
     debug,
     ft_columns,
+    double_img,
 ):
 
     dataloader_train = init_dataloader(
-        train, preprocessing_train, preprocessing_tab, batch_size, ft_columns
+        train,
+        preprocessing_train,
+        preprocessing_tab,
+        batch_size,
+        ft_columns,
+        double_img,
     )
     dataloader_val = init_dataloader(
-        val, preprocessing_val, preprocessing_tab, batch_size, ft_columns
+        val, preprocessing_val, preprocessing_tab, batch_size, ft_columns, double_img
     )
 
-    criterion = nn.CrossEntropyLoss()
+    criterion = nn.BCEWithLogitsLoss()
 
     model = model.to(device)
 

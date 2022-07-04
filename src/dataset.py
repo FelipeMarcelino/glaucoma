@@ -17,6 +17,7 @@ class GlaucomaRandomDataset(Dataset):
         glaucoma_data: pd.DataFrame,
         root_dir: Path,
         ft_columns: List[str],
+        double_img: bool,
         transform_img=None,
         transform_tab=None,
     ):
@@ -26,6 +27,7 @@ class GlaucomaRandomDataset(Dataset):
         self.transform_img = transform_img
         self.transform_tab = transform_tab
         self.ft_columns = ft_columns
+        self.double_img = double_img
 
     def __len__(self):
         return len(self.glaucoma_data)
@@ -51,16 +53,21 @@ class GlaucomaRandomDataset(Dataset):
             photo_1 = self.transform_img(photo_1)
             photo_2 = self.transform_img(photo_2)
 
-        if random.random() > 0.5:
-            return photo_1, ft_numerical, label
+        if self.double_img:
+            return photo_1, photo_2, ft_numerical, label
         else:
-            return photo_2, ft_numerical, label
+            if random.random() > 0.5:
+                return photo_1, photo_2, ft_numerical, label
+            else:
+                return photo_2, photo_1, ft_numerical, label
 
 
-def init_dataloader(data, preprocessing_img, preprocessing_tab, batch_size, ft_columns):
+def init_dataloader(
+    data, preprocessing_img, preprocessing_tab, batch_size, ft_columns, double_img
+):
 
     dataset = GlaucomaRandomDataset(
-        data, ROOT_DIR, ft_columns, preprocessing_img, preprocessing_tab
+        data, ROOT_DIR, ft_columns, double_img, preprocessing_img, preprocessing_tab
     )
     dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
 
