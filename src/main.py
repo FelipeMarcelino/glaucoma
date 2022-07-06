@@ -67,7 +67,8 @@ np.random.seed(42)
     default="adam",
     type=click.Choice(["adam", "sgd", "radam", "ranger"]),
 )
-@click.option("--lr", default=0.001, type=float)
+@click.option("--lr", default=0.0001, type=float)
+@click.option("--batch_size", default=16, type=int)
 def main(
     csv_file,
     epochs: int,
@@ -84,11 +85,10 @@ def main(
     output_tab: int,
     optim: str,
     lr: float,
+    batch_size: int,
 ):
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-    batch_size = 16
 
     model_id = uuid.uuid4().hex
 

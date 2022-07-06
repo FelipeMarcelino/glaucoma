@@ -25,10 +25,29 @@ class MultiInputModel(nn.Module):
         self.features_img_1 = features_img_1
         self.features_img_2 = features_img_2
         self.tab_mlp = nn.Sequential(
-            nn.Linear(input_tab, output_tab), nn.ReLU(inplace=True)
+            nn.Linear(input_tab, int(input_tab / 2)),
+            nn.ReLU(inplace=True),
+            nn.Linear(int(input_tab / 2), output_tab),
+            nn.ReLU(inplace=True),
         )
         self.mul_img_features = 1 if self.features_img_2 is None else 2
-        self.concat_mlp = nn.Linear(self.mul_img_features * in_features + output_tab, 1)
+
+        self.concat_mlp = nn.Sequential(
+            nn.Linear(
+                self.mul_img_features * in_features + output_tab,
+                int((self.mul_img_features * in_features + output_tab) / 2),
+            ),
+            nn.ReLU(inplace=True),
+            nn.Linear(
+                int((self.mul_img_features * in_features + output_tab) / 2),
+                int((self.mul_img_features * in_features + output_tab) / 4),
+            ),
+            nn.ReLU(inplace=True),
+            nn.Linear(
+                int((self.mul_img_features * in_features + output_tab) / 4),
+                1,
+            ),
+        )
 
     def forward(self, img_1, img_2, tab):
         output_img = self.features_img_1(img_1)
