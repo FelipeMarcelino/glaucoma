@@ -1,8 +1,10 @@
+import sys
 import torch
 import numpy as np
 import torch.nn as nn
 import torch.optim as optim
 import copy
+from pytorch_forecasting.optim import Ranger
 from torchvision import models, transforms
 
 from torchvision import transforms
@@ -77,7 +79,7 @@ def init_transforms(input_size: int):
     return preprocessing_train, preprocessing_val, preprocessing_tab
 
 
-def init_optimizer(model, feature_extract, debug):
+def init_optimizer(model, feature_extract, debug, optim_selected, lr):
 
     params_to_update = model.parameters()
 
@@ -97,7 +99,17 @@ def init_optimizer(model, feature_extract, debug):
                     print("\t", name)
 
     # Observe that all parameters are being optimized
-    optimizer = optim.SGD(params_to_update, lr=0.001, momentum=0.9)
+    if optim_selected == "ranger":
+        optimizer = Ranger(params_to_update, lr=lr)
+    elif optim_selected == "adam":
+        optimizer = optim.Adam(params_to_update, lr=lr)
+    elif optim_selected == "radam":
+        optimizer = optim.RAdam(params_to_update, lr=lr)
+    elif optim_selected == "sgd":
+        optimizer = optim.SGD(params_to_update, lr=lr, momentum=0.9)
+    else:
+        print("Optimizer not available")
+        sys.exit(1)
 
     return optimizer
 

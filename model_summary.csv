@@ -1,0 +1,2 @@
+model_id;model_name;k_fold;frac_val;best_acc;best_auc;best_sp;best_sn;avg_acc;avg_auc;avg_sp;avg_sn;host_name;optim;lr;multi;double_img;backbone
+17926c49758543c188ce2322c9c779f3;regnet_single_intput_non_k_fold;;0.2;0.6878980891719746;0.5119467293380336;0.9369369369369369;0.08695652173913043;0.6878980891719746;0.5119467293380336;0.9369369369369369;0.08695652173913043;solid;adam;0.001;0;0;regnet

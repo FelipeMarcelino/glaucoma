@@ -6,6 +6,9 @@ import random
 import torch.nn as nn
 import pandas as pd
 import numpy as np
+import uuid
+import socket
+import os
 
 
 from sklearn.preprocessing import MinMaxScaler
@@ -51,7 +54,7 @@ np.random.seed(42)
 @click.option("--k_fold", default=-1, type=int)
 @click.option("--debug", default=2, type=int)
 @click.option(
-    "--path",
+    "--model_folder",
     default="../models/",
     type=str,
     help="Path to save model",
@@ -59,6 +62,12 @@ np.random.seed(42)
 @click.option("--multi_input", is_flag=True, default=False, type=bool)
 @click.option("--double_img", is_flag=True, default=False, type=bool)
 @click.option("--output_tab", default=3, type=int)
+@click.option(
+    "--optim",
+    default="adam",
+    type=click.Choice(["adam", "sgd", "radam", "ranger"]),
+)
+@click.option("--lr", default=0.001, type=float)
 def main(
     csv_file,
     epochs: int,
@@ -69,15 +78,23 @@ def main(
     frac_val: float,
     k_fold: int,
     debug: int,
-    path: str,
+    model_folder: str,
     multi_input: bool,
     double_img: bool,
     output_tab: int,
+    optim: str,
+    lr: float,
 ):
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     batch_size = 16
+
+    model_id = uuid.uuid4().hex
+
+    path = model_folder + str(model_id) + "/"
+
+    os.makedirs(path)
 
     if scratch:
         pretrained = False
@@ -99,6 +116,7 @@ def main(
 
     min_max_scaler = MinMaxScaler()
     bk_model_name = model_name
+    backbone = model_name
 
     if k_fold >= 2:
         folds = init_k_fold(data, k_fold)
@@ -140,6 +158,8 @@ def main(
                 debug,
                 numerical_columns,
                 double_img,
+                optim,
+                lr,
             )
             dataloaders_dict = {}
             dataloaders_dict["train"] = dataloader_train
@@ -174,11 +194,11 @@ def main(
 
             torch.save(
                 dataloader_train,
-                "../models/train_dataloader_" + model_name + ".pth",
+                path + "train_dataloader_" + model_name + ".pth",
             )
             torch.save(
                 dataloader_val,
-                "../models/val_dataloader_" + model_name + ".pth",
+                path + "val_dataloader_" + model_name + ".pth",
             )
 
             fold_val_acc_history.append(val_acc_history)
@@ -220,6 +240,8 @@ def main(
             debug,
             numerical_columns,
             double_img,
+            optim,
+            lr,
         )
 
         if multi_input:
@@ -232,31 +254,36 @@ def main(
 
         torch.save(
             dataloader_train,
-            "../models/train_dataloader_" + model_name + ".pth",
+            path + "train_dataloader_" + model_name + ".pth",
         )
         torch.save(
             dataloader_val,
-            "../models/val_dataloader_" + model_name + ".pth",
+            path + "val_dataloader_" + model_name + ".pth",
         )
 
         dataloaders_dict = {}
         dataloaders_dict["train"] = dataloader_train
         dataloaders_dict["val"] = dataloader_val
-        (
-            model,
-            val_acc_history,
-            val_auc_history,
-            val_sensitivity_history,
-            val_specificity_history,
-        ) = train_model(
-            model,
-            dataloaders_dict,
-            criterion,
-            optimizer,
-            device,
-            epochs,
-            multi_input=multi_input,
-        )
+
+        try:
+            (
+                model,
+                val_acc_history,
+                val_auc_history,
+                val_sensitivity_history,
+                val_specificity_history,
+            ) = train_model(
+                model,
+                dataloaders_dict,
+                criterion,
+                optimizer,
+                device,
+                epochs,
+                multi_input=multi_input,
+            )
+        except KeyboardInterrupt:
+            pass
+
         fold_val_acc_history.append(val_acc_history)
         fold_val_auc_history.append(val_auc_history)
         fold_val_sensitivity_history.append(val_sensitivity_history)
@@ -286,6 +313,35 @@ def main(
     result_name = bk_model_name + ".pkl"
     with open(path + result_name, "wb") as handle:
         pickle.dump(dict_results, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+    summary = pd.read_csv("../model_summary.csv", sep=";")
+
+    row_data = {
+        "model_id": model_id,
+        "model_name": bk_model_name,
+        "k_fold": k_fold if k_fold > 2 else np.nan,
+        "frac_val": frac_val if k_fold < 2 else np.nan,
+        "best_acc": np.max(dict_results["val_acc_history"]),
+        "best_auc": np.max(dict_results["val_auc_history"]),
+        "best_sp": np.max(dict_results["val_specificity_history"]),
+        "best_sn": np.max(dict_results["val_sensitivity_history"]),
+        "avg_acc": np.mean(dict_results["val_acc_history"]),
+        "avg_auc": np.mean(dict_results["val_auc_history"]),
+        "avg_sp": np.mean(dict_results["val_specificity_history"]),
+        "avg_sn": np.mean(dict_results["val_sensitivity_history"]),
+        "host_name": socket.gethostname(),
+        "optim": optim,
+        "lr": lr,
+        "multi": 1 if multi_input is True else 0,
+        "double_img": 1 if double_img is True else 0,
+        "backbone": backbone,
+    }
+
+    row = pd.DataFrame(row_data, index=[0])
+
+    summary = pd.concat([summary, row])
+
+    summary.to_csv("../model_summary.csv", index=False, sep=";")
 
 
 if __name__ == "__main__":

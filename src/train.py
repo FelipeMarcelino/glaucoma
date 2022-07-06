@@ -3,6 +3,7 @@ import copy
 import torch
 import torch.nn as nn
 import sys
+import numpy as np
 from sklearn.metrics import roc_auc_score, confusion_matrix
 from dataset import init_dataloader
 from model import init_model, init_optimizer, init_transforms
@@ -17,6 +18,7 @@ def train_model(
     num_epochs=25,
     is_inception=False,
     multi_input=False,
+    patient=10,
 ):
     since = time.time()
 
@@ -28,6 +30,9 @@ def train_model(
     best_model_wts = copy.deepcopy(model.state_dict())
     best_acc = 0.0
     best_auc = 0.0
+
+    trigger_time = 0
+    last_loss = np.inf
 
     for epoch in range(num_epochs):
         print("Epoch {}/{}".format(epoch + 1, num_epochs))
@@ -115,6 +120,16 @@ def train_model(
                 )
             )
 
+            if epoch_loss > last_loss:
+                trigger_time += 1
+            else:
+                trigger_time = 0
+
+            if trigger_time >= patient:
+                break
+
+            last_loss = epoch_loss
+
             # deep copy the model
             if phase == "val" and epoch_auc > best_auc:
                 best_auc = epoch_auc
@@ -124,6 +139,15 @@ def train_model(
                 val_auc_history.append(epoch_auc)
                 val_sensitivity_history.append(sensitivity)
                 val_specificity_history.append(specificity)
+
+            if phase == "train":
+                if epoch_loss > last_loss:
+                    trigger_time += 1
+                else:
+                    trigger_time = 0
+
+                if trigger_time >= patient:
+                    break
 
     time_elapsed = time.time() - since
     print(
@@ -157,6 +181,8 @@ def pre_train(
     debug,
     ft_columns,
     double_img,
+    optim,
+    lr,
 ):
 
     dataloader_train = init_dataloader(
@@ -175,6 +201,6 @@ def pre_train(
 
     model = model.to(device)
 
-    optimizer = init_optimizer(model, feature_extract, debug)
+    optimizer = init_optimizer(model, feature_extract, debug, optim, lr)
 
     return model, optimizer, criterion, dataloader_train, dataloader_val
