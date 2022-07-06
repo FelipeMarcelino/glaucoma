@@ -207,7 +207,7 @@ def init_model(
             )
         else:
             num_ftrs = model.fc.in_features
-            model.classifier[-1] = nn.Linear(num_ftrs, 1)
+            model.fc = nn.Linear(num_ftrs, 1)
         input_size = 224
 
     return model, input_size
