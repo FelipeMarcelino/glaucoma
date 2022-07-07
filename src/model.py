@@ -4,7 +4,9 @@ import numpy as np
 import torch.nn as nn
 import torch.optim as optim
 import copy
-from pytorch_forecasting.optim import Ranger
+
+# from pytorch_forecasting.optim import Ranger
+from torch_optimizer import Ranger
 from torchvision import models, transforms
 
 from torchvision import transforms

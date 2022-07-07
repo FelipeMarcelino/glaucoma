@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import click
 import pickle
 import sys
@@ -61,7 +62,7 @@ np.random.seed(42)
 )
 @click.option("--multi_input", is_flag=True, default=False, type=bool)
 @click.option("--double_img", is_flag=True, default=False, type=bool)
-@click.option("--output_tab", default=3, type=int)
+@click.option("--output_tab", default=8, type=int)
 @click.option(
     "--optim",
     default="adam",
@@ -87,6 +88,23 @@ def main(
     lr: float,
     batch_size: int,
 ):
+
+    params = {
+        "epochs": epochs,
+        "scratch": scratch,
+        "feature_extract": feature_extract,
+        "frac_val": frac_val,
+        "k_fold": k_fold,
+        "debug": debug,
+        "multi_input": multi_input,
+        "double_img": double_img,
+        "output_tab": output_tab,
+        "optim": optim,
+        "lr": lr,
+        "batch_size": batch_size,
+    }
+
+    print(batch_size)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -310,9 +328,13 @@ def main(
     else:
         bk_model_name += "_non_k_fold"
 
-    result_name = bk_model_name + ".pkl"
+    result_name = bk_model_name + "_result" + ".pkl"
     with open(path + result_name, "wb") as handle:
         pickle.dump(dict_results, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+    result_name = bk_model_name + "_params" + ".pkl"
+    with open(path + result_name, "wb") as handle:
+        pickle.dump(params, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
     summary = pd.read_csv("../model_summary.csv", sep=";")
 
