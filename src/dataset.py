@@ -38,8 +38,8 @@ class GlaucomaRandomDataset(Dataset):
 
         row = self.glaucoma_data.iloc[idx]
 
-        photo_1 = io.imread(row["photo_1"])
-        photo_2 = io.imread(row["photo_2"])
+        photo_1 = io.imread(self.root_dir / row["photo_1"])
+        photo_2 = io.imread(self.root_dir / row["photo_2"])
         label = row["label"]
         eye_side = row["eye_side"]
 
