@@ -357,6 +357,7 @@ def main(
         "multi": 1 if multi_input is True else 0,
         "double_img": 1 if double_img is True else 0,
         "backbone": backbone,
+        "feature_extract": feature_extract,
     }
 
     row = pd.DataFrame(row_data, index=[0])
