@@ -47,7 +47,7 @@ np.random.seed(42)
 @click.option(
     "--model_name",
     default="regnet",
-    type=click.Choice(["regnet", "mobile", "shuffle", "efficient"]),
+    type=click.Choice(["regnet", "mobile", "shuffle", "efficient", "vit"]),
 )
 @click.option("--scratch", default=False, is_flag=True, type=bool)
 @click.option("--feature_extract", default=False, type=bool, is_flag=True)
@@ -103,8 +103,6 @@ def main(
         "lr": lr,
         "batch_size": batch_size,
     }
-
-    print(batch_size)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 

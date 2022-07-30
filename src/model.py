@@ -1,4 +1,5 @@
 import sys
+import timm
 import torch
 import numpy as np
 import torch.nn as nn
@@ -8,6 +9,7 @@ import copy
 # from pytorch_forecasting.optim import Ranger
 from torch_optimizer import Ranger
 from torchvision import models, transforms
+from torchinfo import summary
 
 from torchvision import transforms
 
@@ -229,6 +231,13 @@ def init_model(
         else:
             num_ftrs = model.fc.in_features
             model.fc = nn.Linear(num_ftrs, 1)
+        input_size = 224
+
+    if model_name == "vit":
+        model = timm.create_model(
+            "vit_base_patch16_224", pretrained=True, num_classes=1
+        )
+
         input_size = 224
 
     return model, input_size
