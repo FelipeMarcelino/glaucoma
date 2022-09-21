@@ -135,6 +135,7 @@ def main(
     backbone = model_name
 
     if k_fold >= 2:
+        # FIXME: Separar por paciente e não por olho
         folds = init_k_fold(data, k_fold)
 
         for index, (train, val) in enumerate(folds):
@@ -234,6 +235,8 @@ def main(
         preprocessing_train, preprocessing_val, preprocessing_tab = init_transforms(
             input_size
         )
+
+        # FIXME: Separar por paciente e não por olho
         msk = np.random.rand(len(data)) < (1 - frac_val)
         train = data[msk]
         val = data[~msk]

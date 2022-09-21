@@ -34,5 +34,3 @@ for (( j=0; j<${#models[@]} ; j+=1 )) ; do
         wait
     done
 done
-
-
