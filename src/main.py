@@ -30,7 +30,7 @@ np.random.seed(42)
 )
 @click.option(
     "--epochs",
-    default=10,
+    default=100,
     type=int,
     help="Total of epochs to train the model",
     show_default=True,
@@ -63,6 +63,7 @@ np.random.seed(42)
 @click.option("--multi_input", is_flag=True, default=False, type=bool)
 @click.option("--double_img", is_flag=True, default=False, type=bool)
 @click.option("--output_tab", default=8, type=int)
+@click.option("--early_start", default=50, type=int)
 @click.option(
     "--optim",
     default="adam",
@@ -84,6 +85,7 @@ def main(
     multi_input: bool,
     double_img: bool,
     output_tab: int,
+    early_start: int,
     optim: str,
     lr: float,
     batch_size: int,
@@ -99,6 +101,7 @@ def main(
         "multi_input": multi_input,
         "double_img": double_img,
         "output_tab": output_tab,
+        "early_start": early_start,
         "optim": optim,
         "lr": lr,
         "batch_size": batch_size,
@@ -125,10 +128,16 @@ def main(
     ft_size = len(numerical_columns)
 
     # Saving results into list
+    fold_val_loss_history = []
     fold_val_acc_history = []
     fold_val_auc_history = []
     fold_val_sensitivity_history = []
     fold_val_specificity_history = []
+    fold_train_loss_history = []
+    fold_train_acc_history = []
+    fold_train_auc_history = []
+    fold_train_sensitivity_history = []
+    fold_train_specificity_history = []
 
     min_max_scaler = MinMaxScaler()
     bk_model_name = model_name
@@ -183,16 +192,23 @@ def main(
             dataloaders_dict["val"] = dataloader_val
             (
                 model,
+                val_loss_history,
                 val_acc_history,
                 val_auc_history,
                 val_sensitivity_history,
                 val_specificity_history,
+                train_loss_history,
+                train_acc_history,
+                train_auc_history,
+                train_sensitivity_history,
+                train_specificity_history,
             ) = train_model(
                 model,
                 dataloaders_dict,
                 criterion,
                 optimizer,
                 device,
+                early_start,
                 epochs,
                 multi_input=multi_input,
             )
@@ -218,10 +234,16 @@ def main(
                 path + "val_dataloader_" + model_name + ".pth",
             )
 
+            fold_val_loss_history.append(val_loss_history)
             fold_val_acc_history.append(val_acc_history)
             fold_val_auc_history.append(val_auc_history)
             fold_val_sensitivity_history.append(val_sensitivity_history)
             fold_val_specificity_history.append(val_specificity_history)
+            fold_train_loss_history.append(train_loss_history)
+            fold_train_acc_history.append(train_acc_history)
+            fold_train_auc_history.append(train_auc_history)
+            fold_train_sensitivity_history.append(train_sensitivity_history)
+            fold_train_specificity_history.append(train_specificity_history)
     else:
         model, input_size = init_model(
             model_name,
@@ -287,15 +309,22 @@ def main(
         try:
             (
                 model,
+                val_loss_history,
                 val_acc_history,
                 val_auc_history,
                 val_sensitivity_history,
                 val_specificity_history,
+                train_loss_history,
+                train_acc_history,
+                train_auc_history,
+                train_sensitivity_history,
+                train_specificity_history,
             ) = train_model(
                 model,
                 dataloaders_dict,
                 criterion,
                 optimizer,
+                early_start,
                 device,
                 epochs,
                 multi_input=multi_input,
@@ -303,18 +332,30 @@ def main(
         except KeyboardInterrupt:
             pass
 
+        fold_val_loss_history.append(val_loss_history)
         fold_val_acc_history.append(val_acc_history)
         fold_val_auc_history.append(val_auc_history)
         fold_val_sensitivity_history.append(val_sensitivity_history)
         fold_val_specificity_history.append(val_specificity_history)
+        fold_train_loss_history.append(train_loss_history)
+        fold_train_acc_history.append(train_acc_history)
+        fold_train_auc_history.append(train_auc_history)
+        fold_train_sensitivity_history.append(train_sensitivity_history)
+        fold_train_specificity_history.append(train_specificity_history)
 
         torch.save(model.state_dict(), path + model_name + ".pth")
 
     dict_results = {}
+    dict_results["val_loss_history"] = fold_val_loss_history
     dict_results["val_acc_history"] = fold_val_acc_history
     dict_results["val_auc_history"] = fold_val_auc_history
     dict_results["val_sensitivity_history"] = fold_val_sensitivity_history
     dict_results["val_specificity_history"] = fold_val_specificity_history
+    dict_results["train_loss_history"] = fold_train_loss_history
+    dict_results["train_acc_history"] = fold_train_acc_history
+    dict_results["train_auc_history"] = fold_train_auc_history
+    dict_results["train_sensitivity_history"] = fold_train_sensitivity_history
+    dict_results["train_specificity_history"] = fold_train_specificity_history
 
     if multi_input:
         bk_model_name += "_multi_input"
@@ -359,13 +400,14 @@ def main(
         "double_img": 1 if double_img is True else 0,
         "backbone": backbone,
         "feature_extract": feature_extract,
+        "early_start": early_start,
     }
 
     row = pd.DataFrame(row_data, index=[0])
 
     summary = pd.concat([summary, row])
 
-    summary.to_csv("../model_summary.csv", index=False, sep=";")
+    summary.to_csv("../model_summary.csv", index=False)
 
 
 if __name__ == "__main__":

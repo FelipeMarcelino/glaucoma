@@ -6,7 +6,7 @@ from skimage import io
 from params import ROOT_DIR
 from pathlib import Path
 from torch.utils.data import Dataset, DataLoader
-from sklearn.model_selection import KFold
+from sklearn.model_selection import KFold, GroupKFold
 
 
 class GlaucomaRandomDataset(Dataset):
@@ -75,9 +75,11 @@ def init_dataloader(
 
 
 def init_k_fold(data, n_splits):
-    kf = KFold(n_splits=n_splits, shuffle=True)
+    # kf = KFold(n_splits=n_splits, shuffle=True)
+    group_kfold = GroupKFold(n_splits=n_splits)
+    patients = data["Patient"].values.tolist()
 
-    for train_index, test_index in kf.split(data):
+    for train_index, test_index in group_kfold.split(data, groups=patients):
         train = data.iloc[train_index]
         test = data.iloc[test_index]
 

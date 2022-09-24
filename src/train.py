@@ -15,7 +15,8 @@ def train_model(
     criterion,
     optimizer,
     device,
-    num_epochs=25,
+    early_start=50,
+    num_epochs=100,
     is_inception=False,
     multi_input=False,
     patient=10,
@@ -26,9 +27,14 @@ def train_model(
     val_auc_history = []
     val_sensitivity_history = []
     val_specificity_history = []
+    val_loss_history = []
+    train_auc_history = []
+    train_acc_history = []
+    train_sensitivity_history = []
+    train_specificity_history = []
+    train_loss_history = []
 
     best_model_wts = copy.deepcopy(model.state_dict())
-    best_acc = 0.0
     best_auc = 0.0
 
     trigger_time = 0
@@ -139,8 +145,16 @@ def train_model(
                 val_auc_history.append(epoch_auc)
                 val_sensitivity_history.append(sensitivity)
                 val_specificity_history.append(specificity)
+                val_loss_history.append(running_loss)
 
             if phase == "train":
+                train_acc_history.append(epoch_acc.cpu().detach().numpy())
+                train_auc_history.append(epoch_auc)
+                train_sensitivity_history.append(sensitivity)
+                train_specificity_history.append(specificity)
+                train_loss_history.append(running_loss)
+
+            if phase == "val" and epoch >= early_start:
                 if epoch_loss > last_loss:
                     trigger_time += 1
                 else:
@@ -161,10 +175,16 @@ def train_model(
     model.load_state_dict(best_model_wts)
     return (
         model,
+        val_loss_history,
         val_acc_history,
         val_auc_history,
         val_sensitivity_history,
         val_specificity_history,
+        train_loss_history,
+        train_acc_history,
+        train_auc_history,
+        train_sensitivity_history,
+        train_specificity_history,
     )
 
 

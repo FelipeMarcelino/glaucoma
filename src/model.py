@@ -28,13 +28,20 @@ class MultiInputModel(nn.Module):
         super(MultiInputModel, self).__init__()
         self.features_img_1 = features_img_1
         self.features_img_2 = features_img_2
-        self.tab_mlp = nn.Sequential(
-            nn.Linear(input_tab, int(input_tab / 2)),
-            nn.ReLU(inplace=True),
-            nn.Linear(int(input_tab / 2), output_tab),
-            nn.ReLU(inplace=True),
-        )
+
+        if output_tab:
+            self.tab_mlp = nn.Sequential(
+                nn.Linear(input_tab, int(input_tab / 2)),
+                nn.ReLU(inplace=True),
+                nn.Linear(int(input_tab / 2), output_tab),
+                nn.ReLU(inplace=True),
+            )
+        else:
+            self.tab_mlp = None
+            output_tab = 0
+
         self.mul_img_features = 1 if self.features_img_2 is None else 2
+
 
         self.concat_mlp = nn.Sequential(
             nn.Linear(
@@ -55,17 +62,27 @@ class MultiInputModel(nn.Module):
 
     def forward(self, img_1, img_2, tab):
         output_img = self.features_img_1(img_1)
-        output_tab = self.tab_mlp(tab)
-
-        if self.mul_img_features == 1:
-            output_img_tab = torch.cat((output_img.squeeze(), output_tab), dim=1)
-        else:
+        if self.features_2:
             output_img_2 = self.features_img_2(img_2)
-            output_img_tab = torch.cat(
-                (output_img.squeeze(), output_img_2.squeeze(), output_tab), dim=1
-            )
+            output_img_b = torch.cat((output_img.squeeze(), output_img_2.squeeze()), dim=1)
+        else:
+            output_img_b = output_img
+        if self.tab_mlp:
+            output_tab = self.tab_mlp(tab)
+            output_img_c = torch.cat((output_img_b, output_tab), dim=1)
+        else:
+            output_img_c = output_img_b
 
-        output = self.concat_mlp(output_img_tab)
+        # if self.mul_img_features == 1:
+        #     output_img_tab = torch.cat((output_img.squeeze(), output_tab), dim=1)
+
+        # else:
+        #     output_img_2 = self.features_img_2(img_2)
+        #     output_img_tab = torch.cat(
+        #         (output_img.squeeze(), output_img_2.squeeze(), output_tab), dim=1
+        #     )
+
+        output = self.concat_mlp(output_img_c)
 
         return output
 
@@ -172,6 +189,44 @@ def init_model(
             model.fc = nn.Linear(num_ftrs, 1)
         input_size = 224
 
+    if model_name == "regnet16":
+        model = models.regnet_y_1_6gf(pretrained)
+        set_parameter_requires_grad(model, feature_extract)
+
+        if multi_input:
+            features = nn.Sequential(*list(model.children()))[:-1]
+            in_features = 784
+            if double_img:
+                features_2 = copy.deepcopy(features)
+            else:
+                features_2 = None
+            model = MultiInputModel(
+                features, features_2, ft_size, output_tab, in_features
+            )
+        else:
+            num_ftrs = model.fc.in_features
+            model.fc = nn.Linear(num_ftrs, 1)
+        input_size = 224
+
+    if model_name == "regnet32":
+        model = models.regnet_y_3_2gf(pretrained)
+        set_parameter_requires_grad(model, feature_extract)
+
+        if multi_input:
+            features = nn.Sequential(*list(model.children()))[:-1]
+            in_features = 784
+            if double_img:
+                features_2 = copy.deepcopy(features)
+            else:
+                features_2 = None
+            model = MultiInputModel(
+                features, features_2, ft_size, output_tab, in_features
+            )
+        else:
+            num_ftrs = model.fc.in_features
+            model.fc = nn.Linear(num_ftrs, 1)
+        input_size = 224
+
     if model_name == "mobile":
         model = models.mobilenet_v3_large(pretrained)
         set_parameter_requires_grad(model, feature_extract)
@@ -215,7 +270,26 @@ def init_model(
         input_size = 224
 
     if model_name == "shuffle":
-        model = models.shufflenet_v2_x1_5()
+        model = models.shufflenet_v2_x1_5(pretrained)
+        set_parameter_requires_grad(model, feature_extract)
+
+        if multi_input:
+            features = nn.Sequential(*list(model.children()))[:-1]
+            in_features = 784
+            if double_img:
+                features_2 = copy.deepcopy(features)
+            else:
+                features_2 = None
+            model = MultiInputModel(
+                features, features_2, ft_size, output_tab, in_features
+            )
+        else:
+            num_ftrs = model.fc.in_features
+            model.fc = nn.Linear(num_ftrs, 1)
+        input_size = 224
+
+    if model_name == "inception":
+        model = models.inception_v3(pretrained)
         set_parameter_requires_grad(model, feature_extract)
 
         if multi_input:
@@ -240,4 +314,5 @@ def init_model(
 
         input_size = 224
 
+    if model_name
     return model, input_size
