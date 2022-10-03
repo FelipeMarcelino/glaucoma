@@ -83,7 +83,6 @@ class MultiInputModel(nn.Module):
         #         (output_img.squeeze(), output_img_2.squeeze(), output_tab), dim=1
         #     )
 
-        print(output_img_c.shape)
         output = self.concat_mlp(output_img_c)
 
         return output
@@ -328,7 +327,7 @@ def init_model(
 
         if output_tab or double_img:
             features = model
-            in_features = 784
+            in_features = 768
             if double_img:
                 features_2 = copy.deepcopy(features)
             else:
