@@ -15,10 +15,11 @@ def train_model(
     criterion,
     optimizer,
     device,
+    double_img,
+    output_tab,
     early_start=50,
     num_epochs=100,
     is_inception=False,
-    multi_input=False,
     patient=10,
 ):
     since = time.time()
@@ -77,26 +78,43 @@ def train_model(
                     #   but in testing we only consider the final output.
                     if is_inception and phase == "train":
                         # From https://discuss.pytorch.org/t/how-to-optimize-inception-model-with-auxiliary-classifiers/7958
-                        if multi_input:
-                            outputs, aux_outputs = model(
-                                imgs_photo_1, imgs_photo_1, ft_numerical
-                            )
-                        else:
-                            outputs, aux_outputs = model(imgs_photo_1)
 
-                        loss1 = criterion(outputs, labels)
-                        loss2 = criterion(aux_outputs, labels)
-                        loss = loss1 + 0.4 * loss2
-                    else:
-                        if multi_input:
+                        # if double_img and not output_tab :
+                        #     outputs,  _ = model(imgs_photo_1, imgs_photo_2, None)
+                        # elif double_img and output_tab:
+                        #     outputs, _ = model(imgs_photo_1, imgs_photo_2, ft_numerical)
+                        # elif not double_img and output_tab:
+                        #     outputs, _ = model(imgs_photo_1, None, ft_numerical)
+                        # else:
+                        #     outputs, _ = model(imgs_photo_1)
+
+                        if double_img and not output_tab :
+                            outputs = model(imgs_photo_1, imgs_photo_2, None)
+                        elif double_img and output_tab:
                             outputs = model(imgs_photo_1, imgs_photo_2, ft_numerical)
+                        elif not double_img and output_tab:
+                            outputs = model(imgs_photo_1, None, ft_numerical)
+                        else:
+                            outputs  = model(imgs_photo_1)
+
+                        #loss1 = criterion(outputs, labels)
+                        #loss2 = criterion(aux_outputs, labels)
+                        #loss = loss1 + 0.4 * loss2
+                        loss = criterion(outputs, labels)
+                    else:
+                        if double_img and not output_tab :
+                            outputs = model(imgs_photo_1, imgs_photo_2, None)
+                        elif double_img and output_tab:
+                            outputs = model(imgs_photo_1, imgs_photo_2, ft_numerical)
+                        elif not double_img and output_tab:
+                            outputs = model(imgs_photo_1, None, ft_numerical)
                         else:
                             outputs = model(imgs_photo_1)
 
                         loss = criterion(outputs, labels)
 
-                        sigmoid_outputs = torch.sigmoid(outputs)
-                        preds = (sigmoid_outputs > 0.5).float()
+                    sigmoid_outputs = torch.sigmoid(outputs)
+                    preds = (sigmoid_outputs > 0.5).float()
 
                     # backward + optimize only if in training phase
                     if phase == "train":
@@ -212,9 +230,11 @@ def pre_train(
         batch_size,
         ft_columns,
         double_img,
+        device,
     )
+
     dataloader_val = init_dataloader(
-        val, preprocessing_val, preprocessing_tab, batch_size, ft_columns, double_img
+        val, preprocessing_val, preprocessing_tab, batch_size, ft_columns, double_img, device
     )
 
     criterion = nn.BCEWithLogitsLoss()

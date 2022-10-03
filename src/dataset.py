@@ -63,13 +63,14 @@ class GlaucomaRandomDataset(Dataset):
 
 
 def init_dataloader(
-    data, preprocessing_img, preprocessing_tab, batch_size, ft_columns, double_img
+    data, preprocessing_img, preprocessing_tab, batch_size, ft_columns, double_img, device
 ):
 
     dataset = GlaucomaRandomDataset(
         data, ROOT_DIR, ft_columns, double_img, preprocessing_img, preprocessing_tab
     )
-    dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+    dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True,
+                            pin_memory=True,num_workers=8)
 
     return dataloader
 

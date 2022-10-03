@@ -1,10 +1,8 @@
 #!/usr/bin/env python
 import click
 import pickle
-import sys
 import torch
 import random
-import torch.nn as nn
 import pandas as pd
 import numpy as np
 import uuid
@@ -13,8 +11,8 @@ import os
 
 
 from sklearn.preprocessing import MinMaxScaler
-from dataset import init_dataloader, init_k_fold
-from model import init_model, init_optimizer, init_transforms
+from dataset import  init_k_fold
+from model import init_model, init_transforms
 from train import pre_train, train_model
 
 
@@ -47,7 +45,9 @@ np.random.seed(42)
 @click.option(
     "--model_name",
     default="regnet",
-    type=click.Choice(["regnet", "mobile", "shuffle", "efficient", "vit"]),
+    type=click.Choice(
+        ["regnet", "regnet16", "regnet32", "mobile", "shuffle", "efficient", "vit", "inception"]
+    ),
 )
 @click.option("--scratch", default=False, is_flag=True, type=bool)
 @click.option("--feature_extract", default=False, type=bool, is_flag=True)
@@ -60,9 +60,8 @@ np.random.seed(42)
     type=str,
     help="Path to save model",
 )
-@click.option("--multi_input", is_flag=True, default=False, type=bool)
 @click.option("--double_img", is_flag=True, default=False, type=bool)
-@click.option("--output_tab", default=8, type=int)
+@click.option("--output_tab", default=None, type=int)
 @click.option("--early_start", default=50, type=int)
 @click.option(
     "--optim",
@@ -71,6 +70,7 @@ np.random.seed(42)
 )
 @click.option("--lr", default=0.0001, type=float)
 @click.option("--batch_size", default=16, type=int)
+@click.option("--patient", default=10, type=int)
 def main(
     csv_file,
     epochs: int,
@@ -82,14 +82,19 @@ def main(
     k_fold: int,
     debug: int,
     model_folder: str,
-    multi_input: bool,
     double_img: bool,
     output_tab: int,
     early_start: int,
     optim: str,
     lr: float,
     batch_size: int,
+    patient: int,
 ):
+
+    if model_name == "inception":
+        is_inception = True
+    else:
+        is_inception = False
 
     params = {
         "epochs": epochs,
@@ -98,13 +103,14 @@ def main(
         "frac_val": frac_val,
         "k_fold": k_fold,
         "debug": debug,
-        "multi_input": multi_input,
         "double_img": double_img,
         "output_tab": output_tab,
         "early_start": early_start,
         "optim": optim,
         "lr": lr,
         "batch_size": batch_size,
+        "is_inception": is_inception,
+        "model_name": model_name,
     }
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -140,7 +146,6 @@ def main(
     fold_train_specificity_history = []
 
     min_max_scaler = MinMaxScaler()
-    bk_model_name = model_name
     backbone = model_name
 
     if k_fold >= 2:
@@ -150,8 +155,6 @@ def main(
         for index, (train, val) in enumerate(folds):
             print("Fold:", index + 1)
 
-            model_name = bk_model_name
-
             train[numerical_columns] = min_max_scaler.fit_transform(
                 train[numerical_columns]
             )
@@ -159,10 +162,9 @@ def main(
             val[numerical_columns] = min_max_scaler.transform(val[numerical_columns])
 
             model, input_size = init_model(
-                model_name,
+                backbone,
                 pretrained,
                 feature_extract,
-                multi_input,
                 double_img,
                 output_tab,
                 ft_size,
@@ -208,30 +210,23 @@ def main(
                 criterion,
                 optimizer,
                 device,
+                double_img,
+                output_tab,
                 early_start,
                 epochs,
-                multi_input=multi_input,
+                is_inception=is_inception,
+                patient=patient
             )
 
-            if multi_input:
-                model_name += "_multi_input"
-            else:
-                model_name += "_single_intput"
-
-            if double_img:
-                model_name += "_double_img"
-
-            model_name = model_name + "_" + str(index + 1) + "k_fold"
-
-            torch.save(model.state_dict(), path + model_name + ".pth")
+            torch.save(model.state_dict(), path + str(model_id) + ".pth")
 
             torch.save(
                 dataloader_train,
-                path + "train_dataloader_" + model_name + ".pth",
+                path + "train_dataloader_" + str(model_id) + ".pth",
             )
             torch.save(
                 dataloader_val,
-                path + "val_dataloader_" + model_name + ".pth",
+                path + "val_dataloader_" + str(model_id) + ".pth",
             )
 
             fold_val_loss_history.append(val_loss_history)
@@ -246,10 +241,9 @@ def main(
             fold_train_specificity_history.append(train_specificity_history)
     else:
         model, input_size = init_model(
-            model_name,
+            backbone,
             pretrained,
             feature_extract,
-            multi_input,
             double_img,
             output_tab,
             ft_size,
@@ -285,21 +279,13 @@ def main(
             lr,
         )
 
-        if multi_input:
-            model_name += "_multi_input_non_fold"
-        else:
-            model_name += "_single_intput_non_fold"
-
-        if double_img:
-            model_name += "_double_img"
-
         torch.save(
             dataloader_train,
-            path + "train_dataloader_" + model_name + ".pth",
+            path + "train_dataloader_" + str(model_id) + ".pth",
         )
         torch.save(
             dataloader_val,
-            path + "val_dataloader_" + model_name + ".pth",
+            path + "val_dataloader_" + str(model_id) + ".pth",
         )
 
         dataloaders_dict = {}
@@ -324,10 +310,13 @@ def main(
                 dataloaders_dict,
                 criterion,
                 optimizer,
-                early_start,
                 device,
+                double_img,
+                output_tab,
+                early_start,
                 epochs,
-                multi_input=multi_input,
+                is_inception=is_inception,
+                patient=patient,
             )
         except KeyboardInterrupt:
             pass
@@ -343,7 +332,7 @@ def main(
         fold_train_sensitivity_history.append(train_sensitivity_history)
         fold_train_specificity_history.append(train_specificity_history)
 
-        torch.save(model.state_dict(), path + model_name + ".pth")
+        torch.save(model.state_dict(), path + str(model_id) + ".pth")
 
     dict_results = {}
     dict_results["val_loss_history"] = fold_val_loss_history
@@ -357,55 +346,52 @@ def main(
     dict_results["train_sensitivity_history"] = fold_train_sensitivity_history
     dict_results["train_specificity_history"] = fold_train_specificity_history
 
-    if multi_input:
-        bk_model_name += "_multi_input"
-    else:
-        bk_model_name += "_single_intput"
-
-    if double_img:
-        bk_model_name += "_double_img"
-
-    if k_fold > 1:
-        bk_model_name += "_k_fold"
-    else:
-        bk_model_name += "_non_k_fold"
-
-    result_name = bk_model_name + "_result" + ".pkl"
-    with open(path + result_name, "wb") as handle:
+    with open(path + str(model_id), "wb") as handle:
         pickle.dump(dict_results, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-    result_name = bk_model_name + "_params" + ".pkl"
-    with open(path + result_name, "wb") as handle:
+    with open(path + str(model_id), "wb") as handle:
         pickle.dump(params, handle, protocol=pickle.HIGHEST_PROTOCOL)
-
-    summary = pd.read_csv("../model_summary.csv", sep=";")
 
     row_data = {
         "model_id": model_id,
-        "model_name": bk_model_name,
         "k_fold": k_fold if k_fold > 2 else np.nan,
         "frac_val": frac_val if k_fold < 2 else np.nan,
-        "best_acc": np.max(dict_results["val_acc_history"]),
-        "best_auc": np.max(dict_results["val_auc_history"]),
-        "best_sp": np.max(dict_results["val_specificity_history"]),
-        "best_sn": np.max(dict_results["val_sensitivity_history"]),
-        "avg_acc": np.mean(dict_results["val_acc_history"]),
-        "avg_auc": np.mean(dict_results["val_auc_history"]),
-        "avg_sp": np.mean(dict_results["val_specificity_history"]),
-        "avg_sn": np.mean(dict_results["val_sensitivity_history"]),
+        "val_best_acc": np.max(dict_results["val_acc_history"]),
+        "val_best_auc": np.max(dict_results["val_auc_history"]),
+        "val_best_sp": np.max(dict_results["val_specificity_history"]),
+        "val_best_sn": np.max(dict_results["val_sensitivity_history"]),
+        "val_avg_acc": np.mean(dict_results["val_acc_history"]),
+        "val_avg_auc": np.mean(dict_results["val_auc_history"]),
+        "val_avg_sp": np.mean(dict_results["val_specificity_history"]),
+        "val_avg_sn": np.mean(dict_results["val_sensitivity_history"]),
+        "train_best_acc": np.max(dict_results["train_acc_history"]),
+        "train_best_auc": np.max(dict_results["train_auc_history"]),
+        "train_best_sp": np.max(dict_results["train_specificity_history"]),
+        "train_best_sn": np.max(dict_results["train_sensitivity_history"]),
+        "train_avg_acc": np.mean(dict_results["train_acc_history"]),
+        "train_avg_auc": np.mean(dict_results["train_auc_history"]),
+        "train_avg_sp": np.mean(dict_results["train_specificity_history"]),
+        "train_avg_sn": np.mean(dict_results["train_sensitivity_history"]),
         "host_name": socket.gethostname(),
+        "is_inception": is_inception,
         "optim": optim,
         "lr": lr,
-        "multi": 1 if multi_input is True else 0,
+        "epochs": epochs,
         "double_img": 1 if double_img is True else 0,
+        "output_tab": output_tab if output_tab is not None else np.nan,
         "backbone": backbone,
         "feature_extract": feature_extract,
         "early_start": early_start,
     }
 
-    row = pd.DataFrame(row_data, index=[0])
-
-    summary = pd.concat([summary, row])
+    try:
+        summary = pd.read_csv("../model_summary.csv", sep=",")
+    except FileNotFoundError:
+        row = pd.DataFrame(row_data, index=[0])
+        summary = row
+    else:
+        row = pd.DataFrame(row_data, index=[0])
+        summary = pd.concat([summary, row])
 
     summary.to_csv("../model_summary.csv", index=False)
 

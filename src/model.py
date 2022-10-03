@@ -42,7 +42,6 @@ class MultiInputModel(nn.Module):
 
         self.mul_img_features = 1 if self.features_img_2 is None else 2
 
-
         self.concat_mlp = nn.Sequential(
             nn.Linear(
                 self.mul_img_features * in_features + output_tab,
@@ -62,9 +61,11 @@ class MultiInputModel(nn.Module):
 
     def forward(self, img_1, img_2, tab):
         output_img = self.features_img_1(img_1)
-        if self.features_2:
+        if self.features_img_2:
             output_img_2 = self.features_img_2(img_2)
-            output_img_b = torch.cat((output_img.squeeze(), output_img_2.squeeze()), dim=1)
+            output_img_b = torch.cat(
+                (output_img.squeeze(), output_img_2.squeeze()), dim=1
+            )
         else:
             output_img_b = output_img
         if self.tab_mlp:
@@ -82,6 +83,7 @@ class MultiInputModel(nn.Module):
         #         (output_img.squeeze(), output_img_2.squeeze(), output_tab), dim=1
         #     )
 
+        print(output_img_c.shape)
         output = self.concat_mlp(output_img_c)
 
         return output
@@ -164,7 +166,6 @@ def init_model(
     model_name: str,
     pretrained: bool,
     feature_extract: bool,
-    multi_input: bool,
     double_img: bool,
     output_tab: int,
     ft_size: int,
@@ -174,7 +175,7 @@ def init_model(
         model = models.regnet_y_800mf(pretrained)
         set_parameter_requires_grad(model, feature_extract)
 
-        if multi_input:
+        if output_tab or double_img:
             features = nn.Sequential(*list(model.children()))[:-1]
             in_features = 784
             if double_img:
@@ -193,9 +194,9 @@ def init_model(
         model = models.regnet_y_1_6gf(pretrained)
         set_parameter_requires_grad(model, feature_extract)
 
-        if multi_input:
+        if output_tab or double_img:
             features = nn.Sequential(*list(model.children()))[:-1]
-            in_features = 784
+            in_features = 888
             if double_img:
                 features_2 = copy.deepcopy(features)
             else:
@@ -212,9 +213,9 @@ def init_model(
         model = models.regnet_y_3_2gf(pretrained)
         set_parameter_requires_grad(model, feature_extract)
 
-        if multi_input:
+        if output_tab or double_img:
             features = nn.Sequential(*list(model.children()))[:-1]
-            in_features = 784
+            in_features = 1512
             if double_img:
                 features_2 = copy.deepcopy(features)
             else:
@@ -231,7 +232,7 @@ def init_model(
         model = models.mobilenet_v3_large(pretrained)
         set_parameter_requires_grad(model, feature_extract)
 
-        if multi_input:
+        if output_tab or double_img:
             features = nn.Sequential(*list(model.children()))[:-1]
             in_features = 784
             if double_img:
@@ -250,7 +251,7 @@ def init_model(
         model = models.mobilenet_v3_large(pretrained)
         set_parameter_requires_grad(model, feature_extract)
 
-        if multi_input:
+        if output_tab or double_img:
             features = nn.Sequential(*list(model.children()))[:-1]
             in_features = 784
             if double_img:
@@ -273,7 +274,7 @@ def init_model(
         model = models.shufflenet_v2_x1_5(pretrained)
         set_parameter_requires_grad(model, feature_extract)
 
-        if multi_input:
+        if output_tab or double_img:
             features = nn.Sequential(*list(model.children()))[:-1]
             in_features = 784
             if double_img:
@@ -292,9 +293,14 @@ def init_model(
         model = models.inception_v3(pretrained)
         set_parameter_requires_grad(model, feature_extract)
 
-        if multi_input:
-            features = nn.Sequential(*list(model.children()))[:-1]
-            in_features = 784
+        if output_tab or double_img:
+            model.fc = nn.Identity()
+            model.aux_logits = False
+            model.eval()
+            #features = nn.Sequential(*list(model.children()))[:-1]
+            #in_features_aux = 768
+            features = model
+            in_features = 2048
             if double_img:
                 features_2 = copy.deepcopy(features)
             else:
@@ -304,15 +310,33 @@ def init_model(
             )
         else:
             num_ftrs = model.fc.in_features
+            num_ftrs_aux = model.AuxLogits.fc.in_features
             model.fc = nn.Linear(num_ftrs, 1)
-        input_size = 224
+            model.AuxLogits.fc = nn.Linear(num_ftrs_aux, 1)
+
+        input_size = 299
 
     if model_name == "vit":
+        if double_img or output_tab:
+            num_classes = 0
+        else:
+            num_classes  = 1
         model = timm.create_model(
-            "vit_base_patch16_224", pretrained=True, num_classes=1
+            "vit_base_patch16_224", pretrained=True, num_classes=num_classes
         )
+        set_parameter_requires_grad(model, feature_extract)
+
+        if output_tab or double_img:
+            features = model
+            in_features = 784
+            if double_img:
+                features_2 = copy.deepcopy(features)
+            else:
+                features_2 = None
+            model = MultiInputModel(
+                features, features_2, ft_size, output_tab, in_features
+            )
 
         input_size = 224
 
-    if model_name
     return model, input_size
