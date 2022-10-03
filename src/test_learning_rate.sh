@@ -44,7 +44,7 @@ for (( j=0; j<${#models[@]} ; j+=1 )) ; do
 done
 
 for (( j=0; j<${#models[@]} ; j+=1 )) ; do
-    for (( i=0; i<${#optims[@]} ; i+=2 )) ; do
+    for (( i=0; i<${#optims[@]} ; i+=4 )) ; do
         for (( k=0; k<${#lr[@]} ; k+=1 )) ; do
             python main.py --optim ${optims[i]} --batch_size ${batch_size} \
             --model_name ${models[j]} --epochs ${epoch} --early_start ${early_start} \
@@ -64,7 +64,7 @@ for (( j=0; j<${#models[@]} ; j+=1 )) ; do
 done
 
 for (( j=0; j<${#models[@]} ; j+=1 )) ; do
-    for (( i=0; i<${#optims[@]} ; i+=2 )) ; do
+    for (( i=0; i<${#optims[@]} ; i+=4 )) ; do
         for (( k=0; k<${#lr[@]} ; k+=1 )) ; do
             python main.py --optim ${optims[i]} --batch_size ${batch_size} \
             --model_name ${models[j]} --epochs ${epoch} --early_start ${early_start} --output_tab \
