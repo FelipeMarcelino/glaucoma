@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import click
+import sys
 import pickle
 import torch
 import random
@@ -43,7 +44,7 @@ np.random.seed(42)
               and test it",
 )
 @click.option(
-    "--model_name",
+    "--backbone",
     default="regnet",
     type=click.Choice(
         ["regnet", "regnet16", "regnet32", "mobile", "shuffle", "efficient", "vit", "inception"]
@@ -71,11 +72,12 @@ np.random.seed(42)
 @click.option("--lr", default=0.0001, type=float)
 @click.option("--batch_size", default=16, type=int)
 @click.option("--patient", default=10, type=int)
+@click.option("--overwrite", is_flag=True, default=False, type=bool)
 def main(
     csv_file,
     epochs: int,
     test: bool,
-    model_name: str,
+    backbone: str,
     scratch: bool,
     feature_extract: bool,
     frac_val: float,
@@ -89,29 +91,37 @@ def main(
     lr: float,
     batch_size: int,
     patient: int,
+    overwrite: bool,
 ):
 
-    if model_name == "inception":
+    if backbone == "inception":
         is_inception = True
     else:
         is_inception = False
 
     params = {
         "epochs": epochs,
-        "scratch": scratch,
+        #"scratch": scratch,
         "feature_extract": feature_extract,
         "frac_val": frac_val,
-        "k_fold": k_fold,
-        "debug": debug,
+        "k_fold": k_fold if k_fold > 2 else None,
         "double_img": double_img,
-        "output_tab": output_tab,
+        "output_tab": output_tab if output_tab else None,
         "early_start": early_start,
         "optim": optim,
         "lr": lr,
-        "batch_size": batch_size,
+        #"batch_size": batch_size,
         "is_inception": is_inception,
-        "model_name": model_name,
+        "backbone": backbone,
     }
+
+    if not overwrite:
+        temp_summary = pd.read_csv("../model_summary.csv", sep=",")
+        query = ' and '.join([f'{k} == {repr(v)}' for k, v in params.items() if v is not None])
+        query_rows = temp_summary.query(query)
+        if len(query_rows) != 0:
+            print("Model already tested!!! Exiting...")
+            return
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -146,7 +156,6 @@ def main(
     fold_train_specificity_history = []
 
     min_max_scaler = MinMaxScaler()
-    backbone = model_name
 
     if k_fold >= 2:
         # FIXME: Separar por paciente e não por olho
