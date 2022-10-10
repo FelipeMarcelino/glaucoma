@@ -10,13 +10,13 @@ for (( j=0; j<${#models[@]} ; j+=1 )) ; do
     for (( i=0; i<${#optims[@]} ; i+=4 )) ; do
         for (( k=0; k<${#lr[@]} ; k+=1 )) ; do
             python main.py --optim ${optims[i]} --batch_size ${batch_size} \
-            --model_name ${models[j]} --epochs ${epoch} --early_start ${early_start} --lr ${lr[k]} &
+            --backbone ${models[j]} --epochs ${epoch} --early_start ${early_start} --lr ${lr[k]} &
             python main.py --optim ${optims[i+1]} --batch_size ${batch_size} \
-            --model_name ${models[j]} --epochs ${epoch} --early_start ${early_start} --lr ${lr[k]} &
+            --backbone ${models[j]} --epochs ${epoch} --early_start ${early_start} --lr ${lr[k]} &
             python main.py --optim ${optims[i+2]} --batch_size ${batch_size} \
-            --model_name ${models[j]} --epochs ${epoch} --early_start ${early_start} --lr ${lr[k]} &
+            --backbone ${models[j]} --epochs ${epoch} --early_start ${early_start} --lr ${lr[k]} &
             python main.py --optim ${optims[i+3]} --batch_size ${batch_size} \
-            --model_name ${models[j]} --epochs ${epoch} --early_start ${early_start} --lr ${lr[k]} &
+            --backbone ${models[j]} --epochs ${epoch} --early_start ${early_start} --lr ${lr[k]} &
         wait
         done
     done
@@ -26,16 +26,16 @@ for (( j=0; j<${#models[@]} ; j+=1 )) ; do
     for (( i=0; i<${#optims[@]} ; i+=4 )) ; do
         for (( k=0; k<${#lr[@]} ; k+=1 )) ; do
             python main.py --optim ${optims[i]} --batch_size ${batch_size} \
-            --model_name ${models[j]} --epochs ${epoch} --early_start ${early_start} --double_img \
+            --backbone ${models[j]} --epochs ${epoch} --early_start ${early_start} --double_img \
             --lr ${lr[k]} &
             python main.py --optim ${optims[i+1]} --batch_size ${batch_size} \
-            --model_name ${models[j]} --epochs ${epoch} --early_start ${early_start} --double_img \
+            --backbone ${models[j]} --epochs ${epoch} --early_start ${early_start} --double_img \
             --lr ${lr[k]} &
             python main.py --optim ${optims[i+2]} --batch_size ${batch_size} \
-            --model_name ${models[j]} --epochs ${epoch} --early_start ${early_start} --double_img \
+            --backbone ${models[j]} --epochs ${epoch} --early_start ${early_start} --double_img \
             --lr ${lr[k]} &
             python main.py --optim ${optims[i+3]} --batch_size ${batch_size} \
-            --model_name ${models[j]} --epochs ${epoch} --early_start ${early_start} --double_img \
+            --backbone ${models[j]} --epochs ${epoch} --early_start ${early_start} --double_img \
             --lr ${lr[k]} &
         wait
         done
@@ -46,16 +46,16 @@ for (( j=0; j<${#models[@]} ; j+=1 )) ; do
     for (( i=0; i<${#optims[@]} ; i+=4 )) ; do
         for (( k=0; k<${#lr[@]} ; k+=1 )) ; do
             python main.py --optim ${optims[i]} --batch_size ${batch_size} \
-            --model_name ${models[j]} --epochs ${epoch} --early_start ${early_start} \
+            --backbone ${models[j]} --epochs ${epoch} --early_start ${early_start} \
             --output_tab ${output_tab} --lr ${lr[k]} &
             python main.py --optim ${optims[i+1]} --batch_size ${batch_size} \
-            --model_name ${models[j]} --epochs ${epoch} --early_start ${early_start} \
+            --backbone ${models[j]} --epochs ${epoch} --early_start ${early_start} \
             --output_tab ${output_tab} --lr ${lr[k]} &
             python main.py --optim ${optims[i+2]} --batch_size ${batch_size} \
-            --model_name ${models[j]} --epochs ${epoch} --early_start ${early_start} \
+            --backbone ${models[j]} --epochs ${epoch} --early_start ${early_start} \
             --output_tab ${output_tab} --lr ${lr[k]} &
             python main.py --optim ${optims[i+3]} --batch_size ${batch_size} \
-            --model_name ${models[j]} --epochs ${epoch} --early_start ${early_start} \
+            --backbone ${models[j]} --epochs ${epoch} --early_start ${early_start} \
             --output_tab ${output_tab} --lr ${lr[k]} &
         wait
         done
@@ -66,16 +66,16 @@ for (( j=0; j<${#models[@]} ; j+=1 )) ; do
     for (( i=0; i<${#optims[@]} ; i+=4 )) ; do
         for (( k=0; k<${#lr[@]} ; k+=1 )) ; do
             python main.py --optim ${optims[i]} --batch_size ${batch_size} \
-            --model_name ${models[j]} --epochs ${epoch} --early_start ${early_start} --output_tab \
+            --backbone ${models[j]} --epochs ${epoch} --early_start ${early_start} --output_tab \
                     ${output_tab} --double_img --lr ${lr[k]} &
             python main.py --optim ${optims[i+1]} --batch_size ${batch_size} \
-            --model_name ${models[j]} --epochs ${epoch} --early_start ${early_start} --output_tab \
+            --backbone ${models[j]} --epochs ${epoch} --early_start ${early_start} --output_tab \
                     ${output_tab} --double_img --lr ${lr[k]} &
             python main.py --optim ${optims[i+2]} --batch_size ${batch_size} \
-            --model_name ${models[j]} --epochs ${epoch} --early_start ${early_start} --output_tab \
+            --backbone ${models[j]} --epochs ${epoch} --early_start ${early_start} --output_tab \
                     ${output_tab} --double_img --lr ${lr[k]} &
             python main.py --optim ${optims[i+3]} --batch_size ${batch_size} \
-            --model_name ${models[j]} --epochs ${epoch} --early_start ${early_start} --output_tab \
+            --backbone ${models[j]} --epochs ${epoch} --early_start ${early_start} --output_tab \
                     ${output_tab} --double_img --lr ${lr[k]} &
         wait
         done
