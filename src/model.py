@@ -7,7 +7,7 @@ import torch.optim as optim
 import copy
 
 # from pytorch_forecasting.optim import Ranger
-from torch_optimizer import Ranger
+from torch_optimizer import Ranger, RAdam
 from torchvision import models, transforms
 from torchinfo import summary
 
@@ -145,7 +145,7 @@ def init_optimizer(model, feature_extract, debug, optim_selected, lr):
     elif optim_selected == "adam":
         optimizer = optim.Adam(params_to_update, lr=lr)
     elif optim_selected == "radam":
-        optimizer = optim.RAdam(params_to_update, lr=lr)
+        optimizer = RAdam(params_to_update, lr=lr)
     elif optim_selected == "sgd":
         optimizer = optim.SGD(params_to_update, lr=lr, momentum=0.9)
     else:
