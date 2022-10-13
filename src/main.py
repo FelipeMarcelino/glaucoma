@@ -116,12 +116,15 @@ def main(
     }
 
     if not overwrite:
-        temp_summary = pd.read_csv("../model_summary.csv", sep=",")
-        query = ' and '.join([f'{k} == {repr(v)}' for k, v in params.items() if v is not None])
-        query_rows = temp_summary.query(query)
-        if len(query_rows) != 0:
-            print("Model already tested!!! Exiting...")
-            return
+        try:
+            temp_summary = pd.read_csv("../model_summary.csv", sep=",")
+            query = ' and '.join([f'{k} == {repr(v)}' for k, v in params.items() if v is not None])
+            query_rows = temp_summary.query(query)
+            if len(query_rows) != 0:
+                print("Model already tested!!! Exiting...")
+                return
+        except FileNotFoundError:
+            pass
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
