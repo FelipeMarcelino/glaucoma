@@ -47,7 +47,9 @@ np.random.seed(42)
     "--backbone",
     default="regnet",
     type=click.Choice(
-        ["regnet", "regnet16", "regnet32", "mobile", "shuffle", "efficient", "vit", "inception"]
+        ["regnetx", "regnetx16", "regnetx32",
+         "mobile", "shuffle", "efficient", "vit", "inception",
+         "regnet", "regnet16", "regnet32"]
     ),
 )
 @click.option("--scratch", default=False, is_flag=True, type=bool)
