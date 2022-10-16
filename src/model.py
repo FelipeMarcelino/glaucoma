@@ -70,7 +70,7 @@ class MultiInputModel(nn.Module):
             output_img_b = output_img
         if self.tab_mlp:
             output_tab = self.tab_mlp(tab)
-            output_img_c = torch.cat((output_img_b, output_tab), dim=1)
+            output_img_c = torch.cat((output_img_b.squeeze(), output_tab), dim=1)
         else:
             output_img_c = output_img_b
 
@@ -254,6 +254,25 @@ def init_model(
         else:
             num_ftrs = model.classifier[-1].in_features
             model.classifier[-1] = nn.Linear(num_ftrs, 1)
+        input_size = 224
+
+    if model_name == "resnet":
+        model = models.resnet50(pretrained)
+        set_parameter_requires_grad(model, feature_extract)
+
+        if output_tab or double_img:
+            features = nn.Sequential(*list(model.children()))[:-1]
+            in_features = 2048
+            if double_img:
+                features_2 = copy.deepcopy(features)
+            else:
+                features_2 = None
+            model = MultiInputModel(
+                features, features_2, ft_size, output_tab, in_features,
+            )
+        else:
+            num_ftrs = model.fc.in_features
+            model.fc = nn.Linear(num_ftrs, 1)
         input_size = 224
 
     if model_name == "efficient":

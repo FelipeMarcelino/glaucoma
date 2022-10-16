@@ -48,7 +48,8 @@ np.random.seed(42)
     default="regnet",
     type=click.Choice(
         ["regnetx", "regnetx16", "regnetx32",
-         "mobile", "shuffle", "efficient", "vit", "inception",
+         "mobile", "shuffle", "efficient", 
+         "vit", "inception", "resnet",
          "regnet", "regnet16", "regnet32"]
     ),
 )
