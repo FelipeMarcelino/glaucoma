@@ -70,7 +70,7 @@ class MultiInputModel(nn.Module):
             output_img_b = output_img
         if self.tab_mlp:
             output_tab = self.tab_mlp(tab)
-            output_img_c = torch.cat((output_img_b, output_tab), dim=1)
+            output_img_c = torch.cat((output_img_b.squeeze(), output_tab), dim=1)
         else:
             output_img_c = output_img_b
 
@@ -170,8 +170,11 @@ def init_model(
     ft_size: int,
 ):
 
-    if model_name == "regnet":
-        model = models.regnet_y_800mf(pretrained)
+    if (model_name == "regnetx" or model_name == "regnet"):
+        if "regnet" == model_name:
+            model = models.regnet_y_800mf(pretrained)
+        else:
+            model = models.regnet_x_800mf(pretrained)
         set_parameter_requires_grad(model, feature_extract)
 
         if output_tab or double_img:
@@ -189,8 +192,12 @@ def init_model(
             model.fc = nn.Linear(num_ftrs, 1)
         input_size = 224
 
-    if model_name == "regnet16":
+    if (model_name == "regnet16x" or model_name == "regnet16y"):
         model = models.regnet_y_1_6gf(pretrained)
+        if "regnet" == model_name:
+            model = models.regnet_y_1_6gf(pretrained)
+        else:
+            model = models.regnet_x_1_6gf(pretrained)
         set_parameter_requires_grad(model, feature_extract)
 
         if output_tab or double_img:
@@ -208,8 +215,11 @@ def init_model(
             model.fc = nn.Linear(num_ftrs, 1)
         input_size = 224
 
-    if model_name == "regnet32":
-        model = models.regnet_y_3_2gf(pretrained)
+    if (model_name == "regnet32x" or model_name == "regnet32y"):
+        if "regnet" == model_name:
+            model = models.regnet_y_3_2gf(pretrained)
+        else:
+            model = models.regnet_x_3_2gf(pretrained)
         set_parameter_requires_grad(model, feature_extract)
 
         if output_tab or double_img:
@@ -239,11 +249,30 @@ def init_model(
             else:
                 features_2 = None
             model = MultiInputModel(
-                features, features_2, ft_size, output_tab, in_features, 1
+                features, features_2, ft_size, output_tab, in_features,
             )
         else:
             num_ftrs = model.classifier[-1].in_features
             model.classifier[-1] = nn.Linear(num_ftrs, 1)
+        input_size = 224
+
+    if model_name == "resnet":
+        model = models.resnet50(pretrained)
+        set_parameter_requires_grad(model, feature_extract)
+
+        if output_tab or double_img:
+            features = nn.Sequential(*list(model.children()))[:-1]
+            in_features = 2048
+            if double_img:
+                features_2 = copy.deepcopy(features)
+            else:
+                features_2 = None
+            model = MultiInputModel(
+                features, features_2, ft_size, output_tab, in_features,
+            )
+        else:
+            num_ftrs = model.fc.in_features
+            model.fc = nn.Linear(num_ftrs, 1)
         input_size = 224
 
     if model_name == "efficient":
@@ -295,7 +324,6 @@ def init_model(
         if output_tab or double_img:
             model.fc = nn.Identity()
             model.aux_logits = False
-            model.eval()
             #features = nn.Sequential(*list(model.children()))[:-1]
             #in_features_aux = 768
             features = model
