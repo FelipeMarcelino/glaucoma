@@ -193,11 +193,12 @@ def init_model(
         input_size = 224
 
     if (model_name == "regnet16x" or model_name == "regnet16"):
-        model = models.regnet_y_1_6gf(pretrained)
-        if "regnet" == model_name:
+        if "regnet16" == model_name:
             model = models.regnet_y_1_6gf(pretrained)
         else:
+            print(model_name)
             model = models.regnet_x_1_6gf(pretrained)
+            print("Entrou16")
         set_parameter_requires_grad(model, feature_extract)
 
         if output_tab or double_img:
@@ -216,10 +217,11 @@ def init_model(
         input_size = 224
 
     if (model_name == "regnet32x" or model_name == "regnet32"):
-        if "regnet" == model_name:
+        if "regnet32" == model_name:
             model = models.regnet_y_3_2gf(pretrained)
         else:
             model = models.regnet_x_3_2gf(pretrained)
+            print("entrou aqui")
         set_parameter_requires_grad(model, feature_extract)
 
         if output_tab or double_img:
