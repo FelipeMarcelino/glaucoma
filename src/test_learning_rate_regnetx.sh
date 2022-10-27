@@ -1,5 +1,5 @@
 epoch=100
-models=("regnetx" "regnetx16" "regnetx32" )
+models=("regnetx" "regnet16x" "regnet32x" )
 optims=("adam" "sgd" "radam" "ranger")
 lr=(0.001 0.0001 0.0005)
 batch_size=16

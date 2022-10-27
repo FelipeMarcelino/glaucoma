@@ -171,3 +171,4 @@ envs/
 
 .direnv
 /direnv
+.direnv/
