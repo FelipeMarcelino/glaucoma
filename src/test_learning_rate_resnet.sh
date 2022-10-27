@@ -7,7 +7,7 @@ early_start=100
 output_tab=5
 
 for (( j=0; j<${#models[@]} ; j+=1 )) ; do
-    for (( i=0; i<${#optims[@]} ; i+=4 )) ; do
+    for (( i=0; i<${#optims[@]} ; i+=2 )) ; do
         for (( k=0; k<${#lr[@]} ; k+=1 )) ; do
             python main.py --optim ${optims[i]} --batch_size ${batch_size} \
             --backbone ${models[j]} --epochs ${epoch} --early_start ${early_start} --lr ${lr[k]} &
@@ -19,7 +19,7 @@ for (( j=0; j<${#models[@]} ; j+=1 )) ; do
 done
 
 for (( j=0; j<${#models[@]} ; j+=1 )) ; do
-    for (( i=0; i<${#optims[@]} ; i+=4 )) ; do
+    for (( i=0; i<${#optims[@]} ; i+=1 )) ; do
         for (( k=0; k<${#lr[@]} ; k+=1 )) ; do
             python main.py --optim ${optims[i]} --batch_size ${batch_size} \
             --backbone ${models[j]} --epochs ${epoch} --early_start ${early_start} --double_img \
@@ -30,7 +30,7 @@ for (( j=0; j<${#models[@]} ; j+=1 )) ; do
 done
 
 for (( j=0; j<${#models[@]} ; j+=1 )) ; do
-    for (( i=0; i<${#optims[@]} ; i+=4 )) ; do
+    for (( i=0; i<${#optims[@]} ; i+=2 )) ; do
         for (( k=0; k<${#lr[@]} ; k+=1 )) ; do
             python main.py --optim ${optims[i]} --batch_size ${batch_size} \
             --backbone ${models[j]} --epochs ${epoch} --early_start ${early_start} \
@@ -44,7 +44,7 @@ for (( j=0; j<${#models[@]} ; j+=1 )) ; do
 done
 
 for (( j=0; j<${#models[@]} ; j+=1 )) ; do
-    for (( i=0; i<${#optims[@]} ; i+=4 )) ; do
+    for (( i=0; i<${#optims[@]} ; i+=1 )) ; do
         for (( k=0; k<${#lr[@]} ; k+=1 )) ; do
             python main.py --optim ${optims[i]} --batch_size ${batch_size} \
             --backbone ${models[j]} --epochs ${epoch} --early_start ${early_start} --output_tab \
