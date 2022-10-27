@@ -10,8 +10,8 @@ mkShell {
   buildInputs = [
     pythonEnv
     yarn
-    cudatoolkit_11_0
-    cudnn_cudatoolkit_11_0
+    cudaPackages.cudatoolkit
+    cudaPackages.cudnn
     nodejs
     stdenv
     libpqxx
@@ -30,8 +30,9 @@ mkShell {
     fi
     source ./$VENV/bin/activate
     export PYTHONPATH=`pwd`/$VENV/${python.sitePackages}/:$PYTHONPATH
-    export LD_LIBRARY_PATH=${lib.makeLibraryPath [ glib stdenv.cc.cc.lib cudatoolkit_11_0 cudnn_cudatoolkit_11_0
-    xorg.libX11 freeglut libGLU libGL linuxPackages.nvidia_x11 oracle-instantclient zlib zlib.dev]}
+    export LD_LIBRARY_PATH=${lib.makeLibraryPath [ glib stdenv.cc.cc.lib cudaPackages.cudatoolkit
+    xorg.libX11 freeglut libGLU libGL linuxPackages.nvidia_x11 oracle-instantclient zlib
+    zlib.dev cudaPackages.cudnn]}
     export LD_LIBRARY_PATH=$(printenv LD_LIBRARY_PATH):$LD_LIBRARY_PATH
   '';
 }

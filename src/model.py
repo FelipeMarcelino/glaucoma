@@ -192,7 +192,7 @@ def init_model(
             model.fc = nn.Linear(num_ftrs, 1)
         input_size = 224
 
-    if (model_name == "regnet16x" or model_name == "regnet16y"):
+    if (model_name == "regnet16x" or model_name == "regnet16"):
         model = models.regnet_y_1_6gf(pretrained)
         if "regnet" == model_name:
             model = models.regnet_y_1_6gf(pretrained)
@@ -215,7 +215,7 @@ def init_model(
             model.fc = nn.Linear(num_ftrs, 1)
         input_size = 224
 
-    if (model_name == "regnet32x" or model_name == "regnet32y"):
+    if (model_name == "regnet32x" or model_name == "regnet32"):
         if "regnet" == model_name:
             model = models.regnet_y_3_2gf(pretrained)
         else:
