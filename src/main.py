@@ -1,3 +1,4 @@
+# TODO: adding time cross validation and total
 #!/usr/bin/env python
 import click
 import sys
@@ -12,7 +13,7 @@ import os
 
 
 from sklearn.preprocessing import MinMaxScaler
-from dataset import  init_k_fold
+from dataset import init_k_fold
 from model import init_model, init_transforms
 from train import pre_train, train_model
 
@@ -47,10 +48,20 @@ np.random.seed(42)
     "--backbone",
     default="regnet",
     type=click.Choice(
-        ["regnetx", "regnet16x", "regnet32x",
-         "mobile", "shuffle", "efficient",
-         "vit", "inception", "resnet",
-         "regnet", "regnet16", "regnet32"]
+        [
+            "regnetx",
+            "regnet16x",
+            "regnet32x",
+            "mobile",
+            "shuffle",
+            "efficient",
+            "vit",
+            "inception",
+            "resnet",
+            "regnet",
+            "regnet16",
+            "regnet32",
+        ]
     ),
 )
 @click.option("--scratch", default=False, is_flag=True, type=bool)
@@ -104,7 +115,7 @@ def main(
 
     params = {
         "epochs": epochs,
-        #"scratch": scratch,
+        # "scratch": scratch,
         "feature_extract": feature_extract,
         "frac_val": frac_val,
         "k_fold": k_fold if k_fold > 2 else None,
@@ -113,7 +124,7 @@ def main(
         "early_start": early_start,
         "optim": optim,
         "lr": lr,
-        #"batch_size": batch_size,
+        # "batch_size": batch_size,
         "is_inception": is_inception,
         "backbone": backbone,
     }
@@ -121,7 +132,9 @@ def main(
     if not overwrite:
         try:
             temp_summary = pd.read_csv("../model_summary.csv", sep=",")
-            query = ' and '.join([f'{k} == {repr(v)}' for k, v in params.items() if v is not None])
+            query = " and ".join(
+                [f"{k} == {repr(v)}" for k, v in params.items() if v is not None]
+            )
             query_rows = temp_summary.query(query)
             if len(query_rows) != 0:
                 print("Model already tested!!! Exiting...")
@@ -230,7 +243,7 @@ def main(
                 early_start,
                 epochs,
                 is_inception=is_inception,
-                patient=patient
+                patient=patient,
             )
 
             torch.save(model.state_dict(), path + str(model_id) + ".pth")
