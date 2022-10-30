@@ -1,7 +1,7 @@
-# TODO: adding time cross validation and total
+# TODO: adding time cross validation and total, datetime.now, and torch/torchvision version. Add
+# shallow copy to double img shared parameters model.
 #!/usr/bin/env python
 import click
-import sys
 import pickle
 import torch
 import random
@@ -10,9 +10,13 @@ import numpy as np
 import uuid
 import socket
 import os
+import time
 
 
+from datetime import datetime
 from sklearn.preprocessing import MinMaxScaler
+from sklearn.model_selection import GroupShuffleSplit
+from torchvision.ops.boxes import torchvision
 from dataset import init_k_fold
 from model import init_model, init_transforms
 from train import pre_train, train_model
@@ -108,6 +112,8 @@ def main(
     overwrite: bool,
 ):
 
+    start = time.time()
+
     if backbone == "inception":
         is_inception = True
     else:
@@ -127,6 +133,8 @@ def main(
         # "batch_size": batch_size,
         "is_inception": is_inception,
         "backbone": backbone,
+        "torch_version": torch.__version__,
+        "torchvision_version": torchvision.__version__,
     }
 
     if not overwrite:
@@ -176,7 +184,9 @@ def main(
 
     min_max_scaler = MinMaxScaler()
 
+    total_cross_val_time = 0
     if k_fold >= 2:
+        start = time.time()
         # FIXME: Separar por paciente e não por olho
         folds = init_k_fold(data, k_fold)
 
@@ -246,15 +256,17 @@ def main(
                 patient=patient,
             )
 
-            torch.save(model.state_dict(), path + str(model_id) + ".pth")
+            torch.save(
+                model.state_dict(), path + "model_fold_" + str(index + 1) + ".pth"
+            )
 
             torch.save(
                 dataloader_train,
-                path + "train_dataloader_" + str(model_id) + ".pth",
+                path + "train_dataloader_fold_" + str(index + 1) + ".pth",
             )
             torch.save(
                 dataloader_val,
-                path + "val_dataloader_" + str(model_id) + ".pth",
+                path + "val_dataloader_fold_" + str(index + 1) + ".pth",
             )
 
             fold_val_loss_history.append(val_loss_history)
@@ -267,6 +279,10 @@ def main(
             fold_train_auc_history.append(train_auc_history)
             fold_train_sensitivity_history.append(train_sensitivity_history)
             fold_train_specificity_history.append(train_specificity_history)
+
+            stop = time.time()
+            total_cross_val_time_iter = stop - start
+            total_cross_val_time += total_cross_val_time_iter
     else:
         model, input_size = init_model(
             backbone,
@@ -282,6 +298,14 @@ def main(
 
         # FIXME: Separar por paciente e não por olho
         msk = np.random.rand(len(data)) < (1 - frac_val)
+
+        # FIXME: Remove comments
+        # splitter = GroupShuffleSplit(test_size=frac_val, n_splits=1, random_state=42)
+        # split = splitter.split(data, groups=data["Patient"])
+        # train_inds, test_inds = next(split)
+
+        # train = data.iloc[train_inds]
+        # val = data[test_inds]
         train = data[msk]
         val = data[~msk]
 
@@ -309,11 +333,11 @@ def main(
 
         torch.save(
             dataloader_train,
-            path + "train_dataloader_" + str(model_id) + ".pth",
+            path + "train_dataloader.pth",
         )
         torch.save(
             dataloader_val,
-            path + "val_dataloader_" + str(model_id) + ".pth",
+            path + "val_dataloader.pth",
         )
 
         dataloaders_dict = {}
@@ -360,7 +384,7 @@ def main(
         fold_train_sensitivity_history.append(train_sensitivity_history)
         fold_train_specificity_history.append(train_specificity_history)
 
-        torch.save(model.state_dict(), path + str(model_id) + ".pth")
+        torch.save(model.state_dict(), path + "model" + ".pth")
 
     dict_results = {}
     dict_results["val_loss_history"] = fold_val_loss_history
@@ -374,11 +398,26 @@ def main(
     dict_results["train_sensitivity_history"] = fold_train_sensitivity_history
     dict_results["train_specificity_history"] = fold_train_specificity_history
 
-    with open(path + str(model_id), "wb") as handle:
+    with open(path + str(model_id) + "results.pkl", "wb") as handle:
         pickle.dump(dict_results, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-    with open(path + str(model_id), "wb") as handle:
-        pickle.dump(params, handle, protocol=pickle.HIGHEST_PROTOCOL)
+    stop = time.time()
+
+    total_time = stop - start
+    hours, rem = divmod(total_time, 3600)
+    minutes, seconds = divmod(rem, 60)
+
+    total_time_str = "{:0>2}:{:0>2}:{:05.2f}".format(int(hours), int(minutes), seconds)
+
+    if k_fold > 2:
+        hours_cross, rem_cross = divmod(total_cross_val_time / k_fold, 3600)
+        minutes_cross, seconds_cross = divmod(rem_cross, 60)
+
+        total_time_str_cross = "{:0>2}:{:0>2}:{:05.2f}".format(
+            int(hours_cross), int(minutes_cross), seconds_cross
+        )
+    else:
+        total_time_str_cross = total_time_str
 
     row_data = {
         "model_id": model_id,
@@ -410,6 +449,11 @@ def main(
         "backbone": backbone,
         "feature_extract": feature_extract,
         "early_start": early_start,
+        "timestamp": str(datetime.now()),
+        "total_hours": total_time_str,
+        "average_cross_hours": total_time_str_cross,
+        "torchvision_version": torchvision.__version__,
+        "torch_version": torch.__version__,
     }
 
     try:

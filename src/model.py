@@ -1,7 +1,6 @@
 import sys
 import timm
 import torch
-import numpy as np
 import torch.nn as nn
 import torch.optim as optim
 import copy
@@ -9,7 +8,6 @@ import copy
 # from pytorch_forecasting.optim import Ranger
 from torch_optimizer import Ranger, RAdam
 from torchvision import models, transforms
-from torchinfo import summary
 
 from torchvision import transforms
 
@@ -170,7 +168,7 @@ def init_model(
     ft_size: int,
 ):
 
-    if (model_name == "regnetx" or model_name == "regnet"):
+    if model_name == "regnetx" or model_name == "regnet":
         if "regnet" == model_name:
             model = models.regnet_y_800mf(pretrained)
         else:
@@ -192,7 +190,7 @@ def init_model(
             model.fc = nn.Linear(num_ftrs, 1)
         input_size = 224
 
-    if (model_name == "regnet16x" or model_name == "regnet16"):
+    if model_name == "regnet16x" or model_name == "regnet16":
         if "regnet16" == model_name:
             model = models.regnet_y_1_6gf(pretrained)
         else:
@@ -216,7 +214,7 @@ def init_model(
             model.fc = nn.Linear(num_ftrs, 1)
         input_size = 224
 
-    if (model_name == "regnet32x" or model_name == "regnet32"):
+    if model_name == "regnet32x" or model_name == "regnet32":
         if "regnet32" == model_name:
             model = models.regnet_y_3_2gf(pretrained)
         else:
@@ -251,7 +249,11 @@ def init_model(
             else:
                 features_2 = None
             model = MultiInputModel(
-                features, features_2, ft_size, output_tab, in_features,
+                features,
+                features_2,
+                ft_size,
+                output_tab,
+                in_features,
             )
         else:
             num_ftrs = model.classifier[-1].in_features
@@ -270,7 +272,11 @@ def init_model(
             else:
                 features_2 = None
             model = MultiInputModel(
-                features, features_2, ft_size, output_tab, in_features,
+                features,
+                features_2,
+                ft_size,
+                output_tab,
+                in_features,
             )
         else:
             num_ftrs = model.fc.in_features
@@ -326,8 +332,8 @@ def init_model(
         if output_tab or double_img:
             model.fc = nn.Identity()
             model.aux_logits = False
-            #features = nn.Sequential(*list(model.children()))[:-1]
-            #in_features_aux = 768
+            # features = nn.Sequential(*list(model.children()))[:-1]
+            # in_features_aux = 768
             features = model
             in_features = 2048
             if double_img:
@@ -349,7 +355,7 @@ def init_model(
         if double_img or output_tab:
             num_classes = 0
         else:
-            num_classes  = 1
+            num_classes = 1
         model = timm.create_model(
             "vit_base_patch16_224", pretrained=True, num_classes=num_classes
         )
