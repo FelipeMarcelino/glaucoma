@@ -185,12 +185,14 @@ def main(
     min_max_scaler = MinMaxScaler()
 
     total_cross_val_time = 0
+
     if k_fold >= 2:
-        start = time.time()
+        total_cross_val_time = 0
         # FIXME: Separar por paciente e não por olho
         folds = init_k_fold(data, k_fold)
 
         for index, (train, val) in enumerate(folds):
+            start = time.time()
             print("Fold:", index + 1)
 
             train[numerical_columns] = min_max_scaler.fit_transform(
