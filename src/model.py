@@ -243,17 +243,13 @@ def init_model(
 
         if output_tab or double_img:
             features = nn.Sequential(*list(model.children()))[:-1]
-            in_features = 784
+            in_features = 960
             if double_img:
                 features_2 = copy.deepcopy(features)
             else:
                 features_2 = None
             model = MultiInputModel(
-                features,
-                features_2,
-                ft_size,
-                output_tab,
-                in_features,
+                features, features_2, ft_size, output_tab, in_features
             )
         else:
             num_ftrs = model.classifier[-1].in_features
@@ -312,7 +308,7 @@ def init_model(
 
         if output_tab or double_img:
             features = nn.Sequential(*list(model.children()))[:-1]
-            in_features = 784
+            in_features = 1024
             if double_img:
                 features_2 = copy.deepcopy(features)
             else:
