@@ -6,7 +6,9 @@ batch_size=16
 early_start=100
 output_tab=5
 
+echo "One image"
 for (( j=0; j<${#models[@]} ; j+=1 )) ; do
+    echo "model: ${models[j]}"
     for (( i=0; i<${#optims[@]} ; i+=4 )) ; do
         for (( k=0; k<${#lr[@]} ; k+=1 )) ; do
             python main.py --optim ${optims[i]} --batch_size ${batch_size} \
@@ -22,7 +24,9 @@ for (( j=0; j<${#models[@]} ; j+=1 )) ; do
     done
 done
 
+echo "Double image"
 for (( j=0; j<${#models[@]} ; j+=1 )) ; do
+    echo "model: ${models[j]}"
     for (( i=0; i<${#optims[@]} ; i+=4 )) ; do
         for (( k=0; k<${#lr[@]} ; k+=1 )) ; do
             python main.py --optim ${optims[i]} --batch_size ${batch_size} \
@@ -42,7 +46,9 @@ for (( j=0; j<${#models[@]} ; j+=1 )) ; do
     done
 done
 
+echo "One image and tab"
 for (( j=0; j<${#models[@]} ; j+=1 )) ; do
+    echo "model: ${models[j]}"
     for (( i=0; i<${#optims[@]} ; i+=4 )) ; do
         for (( k=0; k<${#lr[@]} ; k+=1 )) ; do
             python main.py --optim ${optims[i]} --batch_size ${batch_size} \
@@ -62,7 +68,9 @@ for (( j=0; j<${#models[@]} ; j+=1 )) ; do
     done
 done
 
+echo "Double image and tab"
 for (( j=0; j<${#models[@]} ; j+=1 )) ; do
+    echo "model: ${models[j]}"
     for (( i=0; i<${#optims[@]} ; i+=4 )) ; do
         for (( k=0; k<${#lr[@]} ; k+=1 )) ; do
             python main.py --optim ${optims[i]} --batch_size ${batch_size} \
