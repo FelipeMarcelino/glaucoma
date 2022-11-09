@@ -248,6 +248,8 @@ def init_model(
                 features_2 = copy.deepcopy(features)
             else:
                 features_2 = None
+
+            print("Entrou")
             model = MultiInputModel(
                 features, features_2, ft_size, output_tab, in_features
             )
