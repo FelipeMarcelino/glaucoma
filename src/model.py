@@ -249,7 +249,6 @@ def init_model(
             else:
                 features_2 = None
 
-            print("Entrou")
             model = MultiInputModel(
                 features, features_2, ft_size, output_tab, in_features
             )
@@ -282,12 +281,12 @@ def init_model(
         input_size = 224
 
     if model_name == "efficient":
-        model = models.mobilenet_v3_large(pretrained)
+        model = models.efficientnet_b0(pretrained)
         set_parameter_requires_grad(model, feature_extract)
 
         if output_tab or double_img:
             features = nn.Sequential(*list(model.children()))[:-1]
-            in_features = 784
+            in_features = 1280
             if double_img:
                 features_2 = copy.deepcopy(features)
             else:
@@ -310,6 +309,7 @@ def init_model(
 
         if output_tab or double_img:
             features = nn.Sequential(*list(model.children()))[:-1]
+            features.append(nn.AvgPool2d(7))
             in_features = 1024
             if double_img:
                 features_2 = copy.deepcopy(features)
