@@ -307,6 +307,8 @@ def init_model(
         model = models.shufflenet_v2_x1_5(pretrained)
         set_parameter_requires_grad(model, feature_extract)
 
+        print("Criando shuffle + ", double_img, " + ", output_tab)
+
         if output_tab or double_img:
             features = nn.Sequential(*list(model.children()))[:-1]
             features.append(nn.AvgPool2d(7))
