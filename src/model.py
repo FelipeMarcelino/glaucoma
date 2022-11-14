@@ -194,9 +194,7 @@ def init_model(
         if "regnet16" == model_name:
             model = models.regnet_y_1_6gf(pretrained)
         else:
-            print(model_name)
             model = models.regnet_x_1_6gf(pretrained)
-            print("Entrou16")
         set_parameter_requires_grad(model, feature_extract)
 
         if output_tab or double_img:
@@ -219,7 +217,6 @@ def init_model(
             model = models.regnet_y_3_2gf(pretrained)
         else:
             model = models.regnet_x_3_2gf(pretrained)
-            print("entrou aqui")
         set_parameter_requires_grad(model, feature_extract)
 
         if output_tab or double_img:
@@ -306,8 +303,6 @@ def init_model(
     if model_name == "shuffle":
         model = models.shufflenet_v2_x1_5(pretrained)
         set_parameter_requires_grad(model, feature_extract)
-
-        print("Criando shuffle + ", double_img, " + ", output_tab)
 
         if output_tab or double_img:
             features = nn.Sequential(*list(model.children()))[:-1]
