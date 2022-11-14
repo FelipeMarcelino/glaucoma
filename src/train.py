@@ -76,6 +76,7 @@ def train_model(
                     # Special case for inception because in training it has an auxiliary output. In train
                     #   mode we calculate the loss by summing the final output and the auxiliary output
                     #   but in testing we only consider the final output.
+
                     if is_inception and phase == "train":
                         # From https://discuss.pytorch.org/t/how-to-optimize-inception-model-with-auxiliary-classifiers/7958
 
@@ -88,21 +89,21 @@ def train_model(
                         # else:
                         #     outputs, _ = model(imgs_photo_1)
 
-                        if double_img and not output_tab :
+                        if double_img and not output_tab:
                             outputs = model(imgs_photo_1, imgs_photo_2, None)
                         elif double_img and output_tab:
                             outputs = model(imgs_photo_1, imgs_photo_2, ft_numerical)
                         elif not double_img and output_tab:
                             outputs = model(imgs_photo_1, None, ft_numerical)
                         else:
-                            outputs  = model(imgs_photo_1)
+                            outputs = model(imgs_photo_1)
 
-                        #loss1 = criterion(outputs, labels)
-                        #loss2 = criterion(aux_outputs, labels)
-                        #loss = loss1 + 0.4 * loss2
+                        # loss1 = criterion(outputs, labels)
+                        # loss2 = criterion(aux_outputs, labels)
+                        # loss = loss1 + 0.4 * loss2
                         loss = criterion(outputs, labels)
                     else:
-                        if double_img and not output_tab :
+                        if double_img and not output_tab:
                             outputs = model(imgs_photo_1, imgs_photo_2, None)
                         elif double_img and output_tab:
                             outputs = model(imgs_photo_1, imgs_photo_2, ft_numerical)
@@ -234,7 +235,13 @@ def pre_train(
     )
 
     dataloader_val = init_dataloader(
-        val, preprocessing_val, preprocessing_tab, batch_size, ft_columns, double_img, device
+        val,
+        preprocessing_val,
+        preprocessing_tab,
+        batch_size,
+        ft_columns,
+        double_img,
+        device,
     )
 
     criterion = nn.BCEWithLogitsLoss()
