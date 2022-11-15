@@ -8,6 +8,7 @@ import copy
 # from pytorch_forecasting.optim import Ranger
 from torch_optimizer import Ranger, RAdam
 from torchvision import models, transforms
+from torchinfo import summary
 
 from torchvision import transforms
 
