@@ -1,8 +1,8 @@
 epoch=100
 models=("regnet" "mobile" "shuffle" "efficient" "regnet16" "regnet32" "inception")
 optims=("adam" "sgd" "radam" "ranger")
-lr=(0.001 0.0001 0.0005)
-batch_size=16
+lr=(0.01 0.001 0.0001 0.0005)
+eatch_size=16
 early_start=100
 output_tab=5
 

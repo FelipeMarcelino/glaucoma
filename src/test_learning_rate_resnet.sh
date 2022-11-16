@@ -1,7 +1,7 @@
 epoch=100
 models=("resnet" )
 optims=("adam" "sgd" "radam" "ranger")
-lr=(0.001 0.0001 0.0005)
+lr=(0.01 0.001 0.0001 0.0005)
 batch_size=16
 early_start=100
 output_tab=5

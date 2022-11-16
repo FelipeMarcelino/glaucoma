@@ -172,13 +172,14 @@ def init_model(
     if model_name == "regnetx" or model_name == "regnet":
         if "regnet" == model_name:
             model = models.regnet_y_800mf(pretrained)
+            in_features = 784
         else:
             model = models.regnet_x_800mf(pretrained)
+            in_features = 672
         set_parameter_requires_grad(model, feature_extract)
 
         if output_tab or double_img:
             features = nn.Sequential(*list(model.children()))[:-1]
-            in_features = 784
             if double_img:
                 features_2 = copy.deepcopy(features)
             else:
@@ -194,13 +195,14 @@ def init_model(
     if model_name == "regnet16x" or model_name == "regnet16":
         if "regnet16" == model_name:
             model = models.regnet_y_1_6gf(pretrained)
+            in_features = 888
         else:
             model = models.regnet_x_1_6gf(pretrained)
+            in_features = 912
         set_parameter_requires_grad(model, feature_extract)
 
         if output_tab or double_img:
             features = nn.Sequential(*list(model.children()))[:-1]
-            in_features = 888
             if double_img:
                 features_2 = copy.deepcopy(features)
             else:
@@ -216,13 +218,14 @@ def init_model(
     if model_name == "regnet32x" or model_name == "regnet32":
         if "regnet32" == model_name:
             model = models.regnet_y_3_2gf(pretrained)
+            in_features = 1512
         else:
             model = models.regnet_x_3_2gf(pretrained)
+            in_features = 1008
         set_parameter_requires_grad(model, feature_extract)
 
         if output_tab or double_img:
             features = nn.Sequential(*list(model.children()))[:-1]
-            in_features = 1512
             if double_img:
                 features_2 = copy.deepcopy(features)
             else:
