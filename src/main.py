@@ -535,6 +535,8 @@ def main(
         pretrained = False
         feature_extract = False
 
+        path = model_folder + str(model_id) + "/"
+
         output_tab = (
             int(row["output_tab"].values[0])
             if row["output_tab"].values[0] > 0
@@ -549,18 +551,15 @@ def main(
             output_tab,
             ft_size,
         )
-        model.load_state_dict(
-            torch.load("../models/" + str(model_id) + "/" + "model" + ".pth")
-        )
+        model.load_state_dict(torch.load(path + "model" + ".pth"))
 
-        train_loader = torch.load(
-            "../models/" + str(model_id) + "/train_dataloader" + ".pth"
-        )
-        val_loader = torch.load(
-            "../models/" + str(model_id) + "/val_dataloader" + ".pth"
-        )
+        train_loader = torch.load(path + "train_dataloader" + ".pth")
+        val_loader = torch.load(path + "val_dataloader" + ".pth")
         val_loader.dataset.root_dir = ROOT_DIR
         train_loader.dataset.root_dir = ROOT_DIR
+
+        # TODO:
+        oos_dataloader = None
 
         if score:
             get_sigmoid_pred(
@@ -573,7 +572,16 @@ def main(
                 model_folder,
             )
         if shap:
-            get_shap_values(model, train_loader, val_loader, balanced_shap, size_shap)
+            get_shap_values(
+                model,
+                train_loader,
+                val_loader,
+                oos_dataloader,
+                balanced_shap,
+                size_shap,
+                input_size,
+                path,
+            )
 
 
 if __name__ == "__main__":

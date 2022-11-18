@@ -1,6 +1,45 @@
 import pandas as pd
 import torch
 import numpy as np
+import shap
+import pickle
+
+CHANNELS = 3
+
+
+def shap_values(
+    model,
+    photos1_train,
+    photos2_train,
+    ft_numerical_train,
+    photos1_val,
+    photos2_val,
+    ft_numerical_val,
+    input_size,
+):
+    """
+    Return shap_values_photo1, shap_values_photo2, shap_values_nuermical
+    """
+
+    explainer = shap.DeepExplainer(
+        model,
+        [
+            photos1_train,
+            photos2_train,
+            ft_numerical_train,
+        ],
+    )
+    (
+        shap_values_photo1,
+        shap_values_photo2,
+        shap_values_numerical,
+    ) = explainer.shap_values([photos1_val, photos2_val, ft_numerical_val])
+
+    return (
+        shap_values_photo1.reshape(-1, input_size, input_size, CHANNELS),
+        shap_values_photo2.reshape(-1, input_size, input_size, CHANNELS),
+        shap_values_numerical,
+    )
 
 
 def get_samples_from_dataloader_balanced(dataloader, size):
@@ -133,13 +172,101 @@ def get_sigmoid_pred(
     df_pred.to_csv(model_folder + str(model_id) + "/" + "pred.csv", index=False)
 
 
-def get_shap_values(model, train_dataloader, val_dataloader, balanced, size):
+def get_shap_values(
+    model,
+    train_dataloader,
+    val_dataloader,
+    oos_dataloader,
+    balanced,
+    size,
+    input_size,
+    path,
+):
 
     if balanced:
-        photos1, photos2, ft_numerical, labels = get_samples_from_dataloader_balanced(
-            train_dataloader, size
-        )
+        (
+            photos1_train,
+            photos2_train,
+            ft_numerical_train,
+            _,
+        ) = get_samples_from_dataloader_balanced(train_dataloader, size)
     else:
-        photos1, photos2, ft_numerical, labels = get_samples_from_dataloader(
-            train_dataloader, size
+        (
+            photos1_train,
+            photos2_train,
+            ft_numerical_train,
+            _,
+        ) = get_samples_from_dataloader(train_dataloader, size)
+
+    (
+        photos1_val,
+        photos2_val,
+        ft_numerical_val,
+        _,
+    ) = get_samples_from_dataloader(val_dataloader, len(val_dataloader))
+
+    (
+        shap_values_photo1_val,
+        shap_values_photo2_val,
+        shap_values_numerical_val,
+    ) = shap_values(
+        model,
+        photos1_train,
+        photos2_train,
+        ft_numerical_train,
+        photos1_val,
+        photos2_val,
+        ft_numerical_val,
+        input_size,
+    )
+
+    shap_dict_val = {}
+
+    shap_dict_val["shap_values_photo1_val"] = shap_values_photo1_val
+    shap_dict_val["shap_values_photo2_val"] = shap_values_photo2_val
+    shap_dict_val["shap_values_numerical_val"] = shap_values_numerical_val
+
+    name_file = (
+        "balanced_shap_values_dict_val.pkl" if balanced else "shap_values_dict_val.pkl"
+    )
+
+    with open(path + name_file, "wb") as handle:
+        pickle.dump(shap_dict_val, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+    if oos_dataloader:
+        (
+            photos1_oos,
+            photos2_oos,
+            ft_numerical_oos,
+            _,
+        ) = get_samples_from_dataloader(val_dataloader, len(oos_dataloader))
+
+        (
+            shap_values_photo1_oos,
+            shap_values_photo2_oos,
+            shap_values_numerical_oos,
+        ) = shap_values(
+            model,
+            photos1_train,
+            photos2_train,
+            ft_numerical_train,
+            photos1_oos,
+            photos2_oos,
+            ft_numerical_oos,
+            input_size,
         )
+
+        shap_dict_oos = {}
+
+        shap_dict_oos["shap_values_photo1_oos"] = shap_values_photo1_oos
+        shap_dict_oos["shap_values_photo2_oos"] = shap_values_photo2_oos
+        shap_dict_oos["shap_values_numerical_oos"] = shap_values_numerical_oos
+
+        name_file = (
+            "balanced_shap_values_dict_oos.pkl"
+            if balanced
+            else "shap_values_dict_oos.pkl"
+        )
+
+        with open(path + name_file, "wb") as handle:
+            pickle.dump(shap_dict_oos, handle, protocol=pickle.HIGHEST_PROTOCOL)
