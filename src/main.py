@@ -507,7 +507,7 @@ def main(
             "average_cross_hours": total_time_str_cross,
             "torchvision_version": torchvision.__version__,
             "torch_version": torch.__version__,
-            "history_added:": 0,
+            "history_added": 0,
         }
 
         try:
