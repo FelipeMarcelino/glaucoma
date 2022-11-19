@@ -18,7 +18,7 @@ from datetime import datetime
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import GroupShuffleSplit
 from torchvision.ops.boxes import torchvision
-from dataset import init_k_fold
+from dataset import init_dataloader, init_k_fold
 from model import init_model, init_transforms
 from test import get_sigmoid_pred, get_shap_values
 from train import pre_train, train_model
@@ -507,7 +507,7 @@ def main(
             "average_cross_hours": total_time_str_cross,
             "torchvision_version": torchvision.__version__,
             "torch_version": torch.__version__,
-            "history_added:": 0,
+            "history_added": 0,
         }
 
         try:
@@ -551,15 +551,47 @@ def main(
             output_tab,
             ft_size,
         )
-        model.load_state_dict(torch.load(path + "model" + ".pth"))
+
+        print(model.load_state_dict(torch.load(path + "model" + ".pth")))
 
         train_loader = torch.load(path + "train_dataloader" + ".pth")
         val_loader = torch.load(path + "val_dataloader" + ".pth")
         val_loader.dataset.root_dir = ROOT_DIR
         train_loader.dataset.root_dir = ROOT_DIR
 
-        # TODO:
+        train_dataset_transformed = train_loader.dataset.glaucoma_data
+
         oos_dataloader = None
+
+        if oos_dataset:
+
+            oos = pd.read_csv("oos_dataset")
+
+            train = data.iloc[train_dataset_transformed.index]
+
+            min_max_scaler = MinMaxScaler()
+
+            train[numerical_columns] = min_max_scaler.fit_transform(
+                train[numerical_columns]
+            )
+
+            oos[numerical_columns] = min_max_scaler.transform(oos[numerical_columns])
+
+            (
+                preprocessing_train,
+                preprocessing_oos,
+                preprocessing_tab,
+            ) = init_transforms(input_size)
+
+            oos_dataloader = init_dataloader(
+                oos,
+                preprocessing_oos,
+                preprocessing_tab,
+                batch_size,
+                numerical_columns,
+                double_img_bool,
+                device,
+            )
 
         if score:
             get_sigmoid_pred(
