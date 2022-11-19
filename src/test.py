@@ -100,6 +100,9 @@ def get_samples_from_dataloader(dataloader, size):
             list_of_features.append(numericalft[i])
             list_of_labels.append(labels[i].numpy())
 
+            if len(list_of_labels) >= size:
+                break
+
         if len(list_of_labels) >= size:
             break
 
@@ -183,6 +186,7 @@ def get_shap_values(
     path,
 ):
 
+    print(size)
     if balanced:
         (
             photos1_train,
@@ -205,6 +209,12 @@ def get_shap_values(
         _,
     ) = get_samples_from_dataloader(val_dataloader, len(val_dataloader))
 
+    print(photos1_train.shape)
+    print(photos2_train.shape)
+    print(ft_numerical_train.shape)
+    print(photos1_val.shape)
+    print(photos2_val.shape)
+    print(ft_numerical_val.shape)
     (
         shap_values_photo1_val,
         shap_values_photo2_val,
