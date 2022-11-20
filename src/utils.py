@@ -1,5 +1,7 @@
 import pandas as pd
+import torch
 import subprocess
+import torchvision
 from typing import List
 from itertools import product
 from pathlib import Path
@@ -46,6 +48,8 @@ def list_status_models_tested(
             p_params["double_img"] = 1.0
         else:
             p_params["double_img"] = 0.0
+        p_params["torch_version"] = torch.__version__
+        p_params["torchvision_version"] = torchvision.__version__
         executed = check_execution_already(p_params, summary_path)
         p_params["executed"] = 1 if executed else 0
 
