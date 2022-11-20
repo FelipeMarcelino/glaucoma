@@ -9,7 +9,6 @@ from utils import create_commands, list_status_models_tested, check_already_runn
 
 SAFE_MEM_REDUCE = 100
 
-
 @click.command
 @click.option(
     "--backbone",
@@ -124,7 +123,7 @@ def main(
             "Use somente frac_val ou k_fold, os dois juntos não funciona",
             file=sys.stdout,
         )
-        return 
+        return
 
     if len(frac_val) == 0 and len(k_fold) == 0:
         frac_val = [0.2]
@@ -166,7 +165,7 @@ def main(
     status.reset_index(inplace=True, drop=True)
 
     if len(status) == 0:
-        print("stop", file=sys.stdout)
+        print("Stop", file=sys.stdout)
         return
 
     if return_command:
@@ -181,7 +180,7 @@ def main(
                 print(command_selected, file=sys.stdout)
                 return
             else:
-                print("Full memory", file=sys.stdout)
+                print("Full", file=sys.stdout)
                 return
         else:
             print("Mem available not found", file=sys.stdout)
