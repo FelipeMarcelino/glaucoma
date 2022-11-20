@@ -42,7 +42,7 @@ def shap_values(
     )
 
 
-def get_samples_from_dataloader_balanced(dataloader, size):
+def get_samples_from_loader_balanced(loader, size):
     """
     Return photos1, photos2, ft_numerical, labels
     """
@@ -55,7 +55,7 @@ def get_samples_from_dataloader_balanced(dataloader, size):
     positive_class = 0
     negative_class = 0
 
-    for photos1, photos2, numericalft, labels in dataloader:
+    for photos1, photos2, numericalft, labels in loader:
         for i in range(len(labels)):
             if int(labels[i].numpy()) == 0 and negative_class >= (size / 2):
                 continue
@@ -83,7 +83,7 @@ def get_samples_from_dataloader_balanced(dataloader, size):
     return (photos1, photos2, ft_numerical, labels)
 
 
-def get_samples_from_dataloader(dataloader, size):
+def get_samples_from_loader(loader, size):
     """
     Return photos1, photos2, ft_numerical, labels
     """
@@ -93,7 +93,7 @@ def get_samples_from_dataloader(dataloader, size):
     list_of_features = []
     list_of_labels = []
 
-    for photos1, photos2, numericalft, labels in dataloader:
+    for photos1, photos2, numericalft, labels in loader:
         for i in range(len(labels)):
             list_of_photos_1.append(photos1[i])
             list_of_photos_2.append(photos2[i])
@@ -115,13 +115,22 @@ def get_samples_from_dataloader(dataloader, size):
 
 
 def get_sigmoid_pred(
-    model, train_loader, val_loader, output_tab, double_img, model_id, model_folder
+    model,
+    train_loader,
+    val_loader,
+    oos_loader,
+    output_tab,
+    double_img,
+    model_id,
+    model_folder,
 ):
 
     pred_list_train = []
     true_list_train = []
     pred_list_val = []
     true_list_val = []
+    pred_list_oos = []
+    true_list_oos = []
 
     for imgs_photo_1, imgs_photo_2, ft_numerical, labels in train_loader:
 
@@ -159,6 +168,26 @@ def get_sigmoid_pred(
         )
         true_list_val.extend(labels.data.cpu().detach().numpy().tolist())
 
+    if oos_loader:
+
+        for imgs_photo_1, imgs_photo_2, ft_numerical, labels in oos_loader:
+
+            if double_img and not output_tab:
+                outputs = model(imgs_photo_1, imgs_photo_2, None)
+            elif double_img and output_tab:
+                outputs = model(imgs_photo_1, imgs_photo_2, ft_numerical)
+            elif not double_img and output_tab:
+                outputs = model(imgs_photo_1, None, ft_numerical)
+            else:
+                outputs = model(imgs_photo_1)
+
+            sigmoid_output = torch.sigmoid(outputs)
+
+            pred_list_oos.extend(
+                sigmoid_output.data.cpu().detach().numpy().squeeze().tolist()
+            )
+            true_list_oos.extend(labels.data.cpu().detach().numpy().tolist())
+
     train_df_pred = pd.DataFrame(
         list(zip(pred_list_train, true_list_train)), columns=["pred_sigmoid", "true"]
     )
@@ -169,7 +198,15 @@ def get_sigmoid_pred(
     )
     val_df_pred["dataset"] = "val"
 
-    df_pred = pd.concat([train_df_pred, val_df_pred])
+    if oos_loader:
+        oos_df_pred = pd.DataFrame(
+            list(zip(pred_list_oos, true_list_oos)), columns=["pred_sigmoid", "true"]
+        )
+        oos_df_pred["dataset"] = "oos"
+    else:
+        oos_df_pred = pd.DataFrame(columns=["pred_sigmoid", "true"])
+
+    df_pred = pd.concat([train_df_pred, val_df_pred, oos_df_pred])
     df_pred["model_id"] = model_id
 
     df_pred.to_csv(model_folder + str(model_id) + "/" + "pred.csv", index=False)
@@ -177,44 +214,37 @@ def get_sigmoid_pred(
 
 def get_shap_values(
     model,
-    train_dataloader,
-    val_dataloader,
-    oos_dataloader,
+    train_loader,
+    val_loader,
+    oos_loader,
     balanced,
     size,
     input_size,
     path,
 ):
 
-    print(size)
     if balanced:
         (
             photos1_train,
             photos2_train,
             ft_numerical_train,
             _,
-        ) = get_samples_from_dataloader_balanced(train_dataloader, size)
+        ) = get_samples_from_loader_balanced(train_loader, size)
     else:
         (
             photos1_train,
             photos2_train,
             ft_numerical_train,
             _,
-        ) = get_samples_from_dataloader(train_dataloader, size)
+        ) = get_samples_from_loader(train_loader, size)
 
     (
         photos1_val,
         photos2_val,
         ft_numerical_val,
         _,
-    ) = get_samples_from_dataloader(val_dataloader, len(val_dataloader))
+    ) = get_samples_from_loader(val_loader, len(val_loader.dataset))
 
-    print(photos1_train.shape)
-    print(photos2_train.shape)
-    print(ft_numerical_train.shape)
-    print(photos1_val.shape)
-    print(photos2_val.shape)
-    print(ft_numerical_val.shape)
     (
         shap_values_photo1_val,
         shap_values_photo2_val,
@@ -243,13 +273,13 @@ def get_shap_values(
     with open(path + name_file, "wb") as handle:
         pickle.dump(shap_dict_val, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-    if oos_dataloader:
+    if oos_loader:
         (
             photos1_oos,
             photos2_oos,
             ft_numerical_oos,
             _,
-        ) = get_samples_from_dataloader(val_dataloader, len(oos_dataloader))
+        ) = get_samples_from_loader(oos_loader, len(oos_loader.dataset))
 
         (
             shap_values_photo1_oos,

@@ -73,7 +73,7 @@ np.random.seed(42)
     type=int,
     help="The size of shap background dataset",
 )
-@click.option("--oos_dataset", type=click.Path(exists=True))
+@click.option("--oos_dataset_path", "-oos", type=click.Path(exists=True), default=None)
 @click.option(
     "--backbone",
     default="regnet",
@@ -125,7 +125,7 @@ def main(
     shap: bool,
     balanced_shap: bool,
     size_shap: int,
-    oos_dataset: Path,
+    oos_dataset_path: Path,
     backbone: str,
     scratch: bool,
     feature_extract: bool,
@@ -561,11 +561,11 @@ def main(
 
         train_dataset_transformed = train_loader.dataset.glaucoma_data
 
-        oos_dataloader = None
+        oos_loader = None
 
-        if oos_dataset:
+        if oos_dataset_path:
 
-            oos = pd.read_csv("oos_dataset")
+            oos = pd.read_csv(oos_dataset_path)
 
             train = data.iloc[train_dataset_transformed.index]
 
@@ -583,7 +583,7 @@ def main(
                 preprocessing_tab,
             ) = init_transforms(input_size)
 
-            oos_dataloader = init_dataloader(
+            oos_loader = init_dataloader(
                 oos,
                 preprocessing_oos,
                 preprocessing_tab,
@@ -598,6 +598,7 @@ def main(
                 model,
                 train_loader,
                 val_loader,
+                oos_loader,
                 output_tab,
                 double_img_bool,
                 model_id,
@@ -608,7 +609,7 @@ def main(
                 model,
                 train_loader,
                 val_loader,
-                oos_dataloader,
+                oos_loader,
                 balanced_shap,
                 size_shap,
                 input_size,
