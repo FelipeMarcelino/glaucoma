@@ -1,3 +1,5 @@
+import sys
+import numpy as np
 import pandas as pd
 import torch
 import subprocess
@@ -25,7 +27,10 @@ def check_execution_already(params: Dict, summary_path: Path) -> bool:
     try:
         temp_summary = pd.read_csv(summary_path, sep=",")
         query = " and ".join(
-            [f"{k} == {repr(v)}" for k, v in params.items() if v is not None]
+            [
+                f"{k} == {repr(v)}" if v is not np.nan else f"{k}.isnull()"
+                for k, v in params.items()
+            ]
         )
         query_rows = temp_summary.query(query)
         if len(query_rows) != 0:

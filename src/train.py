@@ -17,9 +17,9 @@ def train_model(
     device,
     double_img,
     output_tab,
-    early_start=50,
+    is_inception,
+    early_start=100,
     num_epochs=100,
-    is_inception=False,
     patient=10,
 ):
     since = time.time()
@@ -72,47 +72,22 @@ def train_model(
                 # forward
                 # track history if only in train
                 with torch.set_grad_enabled(phase == "train"):
-                    # Get model outputs and calculate loss
-                    # Special case for inception because in training it has an auxiliary output. In train
-                    #   mode we calculate the loss by summing the final output and the auxiliary output
-                    #   but in testing we only consider the final output.
-
-                    if is_inception and phase == "train":
-                        # From https://discuss.pytorch.org/t/how-to-optimize-inception-model-with-auxiliary-classifiers/7958
-
-                        # if double_img and not output_tab :
-                        #     outputs,  _ = model(imgs_photo_1, imgs_photo_2, None)
-                        # elif double_img and output_tab:
-                        #     outputs, _ = model(imgs_photo_1, imgs_photo_2, ft_numerical)
-                        # elif not double_img and output_tab:
-                        #     outputs, _ = model(imgs_photo_1, None, ft_numerical)
-                        # else:
-                        #     outputs, _ = model(imgs_photo_1)
-
-                        if double_img and not output_tab:
-                            outputs = model(imgs_photo_1, imgs_photo_2, None)
-                        elif double_img and output_tab:
-                            outputs = model(imgs_photo_1, imgs_photo_2, ft_numerical)
-                        elif not double_img and output_tab:
-                            outputs = model(imgs_photo_1, None, ft_numerical)
-                        else:
-                            outputs, _ = model(imgs_photo_1)  # Remove aux output
-
-                        # loss1 = criterion(outputs, labels)
-                        # loss2 = criterion(aux_outputs, labels)
-                        # loss = loss1 + 0.4 * loss2
-                        loss = criterion(outputs, labels)
+                    if double_img and not output_tab:
+                        outputs = model(imgs_photo_1, imgs_photo_2, None)
+                    elif double_img and output_tab:
+                        outputs = model(imgs_photo_1, imgs_photo_2, ft_numerical)
+                    elif not double_img and output_tab:
+                        outputs = model(imgs_photo_1, None, ft_numerical)
                     else:
-                        if double_img and not output_tab:
-                            outputs = model(imgs_photo_1, imgs_photo_2, None)
-                        elif double_img and output_tab:
-                            outputs = model(imgs_photo_1, imgs_photo_2, ft_numerical)
-                        elif not double_img and output_tab:
-                            outputs = model(imgs_photo_1, None, ft_numerical)
+                        if is_inception and phase == "train":
+                            outputs, _ = model(imgs_photo_1)  # Remove aux output
+                            # loss1 = criterion(outputs, labels)
+                            # loss2 = criterion(aux_outputs, labels)
+                            # loss = loss1 + 0.4 * loss2
                         else:
                             outputs = model(imgs_photo_1)
 
-                        loss = criterion(outputs, labels)
+                    loss = criterion(outputs, labels)
 
                     sigmoid_outputs = torch.sigmoid(outputs)
                     preds = (sigmoid_outputs > 0.5).float()
@@ -145,16 +120,6 @@ def train_model(
                 )
             )
 
-            if epoch_loss > last_loss:
-                trigger_time += 1
-            else:
-                trigger_time = 0
-
-            if trigger_time >= patient:
-                break
-
-            last_loss = epoch_loss
-
             # deep copy the model
             if phase == "val" and epoch_auc > best_auc:
                 best_auc = epoch_auc
@@ -178,6 +143,8 @@ def train_model(
                     trigger_time += 1
                 else:
                     trigger_time = 0
+
+                last_loss = epoch_loss
 
                 if trigger_time >= patient:
                     break
@@ -215,7 +182,6 @@ def pre_train(
     preprocessing_tab,
     batch_size,
     model,
-    feature_extract,
     device,
     debug,
     ft_columns,
@@ -248,6 +214,6 @@ def pre_train(
 
     model = model.to(device)
 
-    optimizer = init_optimizer(model, feature_extract, debug, optim, lr)
+    optimizer = init_optimizer(model, debug, optim, lr)
 
     return model, optimizer, criterion, dataloader_train, dataloader_val

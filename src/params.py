@@ -3,7 +3,7 @@ import os
 
 # PARAMS
 ROOT_DIR = Path(os.path.abspath(__file__)).parents[1].absolute()
-SUMMARY_PATH = ROOT_DIR / "summary.csv"
+SUMMARY_PATH = ROOT_DIR / "model_summary.csv"
 MODEL_USAGE_MEM = ROOT_DIR / "usage_mem_gpu.csv"
 BACKBONE_ARG = "--backbone"
 BATCHSIZE_ARG = "--batch_size"

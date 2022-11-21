@@ -119,24 +119,14 @@ def init_transforms(input_size: int):
     return preprocessing_train, preprocessing_val, preprocessing_tab
 
 
-def init_optimizer(model, feature_extract, debug, optim_selected, lr):
+def init_optimizer(model, debug, optim_selected, lr):
 
     params_to_update = model.parameters()
 
-    if debug < 2:
-        print("Params to learn:")
-    if feature_extract:
-        params_to_update = []
-        for name, param in model.named_parameters():
-            if param.requires_grad == True:
-                params_to_update.append(param)
-                if debug < 2:
-                    print("\t", name)
-    else:
-        for name, param in model.named_parameters():
-            if param.requires_grad == True:
-                if debug < 2:
-                    print("\t", name)
+    for name, param in model.named_parameters():
+        if param.requires_grad == True:
+            if debug:
+                print("\t", name)
 
     # Observe that all parameters are being optimized
     if optim_selected == "ranger":
@@ -154,16 +144,9 @@ def init_optimizer(model, feature_extract, debug, optim_selected, lr):
     return optimizer
 
 
-def set_parameter_requires_grad(model, feature_extract):
-    if feature_extract:
-        for param in model.parameters():
-            param.requires_grad = False
-
-
 def init_model(
     model_name: str,
     pretrained: bool,
-    feature_extract: bool,
     double_img: bool,
     output_tab: int,
     ft_size: int,
@@ -176,7 +159,6 @@ def init_model(
         else:
             model = models.regnet_x_800mf(pretrained)
             in_features = 672
-        set_parameter_requires_grad(model, feature_extract)
 
         if output_tab or double_img:
             features = nn.Sequential(*list(model.children()))[:-1]
@@ -199,7 +181,6 @@ def init_model(
         else:
             model = models.regnet_x_1_6gf(pretrained)
             in_features = 912
-        set_parameter_requires_grad(model, feature_extract)
 
         if output_tab or double_img:
             features = nn.Sequential(*list(model.children()))[:-1]
@@ -222,7 +203,6 @@ def init_model(
         else:
             model = models.regnet_x_3_2gf(pretrained)
             in_features = 1008
-        set_parameter_requires_grad(model, feature_extract)
 
         if output_tab or double_img:
             features = nn.Sequential(*list(model.children()))[:-1]
@@ -240,7 +220,6 @@ def init_model(
 
     if model_name == "mobile":
         model = models.mobilenet_v3_large(pretrained)
-        set_parameter_requires_grad(model, feature_extract)
 
         if output_tab or double_img:
             features = nn.Sequential(*list(model.children()))[:-1]
@@ -260,7 +239,6 @@ def init_model(
 
     if model_name == "resnet":
         model = models.resnet50(pretrained)
-        set_parameter_requires_grad(model, feature_extract)
 
         if output_tab or double_img:
             features = nn.Sequential(*list(model.children()))[:-1]
@@ -283,7 +261,6 @@ def init_model(
 
     if model_name == "efficient":
         model = models.efficientnet_b0(pretrained)
-        set_parameter_requires_grad(model, feature_extract)
 
         if output_tab or double_img:
             features = nn.Sequential(*list(model.children()))[:-1]
@@ -306,7 +283,6 @@ def init_model(
 
     if model_name == "shuffle":
         model = models.shufflenet_v2_x1_5(pretrained)
-        set_parameter_requires_grad(model, feature_extract)
 
         if output_tab or double_img:
             features = nn.Sequential(*list(model.children()))[:-1]
@@ -326,7 +302,6 @@ def init_model(
 
     if model_name == "inception":
         model = models.inception_v3(pretrained)
-        set_parameter_requires_grad(model, feature_extract)
 
         if output_tab or double_img:
             model.fc = nn.Identity()
@@ -358,7 +333,6 @@ def init_model(
         model = timm.create_model(
             "vit_base_patch16_224", pretrained=True, num_classes=num_classes
         )
-        set_parameter_requires_grad(model, feature_extract)
 
         if output_tab or double_img:
             features = model

@@ -11,6 +11,7 @@ import uuid
 import socket
 import os
 import time
+import sys
 
 
 from pathlib import Path
@@ -96,11 +97,9 @@ np.random.seed(42)
         ]
     ),
 )
-@click.option("--scratch", default=False, is_flag=True, type=bool)
-@click.option("--feature_extract", default=False, type=bool, is_flag=True)
 @click.option("--frac_val", default=0.2, type=float)
 @click.option("--k_fold", default=-1, type=int)
-@click.option("--debug", default=False, is_flag=True, type=bool)
+@click.option("--debug", is_flag=True, default=False, type=bool)
 @click.option("--model_id", default=None, type=str)
 @click.option(
     "--model_folder",
@@ -110,7 +109,7 @@ np.random.seed(42)
 )
 @click.option("--double_img", is_flag=True, default=False, type=bool)
 @click.option("--output_tab", default=0, type=int)
-@click.option("--early_start", default=50, type=int)
+@click.option("--early_start", default=100, type=int)
 @click.option(
     "--optim",
     default="adam",
@@ -129,11 +128,9 @@ def main(
     size_shap: int,
     oos_dataset_path: Path,
     backbone: str,
-    scratch: bool,
-    feature_extract: bool,
     frac_val: float,
     k_fold: int,
-    debug: int,
+    debug: bool,
     model_id: str,
     model_folder: str,
     double_img: bool,
@@ -152,24 +149,16 @@ def main(
     if score or shap:
         test = True
 
-    if backbone == "inception":
-        is_inception = True
-    else:
-        is_inception = False
-
     params = {
         "epochs": epochs,
-        # "scratch": scratch,
-        "feature_extract": feature_extract,
-        "frac_val": frac_val,
-        "k_fold": k_fold if k_fold > 2 else None,
+        "frac_val": frac_val if k_fold < 2 else np.nan,
+        "k_fold": k_fold if k_fold > 2 else np.nan,
         "double_img": 1.0 if double_img is True else 0.0,
-        "output_tab": output_tab if output_tab else None,
+        "output_tab": output_tab,
         "early_start": early_start,
         "optim": optim,
         "lr": lr,
-        # "batch_size": batch_size,
-        "is_inception": is_inception,
+        "batch_size": batch_size,
         "backbone": backbone,
         "torch_version": torch.__version__,
         "torchvision_version": torchvision.__version__,
@@ -189,10 +178,7 @@ def main(
 
         os.makedirs(path)
 
-        if scratch:
-            pretrained = False
-        else:
-            pretrained = True
+        pretrained = True
 
     # Loading data
     data = pd.read_csv(csv_file)
@@ -238,7 +224,6 @@ def main(
                 model, input_size = init_model(
                     backbone,
                     pretrained,
-                    feature_extract,
                     double_img,
                     output_tab,
                     ft_size,
@@ -266,7 +251,6 @@ def main(
                     preprocessing_tab,
                     batch_size,
                     model,
-                    feature_extract,
                     device,
                     debug,
                     numerical_columns,
@@ -277,6 +261,11 @@ def main(
                 dataloaders_dict = {}
                 dataloaders_dict["train"] = dataloader_train
                 dataloaders_dict["val"] = dataloader_val
+
+                if backbone == "inception":
+                    is_inception = True
+                else:
+                    is_inception = False
                 (
                     model,
                     val_loss_history,
@@ -297,9 +286,9 @@ def main(
                     device,
                     double_img,
                     output_tab,
+                    is_inception,
                     early_start,
                     epochs,
-                    is_inception=is_inception,
                     patient=patient,
                 )
 
@@ -334,7 +323,6 @@ def main(
             model, input_size = init_model(
                 backbone,
                 pretrained,
-                feature_extract,
                 double_img,
                 output_tab,
                 ft_size,
@@ -374,7 +362,6 @@ def main(
                 preprocessing_tab,
                 batch_size,
                 model,
-                feature_extract,
                 device,
                 debug,
                 numerical_columns,
@@ -395,6 +382,11 @@ def main(
             dataloaders_dict = {}
             dataloaders_dict["train"] = dataloader_train
             dataloaders_dict["val"] = dataloader_val
+
+            if backbone == "inception":
+                is_inception = True
+            else:
+                is_inception = False
 
             try:
                 (
@@ -417,9 +409,9 @@ def main(
                     device,
                     double_img,
                     output_tab,
+                    is_inception,
                     early_start,
                     epochs,
-                    is_inception=is_inception,
                     patient=patient,
                 )
             except KeyboardInterrupt:
@@ -494,14 +486,12 @@ def main(
             "train_avg_sp": np.mean(dict_results["train_specificity_history"]),
             "train_avg_sn": np.mean(dict_results["train_sensitivity_history"]),
             "host_name": socket.gethostname(),
-            "is_inception": is_inception,
             "optim": optim,
             "lr": lr,
             "epochs": epochs,
             "double_img": 1 if double_img is True else 0,
             "output_tab": output_tab if output_tab is not None else np.nan,
             "backbone": backbone,
-            "feature_extract": feature_extract,
             "early_start": early_start,
             "timestamp": str(datetime.now()),
             "total_hours": total_time_str,
@@ -509,6 +499,11 @@ def main(
             "torchvision_version": torchvision.__version__,
             "torch_version": torch.__version__,
             "history_added": 0,
+            "shap_val": 0,
+            "shap_oos": 0,
+            "pred_val": 0,
+            "pred_oos": 0,
+            "batch_size": batch_size,
         }
 
         try:
@@ -534,7 +529,6 @@ def main(
 
         backbone = row["backbone"].values[0]
         pretrained = False
-        feature_extract = False
 
         path = model_folder + str(model_id) + "/"
 
@@ -547,7 +541,6 @@ def main(
         model, input_size = init_model(
             backbone,
             pretrained,
-            feature_extract,
             double_img_bool,
             output_tab,
             ft_size,
