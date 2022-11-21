@@ -15,6 +15,7 @@ import time
 
 from pathlib import Path
 from datetime import datetime
+from torchinfo import summary as torchsummary
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import GroupShuffleSplit
 from torchvision.ops.boxes import torchvision
@@ -22,7 +23,8 @@ from dataset import init_dataloader, init_k_fold
 from model import init_model, init_transforms
 from test import get_sigmoid_pred, get_shap_values
 from train import pre_train, train_model
-from params import ROOT_DIR
+from params import ROOT_DIR, SUMMARY_PATH
+from utils import check_execution_already
 
 
 # Fix seed's for reproducibility
@@ -98,7 +100,7 @@ np.random.seed(42)
 @click.option("--feature_extract", default=False, type=bool, is_flag=True)
 @click.option("--frac_val", default=0.2, type=float)
 @click.option("--k_fold", default=-1, type=int)
-@click.option("--debug", default=2, type=int)
+@click.option("--debug", default=False, is_flag=True, type=bool)
 @click.option("--model_id", default=None, type=str)
 @click.option(
     "--model_folder",
@@ -107,7 +109,7 @@ np.random.seed(42)
     help="Path to save model",
 )
 @click.option("--double_img", is_flag=True, default=False, type=bool)
-@click.option("--output_tab", default=None, type=int)
+@click.option("--output_tab", default=0, type=int)
 @click.option("--early_start", default=50, type=int)
 @click.option(
     "--optim",
@@ -161,7 +163,7 @@ def main(
         "feature_extract": feature_extract,
         "frac_val": frac_val,
         "k_fold": k_fold if k_fold > 2 else None,
-        "double_img": double_img,
+        "double_img": 1.0 if double_img is True else 0.0,
         "output_tab": output_tab if output_tab else None,
         "early_start": early_start,
         "optim": optim,
@@ -173,19 +175,10 @@ def main(
         "torchvision_version": torchvision.__version__,
     }
 
-    if not test:
-        if not overwrite:
-            try:
-                temp_summary = pd.read_csv("../model_summary.csv", sep=",")
-                query = " and ".join(
-                    [f"{k} == {repr(v)}" for k, v in params.items() if v is not None]
-                )
-                query_rows = temp_summary.query(query)
-                if len(query_rows) != 0:
-                    print("Model already tested!!! Exiting...")
-                    return
-            except FileNotFoundError:
-                pass
+    if not test and not debug and not overwrite:
+        if check_execution_already(params, SUMMARY_PATH):
+            print("Model already tested!!! Exiting...")
+            return 0
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -255,6 +248,9 @@ def main(
                     preprocessing_val,
                     preprocessing_tab,
                 ) = init_transforms(input_size)
+
+                if debug:
+                    print(torchsummary(model))
 
                 (
                     model,
@@ -343,6 +339,11 @@ def main(
                 output_tab,
                 ft_size,
             )
+
+            if debug:
+                print(torchsummary(model))
+                print(model)
+
             preprocessing_train, preprocessing_val, preprocessing_tab = init_transforms(
                 input_size
             )

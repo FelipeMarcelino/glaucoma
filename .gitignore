@@ -170,6 +170,8 @@ cython_debug/
 #.idea/
 envs/
 
+nohup.*
+
 .direnv
 /direnv
 .direnv/

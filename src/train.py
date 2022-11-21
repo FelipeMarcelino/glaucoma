@@ -96,7 +96,7 @@ def train_model(
                         elif not double_img and output_tab:
                             outputs = model(imgs_photo_1, None, ft_numerical)
                         else:
-                            outputs = model(imgs_photo_1)
+                            outputs, _ = model(imgs_photo_1)  # Remove aux output
 
                         # loss1 = criterion(outputs, labels)
                         # loss2 = criterion(aux_outputs, labels)
