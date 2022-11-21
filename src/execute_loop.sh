@@ -82,6 +82,7 @@ do
     fi
     if [[ "$RES" != "Full" ]]; then
         FULL_COMMAND="${BASE_PYTHON} ${RES}"
+        echo ${FULL_COMMAND}
         nohup ${FULL_COMMAND} &
     fi
     sleep 60
