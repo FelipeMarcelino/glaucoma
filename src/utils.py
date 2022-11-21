@@ -90,7 +90,7 @@ def create_commands(filtered_status: pd.DataFrame):
 def check_already_running(commands: List[str]):
 
     pythonProcess = subprocess.check_output(
-        "ps -ef  | grep felipema |  grep main.py",
+        "ps -ef  | grep felipe |  grep main.py",
         shell=True,
     ).decode()
     pythonProcess = pythonProcess.split("\n")
