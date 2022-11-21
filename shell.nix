@@ -10,7 +10,7 @@ mkShell {
   buildInputs = [
     pythonEnv
     yarn
-    cudaPackages.cudatoolkit
+    cudaPackages.cudatoolkit 
     cudaPackages.cudnn
     nodejs
     stdenv
