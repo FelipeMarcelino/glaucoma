@@ -41,7 +41,9 @@ def train_model(
     trigger_time = 0
     last_loss = np.inf
 
+    torch.backends.cudnn.benchmark = True
     for epoch in range(num_epochs):
+        start_epoch_time = time.time()
         print("Epoch {}/{}".format(epoch + 1, num_epochs))
         print("-" * 10)
 
@@ -66,7 +68,7 @@ def train_model(
                 labels = labels.to(device)
 
                 # zero the parameter gradients
-                optimizer.zero_grad()
+                optimizer.zero_grad(set_to_none=True)
                 labels = labels.unsqueeze(1).float()
 
                 # forward
@@ -148,6 +150,9 @@ def train_model(
 
                 if trigger_time >= patient:
                     break
+
+            time_elapsed_epoch = time.time() - start_epoch_time
+            print(f"Epoch in {int(time_elapsed_epoch)}/s")
 
     time_elapsed = time.time() - since
     print(

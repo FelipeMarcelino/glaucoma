@@ -379,6 +379,7 @@ def main(
                 path + "val_dataloader.pth",
             )
 
+
             dataloaders_dict = {}
             dataloaders_dict["train"] = dataloader_train
             dataloaders_dict["val"] = dataloader_val
