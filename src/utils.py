@@ -1,4 +1,5 @@
 import sys
+import re
 import numpy as np
 import pandas as pd
 import torch
@@ -109,3 +110,29 @@ def check_already_running(commands: List[str]):
             break
 
     return command_selected
+
+
+def calculate_mem_size(active_bytes, reserved_bytes) -> int:
+    if pd.isna(active_bytes):
+        active_bytes = "0.0M"
+    if pd.isna(reserved_bytes):
+        reserved_bytes = "0.0M"
+
+    active_bytes_number = float(re.findall(r"\d+.\d+", active_bytes)[0])
+    reserved_bytes_number = float(re.findall(r"\d+.\d+", reserved_bytes)[0])
+
+    def to_megabytes(mem_str) -> int:
+        if "M" in mem_str:
+            return 1
+        elif "G" in mem_str:
+            return 1000
+        else:
+            print("Mem string unrecognized: ", mem_str)
+            sys.exit()
+
+    active_bytes_number = active_bytes_number * to_megabytes(active_bytes)
+    reserved_bytes_number = reserved_bytes_number * to_megabytes(reserved_bytes)
+
+    total_mem = int(active_bytes_number + 1) + int(reserved_bytes_number + 1)
+
+    return total_mem
