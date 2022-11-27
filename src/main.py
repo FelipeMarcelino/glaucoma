@@ -28,6 +28,9 @@ from test import get_sigmoid_pred, get_shap_values
 from train import pre_train, train_model
 from params import ROOT_DIR, SUMMARY_PATH, DF_PEAK_SUMMARY
 from utils import calculate_mem_size, check_execution_already
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 # Fix seed's for reproducibility
@@ -427,7 +430,6 @@ def main(
                     ):
                         print("Model/Debug already tested!!! Exiting...")
                         return 0
-
 
                     with LineProfiler(train_model) as prof:
                         torch.cuda.empty_cache()

@@ -1,6 +1,7 @@
 import torch
 import pandas as pd
 import random
+import os
 from typing import List
 from skimage import io
 from params import ROOT_DIR
@@ -76,7 +77,11 @@ def init_dataloader(
         data, ROOT_DIR, ft_columns, double_img, preprocessing_img, preprocessing_tab
     )
     dataloader = DataLoader(
-        dataset, batch_size=batch_size, shuffle=True, pin_memory=True, num_workers=8
+        dataset,
+        batch_size=batch_size,
+        shuffle=True,
+        pin_memory=True,
+        num_workers=int(os.getenv("NUM_WORKERS")),
     )
 
     return dataloader
