@@ -22,6 +22,7 @@ def train_model(
     early_start=100,
     num_epochs=100,
     patient=10,
+    autocast=False,
 ):
     since = time.time()
 
@@ -41,6 +42,10 @@ def train_model(
 
     trigger_time = 0
     last_loss = np.inf
+
+    scaler = torch.cuda.amp.GradScaler(enabled=autocast)
+
+    device_type = "cuda" if "cuda" in str(device) else "cpu"
 
     # torch.backends.cudnn.benchmark = True
     for epoch in range(num_epochs):
@@ -75,30 +80,39 @@ def train_model(
                 # forward
                 # track history if only in train
                 with torch.set_grad_enabled(phase == "train"):
-                    if double_img and not output_tab:
-                        outputs = model(imgs_photo_1, imgs_photo_2, None)
-                    elif double_img and output_tab:
-                        outputs = model(imgs_photo_1, imgs_photo_2, ft_numerical)
-                    elif not double_img and output_tab:
-                        outputs = model(imgs_photo_1, None, ft_numerical)
-                    else:
-                        if is_inception and phase == "train":
-                            outputs, _ = model(imgs_photo_1)  # Remove aux output
-                            # loss1 = criterion(outputs, labels)
-                            # loss2 = criterion(aux_outputs, labels)
-                            # loss = loss1 + 0.4 * loss2
-                        else:
-                            outputs = model(imgs_photo_1)
 
-                    loss = criterion(outputs, labels)
+                    with torch.autocast(
+                        device_type=device_type,
+                        dtype=torch.float16,
+                        enabled=autocast,
+                    ):
+                        if double_img and not output_tab:
+                            outputs = model(imgs_photo_1, imgs_photo_2, None)
+                        elif double_img and output_tab:
+                            outputs = model(imgs_photo_1, imgs_photo_2, ft_numerical)
+                        elif not double_img and output_tab:
+                            outputs = model(imgs_photo_1, None, ft_numerical)
+                        else:
+                            if is_inception and phase == "train":
+                                outputs, _ = model(imgs_photo_1)  # Remove aux output
+                                # loss1 = criterion(outputs, labels)
+                                # loss2 = criterion(aux_outputs, labels)
+                                # loss = loss1 + 0.4 * loss2
+                            else:
+                                outputs = model(imgs_photo_1)
+
+                        loss = criterion(outputs, labels)
 
                     sigmoid_outputs = torch.sigmoid(outputs)
                     preds = (sigmoid_outputs > 0.5).float()
 
                     # backward + optimize only if in training phase
                     if phase == "train":
-                        loss.backward()
-                        optimizer.step()
+                        # loss.backward()
+                        # optimizer.step()
+                        scaler.scale(loss).backward()
+                        scaler.step(optimizer)
+                        scaler.update()
 
                 # statistics
                 running_loss += loss.item() * imgs_photo_1.size(0)

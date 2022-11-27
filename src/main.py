@@ -121,6 +121,7 @@ np.random.seed(42)
 @click.option("--batch_size", default=16, type=int)
 @click.option("--patient", default=10, type=int)
 @click.option("--overwrite", is_flag=True, default=False, type=bool)
+@click.option("--autocast", is_flag=True, default=False, type=bool)
 def main(
     csv_file,
     epochs: int,
@@ -143,6 +144,7 @@ def main(
     batch_size: int,
     patient: int,
     overwrite: bool,
+    autocast: bool,
 ):
 
     start = time.time()
@@ -418,11 +420,13 @@ def main(
                             early_start,
                             epochs,
                             patient=patient,
+                            autocast=autocast,
                         )
                         df_peak = pd.read_html(prof.display()._repr_html_())[0]
                         df_peak.columns = df_peak.columns.droplevel([1, 2])
                         df_peak["backbone"] = backbone
                         df_peak["batch_size"] = batch_size
+                        df_feak["mixed_precision"] = 1 if autocast else 0
                         df_peak["double_img"] = double_img
                         df_peak["output_tab"] = output_tab
                         df_peak["torch_version"] = torch.__version__
@@ -487,6 +491,7 @@ def main(
                         early_start,
                         epochs,
                         patient=patient,
+                        autocast=autocast,
                     )
 
                 fold_val_loss_history.append(val_loss_history)
