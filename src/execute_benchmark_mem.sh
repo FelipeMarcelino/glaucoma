@@ -22,10 +22,10 @@ for (( j=0; j<${#models[@]} ; j+=1 )) ; do
             --backbone ${models[j]} --epochs ${epoch} --early_start ${early_start} \
             --output_tab ${output_tab} --lr ${lr[k]} &
             wait
-            python main.py debug --optim ${optims[i]} --batch_size ${batch_size} \
+            python main.py --debug --optim ${optims[i]} --batch_size ${batch_size} \
             --backbone ${models[j]} --epochs ${epoch} --early_start ${early_start} --output_tab \
                     ${output_tab} --double_img --lr ${lr[k]} &
-        wait
+            wait
         done
     done
 done

@@ -422,6 +422,7 @@ def main(
                         df_peak = pd.read_html(prof.display()._repr_html_())[0]
                         df_peak.columns = df_peak.columns.droplevel([1, 2])
                         df_peak["backbone"] = backbone
+                        df_peak["batch_size"] = batch_size
                         df_peak["double_img"] = double_img
                         df_peak["output_tab"] = output_tab
                         df_peak["torch_version"] = torch.__version__
