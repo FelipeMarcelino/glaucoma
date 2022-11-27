@@ -426,7 +426,7 @@ def main(
                         df_peak.columns = df_peak.columns.droplevel([1, 2])
                         df_peak["backbone"] = backbone
                         df_peak["batch_size"] = batch_size
-                        df_feak["mixed_precision"] = 1 if autocast else 0
+                        df_peak["mixed_precision"] = 1 if autocast else 0
                         df_peak["double_img"] = double_img
                         df_peak["output_tab"] = output_tab
                         df_peak["torch_version"] = torch.__version__
