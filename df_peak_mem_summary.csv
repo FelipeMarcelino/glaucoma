@@ -1,4 +1,4 @@
-backbone,batch_size,mixed_precision,double_img,output_tab,,torch_version,torchvision_version,,cuda_version,torchvision_cuda_version,,running_cuda,total_mem_mb,,host_name,
+backbone,batch_size,mixed_precision,double_img,output_tab,Unnamed: 5,torch_version,torchvision_version,Unnamed: 8,cuda_version,torchvision_cuda_version,Unnamed: 11,running_cuda,total_mem_mb,Unnamed: 14,host_name,Unnamed: 16
 regnet,16,0,False,0,,1.12.0+cu113,0.13.0+cu113,,11.3,11030,,11.2,1897,,magneto,
 regnet,16,0,True,0,,1.12.0+cu113,0.13.0+cu113,,11.3,11030,,11.2,3522,,magneto,
 regnet,16,0,False,5,,1.12.0+cu113,0.13.0+cu113,,11.3,11030,,11.2,1906,,magneto,
@@ -98,3 +98,5 @@ resnet,16,0,False,0,,1.12.0+cu113,0.13.0+cu113,,11.3,11030,,11.8,3692,,solid,
 resnet,16,0,True,0,,1.12.0+cu113,0.13.0+cu113,,11.3,11030,,11.8,7372,,solid,
 resnet,16,0,False,5,,1.12.0+cu113,0.13.0+cu113,,11.3,11030,,11.8,3762,,solid,
 resnet,16,0,True,5,,1.12.0+cu113,0.13.0+cu113,,11.3,11030,,11.8,7372,,solid,
+regnet16x,16,1,False,0,,1.12.0+cu113,0.13.0+cu113,,11.3,11030,,11.2,1414,,magneto,
+regnet16x,16,1,False,0,,1.12.0+cu113,0.13.0+cu113,,11.3,11030,,11.2,6592,,magneto,
