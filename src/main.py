@@ -122,6 +122,7 @@ np.random.seed(42)
 @click.option("--patient", default=10, type=int)
 @click.option("--overwrite", is_flag=True, default=False, type=bool)
 @click.option("--autocast", is_flag=True, default=False, type=bool)
+@click.option("--cudnn_bench", is_flag=True, default=False, type=bool)
 def main(
     csv_file,
     epochs: int,
@@ -145,6 +146,7 @@ def main(
     patient: int,
     overwrite: bool,
     autocast: bool,
+    cudnn_bench: bool,
 ):
 
     start = time.time()
@@ -294,6 +296,8 @@ def main(
                     early_start,
                     epochs,
                     patient=patient,
+                    autocast=autocast,
+                    cudnn_bench=cudnn_bench,
                 )
 
                 torch.save(
@@ -394,6 +398,37 @@ def main(
 
             try:
                 if debug:
+                    debug_params = {}
+                    debug_params["host_name"] = socket.gethostname()
+                    debug_params["backbone"] = backbone
+                    debug_params["batch_size"] = batch_size
+                    debug_params["mixed_precision"] = 1 if autocast else 0
+                    debug_params["cudnn_bench"] = 1 if cudnn_bench else 0
+                    debug_params["double_img"] = double_img
+                    debug_params["output_tab"] = output_tab
+                    debug_params["torch_version"] = torch.__version__
+                    debug_params["torchvision_version"] = torchvision.__version__
+                    debug_params["cuda_version"] = float(torch.version.cuda)
+                    debug_params["torchvision_cuda_version"] = int(
+                        torchvision.version.cuda
+                    )
+                    debug_params["running_cuda"] = float(
+                        (
+                            subprocess.check_output(["nvidia-smi"])
+                            .decode()
+                            .split("\n")[2]
+                            .split(" ")[-6]
+                        )
+                    )
+
+                    if (
+                        check_execution_already(debug_params, DF_PEAK_SUMMARY)
+                        and not overwrite
+                    ):
+                        print("Model/Debug already tested!!! Exiting...")
+                        return 0
+
+
                     with LineProfiler(train_model) as prof:
                         torch.cuda.empty_cache()
                         (
@@ -421,12 +456,15 @@ def main(
                             epochs,
                             patient=patient,
                             autocast=autocast,
+                            cudnn_bench=cudnn_bench,
                         )
                         df_peak = pd.read_html(prof.display()._repr_html_())[0]
                         df_peak.columns = df_peak.columns.droplevel([1, 2])
+                        df_peak["host_name"] = socket.gethostname()
                         df_peak["backbone"] = backbone
                         df_peak["batch_size"] = batch_size
                         df_peak["mixed_precision"] = 1 if autocast else 0
+                        df_peak["cudnn_bench"] = 1 if cudnn_bench else 0
                         df_peak["double_img"] = double_img
                         df_peak["output_tab"] = output_tab
                         df_peak["torch_version"] = torch.__version__
@@ -450,7 +488,6 @@ def main(
                             columns=["line", "code", "active_bytes", "reserved_bytes"],
                             inplace=True,
                         )
-                        df_peak["host_name"] = socket.gethostname()
 
                         df_peak_row = df_peak[
                             df_peak["total_mem_mb"] == df_peak["total_mem_mb"].max()
@@ -492,6 +529,7 @@ def main(
                         epochs,
                         patient=patient,
                         autocast=autocast,
+                        cudnn_bench=cudnn_bench,
                     )
 
                 fold_val_loss_history.append(val_loss_history)

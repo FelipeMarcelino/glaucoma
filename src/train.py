@@ -23,6 +23,7 @@ def train_model(
     num_epochs=100,
     patient=10,
     autocast=False,
+    cudnn_bench=False,
 ):
     since = time.time()
 
@@ -47,7 +48,8 @@ def train_model(
 
     device_type = "cuda" if "cuda" in str(device) else "cpu"
 
-    torch.backends.cudnn.benchmark = True
+    torch.backends.cudnn.benchmark = cudnn_bench
+
     for epoch in range(num_epochs):
         start_epoch_time = time.time()
         print("Epoch {}/{}".format(epoch + 1, num_epochs))
