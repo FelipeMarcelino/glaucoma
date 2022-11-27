@@ -1,0 +1,1 @@
+backbone,batch_size,double_img,output_tab,torch_version,torchvision_version,cuda_version,torchvision_cuda_version,running_cuda,total_mem_mb,host_name

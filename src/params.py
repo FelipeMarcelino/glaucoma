@@ -5,6 +5,7 @@ import os
 ROOT_DIR = Path(os.path.abspath(__file__)).parents[1].absolute()
 SUMMARY_PATH = ROOT_DIR / "model_summary.csv"
 MODEL_USAGE_MEM = ROOT_DIR / "usage_mem_gpu.csv"
+DF_PEAK_SUMMARY = ROOT_DIR / "df_peak_mem_summary.csv"
 BACKBONE_ARG = "--backbone"
 BATCHSIZE_ARG = "--batch_size"
 DOUBLE_IMG_ARG = "--double_img"

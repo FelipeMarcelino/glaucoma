@@ -3,6 +3,8 @@
 #!/usr/bin/env python
 import click
 import pickle
+import subprocess
+from pytorch_memlab import LineProfiler
 import torch
 import random
 import pandas as pd
@@ -24,8 +26,8 @@ from dataset import init_dataloader, init_k_fold
 from model import init_model, init_transforms
 from test import get_sigmoid_pred, get_shap_values
 from train import pre_train, train_model
-from params import ROOT_DIR, SUMMARY_PATH
-from utils import check_execution_already
+from params import ROOT_DIR, SUMMARY_PATH, DF_PEAK_SUMMARY
+from utils import calculate_mem_size, check_execution_already
 
 
 # Fix seed's for reproducibility
@@ -379,7 +381,6 @@ def main(
                 path + "val_dataloader.pth",
             )
 
-
             dataloaders_dict = {}
             dataloaders_dict["train"] = dataloader_train
             dataloaders_dict["val"] = dataloader_val
@@ -390,46 +391,118 @@ def main(
                 is_inception = False
 
             try:
-                (
-                    model,
-                    val_loss_history,
-                    val_acc_history,
-                    val_auc_history,
-                    val_sensitivity_history,
-                    val_specificity_history,
-                    train_loss_history,
-                    train_acc_history,
-                    train_auc_history,
-                    train_sensitivity_history,
-                    train_specificity_history,
-                ) = train_model(
-                    model,
-                    dataloaders_dict,
-                    criterion,
-                    optimizer,
-                    device,
-                    double_img,
-                    output_tab,
-                    is_inception,
-                    early_start,
-                    epochs,
-                    patient=patient,
-                )
+                if debug:
+                    with LineProfiler(train_model) as prof:
+                        torch.cuda.empty_cache()
+                        (
+                            model,
+                            val_loss_history,
+                            val_acc_history,
+                            val_auc_history,
+                            val_sensitivity_history,
+                            val_specificity_history,
+                            train_loss_history,
+                            train_acc_history,
+                            train_auc_history,
+                            train_sensitivity_history,
+                            train_specificity_history,
+                        ) = train_model(
+                            model,
+                            dataloaders_dict,
+                            criterion,
+                            optimizer,
+                            device,
+                            double_img,
+                            output_tab,
+                            is_inception,
+                            early_start,
+                            epochs,
+                            patient=patient,
+                        )
+                        df_peak = pd.read_html(prof.display()._repr_html_())[0]
+                        df_peak.columns = df_peak.columns.droplevel([1, 2])
+                        df_peak["backbone"] = backbone
+                        df_peak["batch_size"] = batch_size
+                        df_peak["double_img"] = double_img
+                        df_peak["output_tab"] = output_tab
+                        df_peak["torch_version"] = torch.__version__
+                        df_peak["torchvision_version"] = torchvision.__version__
+                        df_peak["cuda_version"] = torch.version.cuda
+                        df_peak["torchvision_cuda_version"] = torchvision.version.cuda
+                        df_peak["running_cuda"] = (
+                            subprocess.check_output(["nvidia-smi"])
+                            .decode()
+                            .split("\n")[2]
+                            .split(" ")[-6]
+                        )
+
+                        df_peak["total_mem_mb"] = df_peak.apply(
+                            lambda x: calculate_mem_size(
+                                x["active_bytes"], x["reserved_bytes"]
+                            ),
+                            axis=1,
+                        )
+                        df_peak.drop(
+                            columns=["line", "code", "active_bytes", "reserved_bytes"],
+                            inplace=True,
+                        )
+                        df_peak["host_name"] = socket.gethostname()
+
+                        df_peak_row = df_peak[
+                            df_peak["total_mem_mb"] == df_peak["total_mem_mb"].max()
+                        ]
+
+                        df_peak_mem_summary = pd.read_csv(DF_PEAK_SUMMARY)
+
+                        df_peak_mem_summary = pd.concat(
+                            [df_peak_mem_summary, df_peak_row]
+                        )
+
+                        df_peak_mem_summary.to_csv(DF_PEAK_SUMMARY, index=False)
+                        return 0
+
+                else:
+                    torch.cuda.empty_cache()
+                    (
+                        model,
+                        val_loss_history,
+                        val_acc_history,
+                        val_auc_history,
+                        val_sensitivity_history,
+                        val_specificity_history,
+                        train_loss_history,
+                        train_acc_history,
+                        train_auc_history,
+                        train_sensitivity_history,
+                        train_specificity_history,
+                    ) = train_model(
+                        model,
+                        dataloaders_dict,
+                        criterion,
+                        optimizer,
+                        device,
+                        double_img,
+                        output_tab,
+                        is_inception,
+                        early_start,
+                        epochs,
+                        patient=patient,
+                    )
+
+                fold_val_loss_history.append(val_loss_history)
+                fold_val_acc_history.append(val_acc_history)
+                fold_val_auc_history.append(val_auc_history)
+                fold_val_sensitivity_history.append(val_sensitivity_history)
+                fold_val_specificity_history.append(val_specificity_history)
+                fold_train_loss_history.append(train_loss_history)
+                fold_train_acc_history.append(train_acc_history)
+                fold_train_auc_history.append(train_auc_history)
+                fold_train_sensitivity_history.append(train_sensitivity_history)
+                fold_train_specificity_history.append(train_specificity_history)
+
+                torch.save(model.state_dict(), path + "model" + ".pth")
             except KeyboardInterrupt:
-                pass
-
-            fold_val_loss_history.append(val_loss_history)
-            fold_val_acc_history.append(val_acc_history)
-            fold_val_auc_history.append(val_auc_history)
-            fold_val_sensitivity_history.append(val_sensitivity_history)
-            fold_val_specificity_history.append(val_specificity_history)
-            fold_train_loss_history.append(train_loss_history)
-            fold_train_acc_history.append(train_acc_history)
-            fold_train_auc_history.append(train_auc_history)
-            fold_train_sensitivity_history.append(train_sensitivity_history)
-            fold_train_specificity_history.append(train_specificity_history)
-
-            torch.save(model.state_dict(), path + "model" + ".pth")
+                return 0
 
         dict_results = {}
         dict_results["val_loss_history"] = fold_val_loss_history

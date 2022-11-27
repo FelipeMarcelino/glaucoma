@@ -2,13 +2,14 @@ import time
 import copy
 import torch
 import torch.nn as nn
-import sys
 import numpy as np
 from sklearn.metrics import roc_auc_score, confusion_matrix
 from dataset import init_dataloader
-from model import init_model, init_optimizer, init_transforms
+from model import init_optimizer
+from pytorch_memlab import profile
 
 
+@profile
 def train_model(
     model,
     dataloaders,
@@ -41,7 +42,7 @@ def train_model(
     trigger_time = 0
     last_loss = np.inf
 
-    torch.backends.cudnn.benchmark = True
+    # torch.backends.cudnn.benchmark = True
     for epoch in range(num_epochs):
         start_epoch_time = time.time()
         print("Epoch {}/{}".format(epoch + 1, num_epochs))
