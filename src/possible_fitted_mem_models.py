@@ -166,7 +166,6 @@ def main(
     status.reset_index(inplace=True, drop=True)
 
     status.to_csv("tmp_status.csv", index=False)
-    sys.exit(1)
     if len(status) == 0:
         print("Stop", file=sys.stdout)
         return
@@ -174,6 +173,7 @@ def main(
     if return_command:
         if mem_avail:
             filtered_status = status[status["executed"] == 0]
+            filtered_status.to_csv("not_executed_yet.csv", index=False)
             filtered_status = filtered_status[
                 filtered_status["mem_usage"] <= mem_avail - SAFE_MEM_REDUCE
             ]
