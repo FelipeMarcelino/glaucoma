@@ -12,7 +12,7 @@ BASE_PYTHON="python main.py"
 BASE_MEM="--mem_avail"
 
 LIST_BACKBONES=("regnetx" "regnet16x" "regnet32x" "regnet" "regnet16" "regnet32" "vit" "inception" "resnet" "shuffle" "mobile" "efficient")
-LIST_OPTIM=("adam" "ranger" "sgd" "ranger")
+LIST_OPTIM=("adam" "ranger" "sgd" "radam")
 LIST_ARQ=("double_img" "single_img") # single_img or double_img
 LIST_BATCH_SIZE=(16)
 LIST_FRAC_VAL=(0.2)

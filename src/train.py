@@ -8,6 +8,8 @@ from dataset import init_dataloader
 from model import init_optimizer
 from pytorch_memlab import profile
 
+num_accum_grad = 2
+
 
 @profile
 def train_model(
@@ -69,14 +71,30 @@ def train_model(
             true_epoch = []
 
             # Iterate over data.
-            for imgs_photo_1, imgs_photo_2, ft_numerical, labels in dataloaders[phase]:
-                imgs_photo_1 = imgs_photo_1.to(device)
-                imgs_photo_2 = imgs_photo_2.to(device)
-                ft_numerical = ft_numerical.to(device)
-                labels = labels.to(device)
+            for iter_batch, (
+                imgs_photo_1,
+                imgs_photo_2,
+                ft_numerical,
+                labels,
+            ) in enumerate(dataloaders[phase]):
+                imgs_photo_1 = imgs_photo_1.to(
+                    device,
+                    non_blocking=True,
+                )
+                imgs_photo_2 = imgs_photo_2.to(
+                    device,
+                    non_blocking=True,
+                )
+                ft_numerical = ft_numerical.to(
+                    device,
+                    non_blocking=True,
+                )
+                labels = labels.to(
+                    device,
+                    non_blocking=True,
+                )
 
                 # zero the parameter gradients
-                optimizer.zero_grad(set_to_none=True)
                 labels = labels.unsqueeze(1).float()
 
                 # forward
@@ -113,8 +131,13 @@ def train_model(
                         # loss.backward()
                         # optimizer.step()
                         scaler.scale(loss).backward()
-                        scaler.step(optimizer)
-                        scaler.update()
+
+                        if (iter_batch + 1) % num_accum_grad == 0 or (
+                            iter_batch + 1
+                        ) == len(dataloaders[phase]):
+                            scaler.step(optimizer)
+                            optimizer.zero_grad(set_to_none=True)
+                            scaler.update()
 
                 # statistics
                 running_loss += loss.item() * imgs_photo_1.size(0)

@@ -165,6 +165,8 @@ def main(
     status["cum_mem"] = status["mem_usage"].cumsum()
     status.reset_index(inplace=True, drop=True)
 
+    status.to_csv("tmp_status.csv", index=False)
+    sys.exit(1)
     if len(status) == 0:
         print("Stop", file=sys.stdout)
         return
