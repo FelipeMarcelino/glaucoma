@@ -23,7 +23,7 @@ from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import GroupShuffleSplit
 from torchvision.ops.boxes import torchvision
 from dataset import init_dataloader, init_k_fold
-from model import init_model, init_transforms
+from model import init_model
 from test import get_sigmoid_pred, get_shap_values
 from train import pre_train, train_model
 from params import ROOT_DIR, SUMMARY_PATH, DF_PEAK_SUMMARY
@@ -41,7 +41,7 @@ np.random.seed(42)
 
 @click.command
 @click.argument(
-    "csv_file", default="../data.csv", nargs=1, type=click.Path(exists=True)
+    "csv_file", default="../data_padded.csv", nargs=1, type=click.Path(exists=True)
 )
 @click.option(
     "--epochs",
@@ -121,7 +121,7 @@ np.random.seed(42)
     type=click.Choice(["adam", "sgd", "radam", "ranger"]),
 )
 @click.option("--lr", default=0.0001, type=float)
-@click.option("--batch_size", default=16, type=int)
+@click.option("--batch_size", default=4, type=int)
 @click.option("--patient", default=10, type=int)
 @click.option("--overwrite", is_flag=True, default=False, type=bool)
 @click.option("--autocast", is_flag=True, default=False, type=bool)
@@ -236,15 +236,9 @@ def main(
                     double_img,
                     output_tab,
                     ft_size,
-                )
-                (
                     preprocessing_train,
                     preprocessing_val,
-                    preprocessing_tab,
-                ) = init_transforms(input_size)
-
-                if debug:
-                    print(torchsummary(model))
+                )
 
                 (
                     model,
@@ -331,20 +325,13 @@ def main(
                 total_cross_val_time_iter = stop - start
                 total_cross_val_time += total_cross_val_time_iter
         else:
+
             model, input_size = init_model(
                 backbone,
                 pretrained,
                 double_img,
                 output_tab,
                 ft_size,
-            )
-
-            if debug:
-                print(torchsummary(model))
-                print(model)
-
-            preprocessing_train, preprocessing_val, preprocessing_tab = init_transforms(
-                input_size
             )
 
             # FIXME: Separar por paciente e não por olho
@@ -368,9 +355,6 @@ def main(
             model, optimizer, criterion, dataloader_train, dataloader_val = pre_train(
                 train,
                 val,
-                preprocessing_train,
-                preprocessing_val,
-                preprocessing_tab,
                 batch_size,
                 model,
                 device,
@@ -657,6 +641,7 @@ def main(
             else None
         )
         double_img_bool = True if row["double_img"].values[0] > 0 else False
+
         model, input_size = init_model(
             backbone,
             pretrained,
@@ -690,12 +675,6 @@ def main(
 
             oos[numerical_columns] = min_max_scaler.transform(oos[numerical_columns])
 
-            (
-                preprocessing_train,
-                preprocessing_oos,
-                preprocessing_tab,
-            ) = init_transforms(input_size)
-
             oos_loader = init_dataloader(
                 oos,
                 preprocessing_oos,
@@ -703,7 +682,6 @@ def main(
                 batch_size,
                 numerical_columns,
                 double_img_bool,
-                device,
             )
 
         if score:

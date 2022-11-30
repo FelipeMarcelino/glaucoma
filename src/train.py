@@ -77,6 +77,7 @@ def train_model(
                 ft_numerical,
                 labels,
             ) in enumerate(dataloaders[phase]):
+
                 imgs_photo_1 = imgs_photo_1.to(
                     device,
                     non_blocking=True,
@@ -106,20 +107,8 @@ def train_model(
                         dtype=torch.float16,
                         enabled=autocast,
                     ):
-                        if double_img and not output_tab:
-                            outputs = model(imgs_photo_1, imgs_photo_2, None)
-                        elif double_img and output_tab:
-                            outputs = model(imgs_photo_1, imgs_photo_2, ft_numerical)
-                        elif not double_img and output_tab:
-                            outputs = model(imgs_photo_1, None, ft_numerical)
-                        else:
-                            if is_inception and phase == "train":
-                                outputs, _ = model(imgs_photo_1)  # Remove aux output
-                                # loss1 = criterion(outputs, labels)
-                                # loss2 = criterion(aux_outputs, labels)
-                                # loss = loss1 + 0.4 * loss2
-                            else:
-                                outputs = model(imgs_photo_1)
+
+                        outputs = model(imgs_photo_1, imgs_photo_2, ft_numerical)
 
                         loss = criterion(outputs, labels)
 
@@ -191,8 +180,10 @@ def train_model(
                 if trigger_time >= patient:
                     break
 
-            time_elapsed_epoch = time.time() - start_epoch_time
-            print(f"Epoch in {int(time_elapsed_epoch)}/s")
+        time_elapsed_epoch = time.time() - start_epoch_time
+
+        print(f"Epoch in {int(time_elapsed_epoch)}/s")
+        print("")
 
     time_elapsed = time.time() - since
     print(
@@ -222,9 +213,6 @@ def train_model(
 def pre_train(
     train,
     val,
-    preprocessing_train,
-    preprocessing_val,
-    preprocessing_tab,
     batch_size,
     model,
     device,
@@ -237,8 +225,6 @@ def pre_train(
 
     dataloader_train = init_dataloader(
         train,
-        preprocessing_train,
-        preprocessing_tab,
         batch_size,
         ft_columns,
         double_img,
@@ -247,8 +233,6 @@ def pre_train(
 
     dataloader_val = init_dataloader(
         val,
-        preprocessing_val,
-        preprocessing_tab,
         batch_size,
         ft_columns,
         double_img,

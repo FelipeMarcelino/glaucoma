@@ -2,6 +2,7 @@ import torch
 import pandas as pd
 import random
 import os
+from torchvision.io import read_image
 from typing import List
 from skimage import io
 from params import ROOT_DIR
@@ -19,16 +20,14 @@ class GlaucomaRandomDataset(Dataset):
         root_dir: Path,
         ft_columns: List[str],
         double_img: bool,
-        transform_img=None,
-        transform_tab=None,
+        device: torch.device,
     ):
         super(GlaucomaRandomDataset, self).__init__()
         self.glaucoma_data = glaucoma_data
         self.root_dir = root_dir
-        self.transform_img = transform_img
-        self.transform_tab = transform_tab
         self.ft_columns = ft_columns
         self.double_img = double_img
+        self.device = device
 
     def __len__(self):
         return len(self.glaucoma_data)
@@ -39,34 +38,31 @@ class GlaucomaRandomDataset(Dataset):
 
         row = self.glaucoma_data.iloc[idx]
 
-        photo_1 = io.imread(self.root_dir / row["photo_1"])
-        photo_2 = io.imread(self.root_dir / row["photo_2"])
+        photo_1 = read_image(str(self.root_dir / row["photo_1"]))
+        photo_2 = read_image(str(self.root_dir / row["photo_2"]))
         label = row["label"]
         eye_side = row["eye_side"]
 
         ft_numerical = row[self.ft_columns].to_numpy(dtype="float32")
 
-        # if self.transform_tab:
-        #     ft_numerical = self.transform_tab(ft_numerical)
         ft_numerical = torch.from_numpy(ft_numerical)
-
-        if self.transform_img:
-            photo_1 = self.transform_img(photo_1)
-            photo_2 = self.transform_img(photo_2)
 
         if self.double_img:
             return photo_1, photo_2, ft_numerical, label
         else:
+            # if random.random() > 0.5:
+            #     return photo_1, photo_2, ft_numerical, label
+            # else:
+            #     return photo_2, photo_1, ft_numerical, label
+
             if random.random() > 0.5:
                 return photo_1, photo_2, ft_numerical, label
             else:
-                return photo_2, photo_1, ft_numerical, label
+                return photo_1, photo_2, ft_numerical, label
 
 
 def init_dataloader(
     data,
-    preprocessing_img,
-    preprocessing_tab,
     batch_size,
     ft_columns,
     double_img,
@@ -74,7 +70,11 @@ def init_dataloader(
 ):
 
     dataset = GlaucomaRandomDataset(
-        data, ROOT_DIR, ft_columns, double_img, preprocessing_img, preprocessing_tab
+        data,
+        ROOT_DIR,
+        ft_columns,
+        double_img,
+        device,
     )
     dataloader = DataLoader(
         dataset,
