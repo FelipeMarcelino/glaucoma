@@ -215,11 +215,10 @@ def main(
 
         if k_fold >= 2:
             total_cross_val_time = 0
-            # FIXME: Separar por paciente e não por olho
             folds = init_k_fold(data, k_fold)
 
             for index, (train, val) in enumerate(folds):
-                start = time.time()
+                start_fold = time.time()
                 print("Fold:", index + 1)
 
                 train[numerical_columns] = min_max_scaler.fit_transform(
@@ -327,8 +326,8 @@ def main(
                 fold_train_sensitivity_history.append(train_sensitivity_history)
                 fold_train_specificity_history.append(train_specificity_history)
 
-                stop = time.time()
-                total_cross_val_time_iter = stop - start
+                stop_fold = time.time()
+                total_cross_val_time_iter = stop_fold - start_fold
                 total_cross_val_time += total_cross_val_time_iter
         else:
             model, input_size = init_model(
@@ -347,18 +346,14 @@ def main(
                 input_size
             )
 
-            # FIXME: Separar por paciente e não por olho
-            msk = np.random.rand(len(data)) < (1 - frac_val)
+            splitter = GroupShuffleSplit(
+                test_size=frac_val, n_splits=1, random_state=42
+            )
+            split = splitter.split(data, groups=data["Patient"])
+            train_inds, test_inds = next(split)
 
-            # FIXME: Remove comments
-            # splitter = GroupShuffleSplit(test_size=frac_val, n_splits=1, random_state=42)
-            # split = splitter.split(data, groups=data["Patient"])
-            # train_inds, test_inds = next(split)
-
-            # train = data.iloc[train_inds]
-            # val = data[test_inds]
-            train = data[msk]
-            val = data[~msk]
+            train = data.iloc[train_inds]
+            val = data[test_inds]
 
             train[numerical_columns] = min_max_scaler.fit_transform(
                 train[numerical_columns]
