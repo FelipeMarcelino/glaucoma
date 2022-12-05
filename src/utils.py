@@ -136,3 +136,21 @@ def calculate_mem_size(active_bytes, reserved_bytes) -> int:
     total_mem = int(active_bytes_number + 1) + int(reserved_bytes_number + 1)
 
     return total_mem
+
+
+def open_result_file(model_id):
+    try:
+        f = open(
+            "../models/" + str(model_id) + "/" + str(model_id) + "results" + ".pkl",
+            "rb",
+        )
+        return f
+    except FileNotFoundError:
+        pass
+    try:
+        f = open("../models/" + str(model_id) + "/" + "results" + ".pkl", "rb")
+        return f
+    except FileNotFoundError:
+        pass
+
+    return None

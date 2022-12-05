@@ -16,3 +16,6 @@ FRAC_VAL_ARG = "--frac_val"
 K_FOLD_ARG = "--k_fold"
 LR_ARG = "--lr"
 EPOCHS_ARG = "--epochs"
+
+OCT_PRESENCE = "Usando OCT"
+DUAL_IMAGE = "Dual Image"
