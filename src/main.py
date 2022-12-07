@@ -346,14 +346,19 @@ def main(
                 input_size
             )
 
-            splitter = GroupShuffleSplit(
-                test_size=frac_val, n_splits=1, random_state=42
-            )
-            split = splitter.split(data, groups=data["Patient"])
-            train_inds, test_inds = next(split)
+            msk = np.random.rand(len(data)) < (1 - frac_val)
 
-            train = data.iloc[train_inds]
-            val = data[test_inds]
+            # splitter = GroupShuffleSplit(
+            #     test_size=frac_val, n_splits=1, random_state=42
+            # )
+            # split = splitter.split(data, groups=data["Patient"])
+            # train_inds, test_inds = next(split)
+
+            # train = data.iloc[train_inds]
+            # val = data[test_inds]
+
+            train = data[msk]
+            val = data[~msk]
 
             train[numerical_columns] = min_max_scaler.fit_transform(
                 train[numerical_columns]
