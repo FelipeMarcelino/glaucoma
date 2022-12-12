@@ -8,7 +8,6 @@ import copy
 # from pytorch_forecasting.optim import Ranger
 from torch_optimizer import Ranger, RAdam
 from torchvision import models, transforms
-from torchinfo import summary
 
 from torchvision import transforms
 
@@ -142,6 +141,20 @@ def init_optimizer(model, debug, optim_selected, lr):
         sys.exit(1)
 
     return optimizer
+
+
+def init_lr_scheduler(optimizer, scheduler_name):
+
+    if not scheduler_name:
+        return optimizer
+
+    if scheduler_name == "plateau":
+        scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, "min", patience=5)
+    else:
+        print("Scheduler not implemented. Exiting!!!")
+        sys.exit(1)
+
+    return scheduler
 
 
 def init_model(

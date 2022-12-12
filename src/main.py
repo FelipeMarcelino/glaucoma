@@ -13,7 +13,6 @@ import uuid
 import socket
 import os
 import time
-import sys
 
 
 from pathlib import Path
@@ -120,9 +119,10 @@ np.random.seed(42)
     default="adam",
     type=click.Choice(["adam", "sgd", "radam", "ranger"]),
 )
+@click.option("-sc", "--scheduler_name", default=None, type=click.Choice(["plateau"]))
 @click.option("--lr", default=0.0001, type=float)
 @click.option("--batch_size", default=16, type=int)
-@click.option("--patient", default=10, type=int)
+@click.option("--patient_el", default=10, type=int)
 @click.option("--overwrite", is_flag=True, default=False, type=bool)
 @click.option("--autocast", is_flag=True, default=False, type=bool)
 @click.option("--cudnn_bench", is_flag=True, default=False, type=bool)
@@ -144,9 +144,10 @@ def main(
     output_tab: int,
     early_start: int,
     optim: str,
+    scheduler_name: str,
     lr: float,
     batch_size: int,
-    patient: int,
+    patient_el: int,
     overwrite: bool,
     autocast: bool,
     cudnn_bench: bool,
@@ -208,6 +209,7 @@ def main(
         fold_train_auc_history = []
         fold_train_sensitivity_history = []
         fold_train_specificity_history = []
+        fold_lr_history = []
 
         min_max_scaler = MinMaxScaler()
 
@@ -248,6 +250,7 @@ def main(
                 (
                     model,
                     optimizer,
+                    scheduler,
                     criterion,
                     dataloader_train,
                     dataloader_val,
@@ -265,6 +268,7 @@ def main(
                     double_img,
                     optim,
                     lr,
+                    scheduler_name,
                 )
                 dataloaders_dict = {}
                 dataloaders_dict["train"] = dataloader_train
@@ -286,18 +290,20 @@ def main(
                     train_auc_history,
                     train_sensitivity_history,
                     train_specificity_history,
+                    lr_history,
                 ) = train_model(
                     model,
                     dataloaders_dict,
                     criterion,
                     optimizer,
+                    scheduler,
                     device,
                     double_img,
                     output_tab,
                     is_inception,
                     early_start,
                     epochs,
-                    patient=patient,
+                    patient_el=patient_el,
                     autocast=autocast,
                     cudnn_bench=cudnn_bench,
                 )
@@ -325,6 +331,7 @@ def main(
                 fold_train_auc_history.append(train_auc_history)
                 fold_train_sensitivity_history.append(train_sensitivity_history)
                 fold_train_specificity_history.append(train_specificity_history)
+                fold_lr_history.append(lr_history)
 
                 stop_fold = time.time()
                 total_cross_val_time_iter = stop_fold - start_fold
@@ -365,7 +372,14 @@ def main(
             )
             val[numerical_columns] = min_max_scaler.transform(val[numerical_columns])
 
-            model, optimizer, criterion, dataloader_train, dataloader_val = pre_train(
+            (
+                model,
+                optimizer,
+                scheduler,
+                criterion,
+                dataloader_train,
+                dataloader_val,
+            ) = pre_train(
                 train,
                 val,
                 preprocessing_train,
@@ -379,6 +393,7 @@ def main(
                 double_img,
                 optim,
                 lr,
+                scheduler_name,
             )
 
             torch.save(
@@ -445,18 +460,20 @@ def main(
                             train_auc_history,
                             train_sensitivity_history,
                             train_specificity_history,
+                            lr_history,
                         ) = train_model(
                             model,
                             dataloaders_dict,
                             criterion,
                             optimizer,
+                            scheduler,
                             device,
                             double_img,
                             output_tab,
                             is_inception,
                             early_start,
                             epochs,
-                            patient=patient,
+                            patient_el=patient_el,
                             autocast=autocast,
                             cudnn_bench=cudnn_bench,
                         )
@@ -518,6 +535,7 @@ def main(
                         train_auc_history,
                         train_sensitivity_history,
                         train_specificity_history,
+                        lr_history,
                     ) = train_model(
                         model,
                         dataloaders_dict,
@@ -529,7 +547,7 @@ def main(
                         is_inception,
                         early_start,
                         epochs,
-                        patient=patient,
+                        patient_el=patient_el,
                         autocast=autocast,
                         cudnn_bench=cudnn_bench,
                     )
@@ -544,6 +562,7 @@ def main(
                 fold_train_auc_history.append(train_auc_history)
                 fold_train_sensitivity_history.append(train_sensitivity_history)
                 fold_train_specificity_history.append(train_specificity_history)
+                fold_lr_history.append(lr_history)
 
                 torch.save(model.state_dict(), path + "model" + ".pth")
             except KeyboardInterrupt:
@@ -560,6 +579,7 @@ def main(
         dict_results["train_auc_history"] = fold_train_auc_history
         dict_results["train_sensitivity_history"] = fold_train_sensitivity_history
         dict_results["train_specificity_history"] = fold_train_specificity_history
+        dict_results["lr_history"] = fold_lr_history
 
         with open(path + "results.pkl", "wb") as handle:
             pickle.dump(dict_results, handle, protocol=pickle.HIGHEST_PROTOCOL)
@@ -609,7 +629,9 @@ def main(
             "lr": lr,
             "epochs": epochs,
             "double_img": 1 if double_img is True else 0,
+            "patient_el": patient_el,
             "output_tab": output_tab if output_tab is not None else np.nan,
+            "scheduler": scheduler if scheduler is not None else np.nan,
             "backbone": backbone,
             "early_start": early_start,
             "timestamp": str(datetime.now()),

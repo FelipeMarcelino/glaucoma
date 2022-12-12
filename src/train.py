@@ -5,7 +5,7 @@ import torch.nn as nn
 import numpy as np
 from sklearn.metrics import roc_auc_score, confusion_matrix
 from dataset import init_dataloader
-from model import init_optimizer
+from model import init_optimizer, init_lr_scheduler
 from pytorch_memlab import profile
 
 num_accum_grad = 2
@@ -17,13 +17,14 @@ def train_model(
     dataloaders,
     criterion,
     optimizer,
+    scheduler,
     device,
     double_img,
     output_tab,
     is_inception,
     early_start=100,
     num_epochs=100,
-    patient=10,
+    patient_el=10,
     autocast=False,
     cudnn_bench=False,
 ):
@@ -39,6 +40,7 @@ def train_model(
     train_sensitivity_history = []
     train_specificity_history = []
     train_loss_history = []
+    lr_history = []
 
     best_model_wts = copy.deepcopy(model.state_dict())
     best_auc = 0.0
@@ -156,9 +158,20 @@ def train_model(
             # Calculate sensitivity
             sensitivity = tp / (tp + fn)
 
+            if phase == "val" and scheduler:
+                scheduler.step(epoch_loss)
+
+            current_learning_rate = optimizer.param_groups[0]["lr"]
+
             print(
-                "{} Loss: {:.4f} Acc: {:.4f} AUC: {:.4f}, SP: {:.4f}, SN: {:.4f}".format(
-                    phase, epoch_loss, epoch_acc, epoch_auc, specificity, sensitivity
+                "{} Loss: {:.4f} Acc: {:.4f} AUC: {:.4f}, SP: {:.4f}, SN: {:.4f}, LR: {:.6f}".format(
+                    phase,
+                    epoch_loss,
+                    epoch_acc,
+                    epoch_auc,
+                    specificity,
+                    sensitivity,
+                    current_learning_rate,
                 )
             )
 
@@ -172,6 +185,7 @@ def train_model(
                 val_sensitivity_history.append(sensitivity)
                 val_specificity_history.append(specificity)
                 val_loss_history.append(running_loss)
+                lr_history.append(current_learning_rate)
 
             if phase == "train":
                 train_acc_history.append(epoch_acc.cpu().detach().numpy())
@@ -188,7 +202,7 @@ def train_model(
 
                 last_loss = epoch_loss
 
-                if trigger_time >= patient:
+                if trigger_time >= patient_el:
                     break
 
             time_elapsed_epoch = time.time() - start_epoch_time
@@ -216,6 +230,7 @@ def train_model(
         train_auc_history,
         train_sensitivity_history,
         train_specificity_history,
+        lr_history,
     )
 
 
@@ -233,6 +248,7 @@ def pre_train(
     double_img,
     optim,
     lr,
+    scheduler_name,
 ):
 
     dataloader_train = init_dataloader(
@@ -261,4 +277,6 @@ def pre_train(
 
     optimizer = init_optimizer(model, debug, optim, lr)
 
-    return model, optimizer, criterion, dataloader_train, dataloader_val
+    scheduler = init_lr_scheduler(optimizer, scheduler_name)
+
+    return model, optimizer, scheduler, criterion, dataloader_train, dataloader_val
