@@ -6,12 +6,10 @@ import numpy as np
 from sklearn.metrics import roc_auc_score, confusion_matrix
 from dataset import init_dataloader
 from model import init_optimizer, init_lr_scheduler
-from pytorch_memlab import profile
 
 num_accum_grad = 2
 
 
-@profile
 def train_model(
     model,
     dataloaders,
