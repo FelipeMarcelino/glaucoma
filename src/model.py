@@ -121,8 +121,6 @@ def init_transforms(input_size: int, randaugop: int):
     if randaugop:
         preprocessing_train.transforms.insert(1, RandAugment(randaugop))
 
-    print(preprocessing_train)
-
     return preprocessing_train, preprocessing_val, preprocessing_tab
 
 
