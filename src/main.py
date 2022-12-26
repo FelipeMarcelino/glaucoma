@@ -174,6 +174,8 @@ def main(
         "backbone": backbone,
         "torch_version": torch.__version__,
         "torchvision_version": torchvision.__version__,
+        "scheduler": scheduler_name,
+        "randaugop": randaugop,
     }
 
     if not test and not debug and not overwrite:
