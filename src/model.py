@@ -8,6 +8,7 @@ import copy
 # from pytorch_forecasting.optim import Ranger
 from torch_optimizer import Ranger, RAdam
 from torchvision import models, transforms
+from torchvision.transforms import RandAugment
 
 from torchvision import transforms
 
@@ -86,7 +87,7 @@ class MultiInputModel(nn.Module):
         return output
 
 
-def init_transforms(input_size: int):
+def init_transforms(input_size: int, randaugop: int):
 
     normalize = transforms.Normalize(
         mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
@@ -114,6 +115,13 @@ def init_transforms(input_size: int):
     )
 
     preprocessing_tab = transforms.Compose([transforms.ToTensor()])
+
+    # Add rand_augmentation
+
+    if randaugop:
+        preprocessing_train.transforms.insert(1, RandAugment(randaugop))
+
+    print(preprocessing_train)
 
     return preprocessing_train, preprocessing_val, preprocessing_tab
 
@@ -146,7 +154,7 @@ def init_optimizer(model, debug, optim_selected, lr):
 def init_lr_scheduler(optimizer, scheduler_name):
 
     if not scheduler_name:
-        return optimizer
+        return None
 
     if scheduler_name == "plateau":
         scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, "min", patience=5)

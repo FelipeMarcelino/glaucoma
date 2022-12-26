@@ -44,7 +44,7 @@ def train_model(
     best_auc = 0.0
 
     trigger_time = 0
-    last_loss = np.inf
+    min_loss = np.inf
 
     scaler = torch.cuda.amp.GradScaler(enabled=autocast)
 
@@ -193,12 +193,11 @@ def train_model(
                 train_loss_history.append(running_loss)
 
             if phase == "val" and epoch >= early_start:
-                if epoch_loss > last_loss:
+                if epoch_loss > min_loss:
                     trigger_time += 1
                 else:
+                    min_loss = epoch_loss
                     trigger_time = 0
-
-                last_loss = epoch_loss
 
                 if trigger_time >= patient_el:
                     break

@@ -126,6 +126,7 @@ np.random.seed(42)
 @click.option("--overwrite", is_flag=True, default=False, type=bool)
 @click.option("--autocast", is_flag=True, default=False, type=bool)
 @click.option("--cudnn_bench", is_flag=True, default=False, type=bool)
+@click.option("-aug", "--randaugop", type=int, default=0)
 def main(
     csv_file,
     epochs: int,
@@ -151,6 +152,7 @@ def main(
     overwrite: bool,
     autocast: bool,
     cudnn_bench: bool,
+    randaugop: int,
 ):
 
     start = time.time()
@@ -242,7 +244,7 @@ def main(
                     preprocessing_train,
                     preprocessing_val,
                     preprocessing_tab,
-                ) = init_transforms(input_size)
+                ) = init_transforms(input_size, randaugop)
 
                 if debug:
                     print(torchsummary(model))
@@ -350,22 +352,23 @@ def main(
                 print(model)
 
             preprocessing_train, preprocessing_val, preprocessing_tab = init_transforms(
-                input_size
+                input_size,
+                randaugop,
             )
 
-            msk = np.random.rand(len(data)) < (1 - frac_val)
+            # msk = np.random.rand(len(data)) < (1 - frac_val)
 
-            # splitter = GroupShuffleSplit(
-            #     test_size=frac_val, n_splits=1, random_state=42
-            # )
-            # split = splitter.split(data, groups=data["Patient"])
-            # train_inds, test_inds = next(split)
+            splitter = GroupShuffleSplit(
+                test_size=frac_val, n_splits=1, random_state=42
+            )
+            split = splitter.split(data, groups=data["Patient"])
+            train_inds, test_inds = next(split)
 
-            # train = data.iloc[train_inds]
-            # val = data[test_inds]
+            train = data.iloc[train_inds]
+            val = data.iloc[test_inds]
 
-            train = data[msk]
-            val = data[~msk]
+            # train = data[msk]
+            # val = data[~msk]
 
             train[numerical_columns] = min_max_scaler.fit_transform(
                 train[numerical_columns]
@@ -645,6 +648,7 @@ def main(
             "pred_val": 0,
             "pred_oos": 0,
             "batch_size": batch_size,
+            "randaugop": randaugop,
         }
 
         try:
@@ -716,7 +720,7 @@ def main(
                 preprocessing_train,
                 preprocessing_oos,
                 preprocessing_tab,
-            ) = init_transforms(input_size)
+            ) = init_transforms(input_size, randaugop)
 
             oos_loader = init_dataloader(
                 oos,
