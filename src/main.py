@@ -636,7 +636,7 @@ def main(
             "double_img": 1 if double_img is True else 0,
             "patient_el": patient_el,
             "output_tab": output_tab if output_tab is not None else np.nan,
-            "scheduler": scheduler if scheduler is not None else np.nan,
+            "scheduler": scheduler_name if scheduler_name is not None else np.nan,
             "backbone": backbone,
             "early_start": early_start,
             "timestamp": str(datetime.now()),
