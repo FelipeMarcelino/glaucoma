@@ -28,6 +28,7 @@ from train import pre_train, train_model
 from params import ROOT_DIR, SUMMARY_PATH, DF_PEAK_SUMMARY
 from utils import calculate_mem_size, check_execution_already
 from dotenv import load_dotenv
+from test_procedure import inference
 
 load_dotenv()
 
@@ -693,69 +694,63 @@ def main(
             ft_size,
         )
 
-        print(model.load_state_dict(torch.load(path + "model" + ".pth")))
+        if row["frac_val"] == pd.nan:
+            model_name = "model"
+            train_loader_name = "train_dataloader"
+            val_loader_name = "val_dataloader"
 
-        train_loader = torch.load(path + "train_dataloader" + ".pth")
-        val_loader = torch.load(path + "val_dataloader" + ".pth")
-        val_loader.dataset.root_dir = ROOT_DIR
-        train_loader.dataset.root_dir = ROOT_DIR
-
-        train_dataset_transformed = train_loader.dataset.glaucoma_data
-
-        oos_loader = None
-
-        if oos_dataset_path:
-
-            oos = pd.read_csv(oos_dataset_path)
-
-            train = data.iloc[train_dataset_transformed.index]
-
-            min_max_scaler = MinMaxScaler()
-
-            train[numerical_columns] = min_max_scaler.fit_transform(
-                train[numerical_columns]
-            )
-
-            oos[numerical_columns] = min_max_scaler.transform(oos[numerical_columns])
-
-            (
-                preprocessing_train,
-                preprocessing_oos,
-                preprocessing_tab,
-            ) = init_transforms(input_size, randaugop)
-
-            oos_loader = init_dataloader(
-                oos,
-                preprocessing_oos,
-                preprocessing_tab,
-                batch_size,
-                numerical_columns,
-                double_img_bool,
-                device,
-            )
-
-        if score:
-            get_sigmoid_pred(
+            inference(
+                path,
                 model,
-                train_loader,
-                val_loader,
-                oos_loader,
-                output_tab,
+                numerical_columns,
+                randaugop,
+                input_size,
+                data,
+                oos_dataset_path,
                 double_img_bool,
+                output_tab,
+                score,
+                shap,
+                size_shap,
+                balanced_shap,
                 model_id,
                 model_folder,
+                device,
+                batch_size,
+                model_name,
+                train_loader_name,
+                val_loader_name,
             )
-        if shap:
-            get_shap_values(
-                model,
-                train_loader,
-                val_loader,
-                oos_loader,
-                balanced_shap,
-                size_shap,
-                input_size,
-                path,
-            )
+        else:
+            k_fold = int(row["k_fold"])
+
+            for i in range(1, k_fold + 1):
+                model_name = "model_folder_" + str(i)
+                train_loader_name = "train_dataloader_fold_" + str(i)
+                val_loader_name = "val_dataloader_fold_" + str(i)
+
+                inference(
+                    path,
+                    model,
+                    numerical_columns,
+                    randaugop,
+                    input_size,
+                    data,
+                    oos_dataset_path,
+                    double_img_bool,
+                    output_tab,
+                    score,
+                    shap,
+                    size_shap,
+                    balanced_shap,
+                    model_id,
+                    model_folder,
+                    device,
+                    batch_size,
+                    model_name,
+                    train_loader_name,
+                    val_loader_name,
+                )
 
 
 if __name__ == "__main__":

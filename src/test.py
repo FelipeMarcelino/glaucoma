@@ -123,6 +123,7 @@ def get_sigmoid_pred(
     double_img,
     model_id,
     model_folder,
+    model_name,
 ):
 
     pred_list_train = []
@@ -221,6 +222,7 @@ def get_shap_values(
     size,
     input_size,
     path,
+    model_name,
 ):
 
     if balanced:
@@ -308,5 +310,5 @@ def get_shap_values(
             else "shap_values_dict_oos.pkl"
         )
 
-        with open(path + name_file, "wb") as handle:
+        with open(path + model_name + name_file, "wb") as handle:
             pickle.dump(shap_dict_oos, handle, protocol=pickle.HIGHEST_PROTOCOL)
