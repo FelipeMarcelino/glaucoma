@@ -696,13 +696,14 @@ def main(
             output_tab,
             ft_size,
         )
+        inference_ms = None
 
         if row["frac_val"].values[0] is pd.NA:
             model_name = "model"
             train_loader_name = "train_dataloader"
             val_loader_name = "val_dataloader"
 
-            inference(
+            inference_ms = inference(
                 path,
                 model,
                 numerical_columns,
@@ -756,11 +757,23 @@ def main(
                     val_loader_name,
                 )
                 print("Final shap:", (time.time() - start_shap) / 3600)
-                if inference_ms:
-                    summary.loc[
-                        summary["model_id"] == model_id, "inference_time"
-                    ] = inference_ms
-                    summary.to_csv("../model_summary.csv", index=False)
+
+        if inference_ms:
+            summary.loc[
+                summary["model_id"] == model_id, "inference_time"
+            ] = inference_ms
+        if score:
+            summary.loc[summary["model_id"] == model_id, "pred_val"] = 1
+
+            if oos_dataset_path:
+                summary.loc[summary["model_id"] == model_id, "pred_oos"] = 1
+        if shap:
+            summary.loc[summary["model_id"] == model_id, "shap_val"] = 1
+
+            if oos_dataset_path:
+                summary.loc[summary["model_id"] == model_id, "shap_oos"] = 1
+
+        summary.to_csv("../model_summary.csv", index=False)
 
 
 if __name__ == "__main__":
