@@ -1,4 +1,5 @@
 import torch
+import time
 import pandas as pd
 from params import ROOT_DIR
 from sklearn.preprocessing import MinMaxScaler
@@ -55,7 +56,7 @@ def inference(
         oos[numerical_columns] = min_max_scaler.transform(oos[numerical_columns])
 
         (
-            _ ,
+            _,
             preprocessing_oos,
             preprocessing_tab,
         ) = init_transforms(input_size, randaugop)
@@ -70,8 +71,10 @@ def inference(
             device,
         )
 
+    inference_ms = None
     if score:
-        get_sigmoid_pred(
+        inference_time_start = time.time()
+        pred_size = get_sigmoid_pred(
             model,
             train_loader,
             val_loader,
@@ -82,6 +85,11 @@ def inference(
             model_folder,
             model_name,
         )
+        inference_time_stop = time.time()
+        inference_ms = round(
+            (inference_time_stop - inference_time_start) / (pred_size * 3), 3
+        )
+
     if shap:
         get_shap_values(
             model,
@@ -93,4 +101,8 @@ def inference(
             input_size,
             path,
             model_name,
+            double_img_bool,
+            output_tab,
         )
+
+    return inference_ms

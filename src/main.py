@@ -84,7 +84,7 @@ np.random.seed(42)
 @click.option("--oos_dataset_path", "-oos", type=click.Path(exists=True), default=None)
 @click.option(
     "--backbone",
-    default="regnet",
+    default="regnety",
     type=click.Choice(
         [
             "regnetx",
@@ -96,9 +96,9 @@ np.random.seed(42)
             "vit",
             "inception",
             "resnet",
-            "regnet",
-            "regnet16",
-            "regnet32",
+            "regnety",
+            "regnet16y",
+            "regnet32y",
         ]
     ),
 )
@@ -652,6 +652,7 @@ def main(
             "pred_oos": 0,
             "batch_size": batch_size,
             "randaugop": randaugop,
+            "inference_time": np.nan,
         }
 
         try:
@@ -670,8 +671,10 @@ def main(
             return
 
         summary = pd.read_csv("../model_summary.csv", sep=",")
-        summary = summary.drop_duplicates(subset=["model_id"])
+        summary: pd.DataFrame = summary.drop_duplicates(subset=["model_id"])
         print(f"Testing model...")
+        print(model_id)
+        print(summary.shape)
         row = summary[summary["model_id"] == model_id]
         print(row.squeeze())
 
@@ -694,7 +697,7 @@ def main(
             ft_size,
         )
 
-        if row["frac_val"] == pd.nan:
+        if row["frac_val"].values[0] is pd.NA:
             model_name = "model"
             train_loader_name = "train_dataloader"
             val_loader_name = "val_dataloader"
@@ -725,11 +728,12 @@ def main(
             k_fold = int(row["k_fold"])
 
             for i in range(1, k_fold + 1):
-                model_name = "model_folder_" + str(i)
+                model_name = "model_fold_" + str(i)
                 train_loader_name = "train_dataloader_fold_" + str(i)
                 val_loader_name = "val_dataloader_fold_" + str(i)
 
-                inference(
+                start_shap = time.time()
+                inference_ms = inference(
                     path,
                     model,
                     numerical_columns,
@@ -751,6 +755,12 @@ def main(
                     train_loader_name,
                     val_loader_name,
                 )
+                print("Final shap:", (time.time() - start_shap) / 3600)
+                if inference_ms:
+                    summary.loc[
+                        summary["model_id"] == model_id, "inference_time"
+                    ] = inference_ms
+                    summary.to_csv("../model_summary.csv", index=False)
 
 
 if __name__ == "__main__":

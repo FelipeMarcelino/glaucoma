@@ -3,37 +3,65 @@ import torch
 import numpy as np
 import shap
 import pickle
+import time
 
 CHANNELS = 3
 
 
+def get_explainer(
+    model, photos1_train, photos2_train, ft_numerical_train, double_img, output_tab
+):
+    if double_img and not output_tab:
+        explainer = shap.DeepExplainer(model, [photos1_train, photos2_train, None])
+    elif double_img and output_tab:
+        explainer = shap.DeepExplainer(
+            model, [photos1_train, photos2_train, ft_numerical_train]
+        )
+    elif not double_img and output_tab:
+        explainer = shap.DeepExplainer(model, [photos1_train, None, ft_numerical_train])
+    else:
+        explainer = shap.DeepExplainer(model, [photos1_train])
+
+    return explainer
+
+
 def shap_values(
-    model,
-    photos1_train,
-    photos2_train,
-    ft_numerical_train,
+    explainer,
     photos1_val,
     photos2_val,
     ft_numerical_val,
     input_size,
+    double_img,
+    output_tab,
 ):
     """
     Return shap_values_photo1, shap_values_photo2, shap_values_nuermical
     """
 
-    explainer = shap.DeepExplainer(
-        model,
-        [
-            photos1_train,
-            photos2_train,
-            ft_numerical_train,
-        ],
-    )
-    (
-        shap_values_photo1,
-        shap_values_photo2,
-        shap_values_numerical,
-    ) = explainer.shap_values([photos1_val, photos2_val, ft_numerical_val])
+    if double_img and not output_tab:
+        (
+            shap_values_photo1,
+            shap_values_photo2,
+            shap_values_numerical,
+        ) = explainer.shap_values([photos1_val, photos2_val, None])
+    elif double_img and output_tab:
+        (
+            shap_values_photo1,
+            shap_values_photo2,
+            shap_values_numerical,
+        ) = explainer.shap_values([photos1_val, photos2_val, ft_numerical_val])
+    elif not double_img and output_tab:
+        (
+            shap_values_photo1,
+            shap_values_photo2,
+            shap_values_numerical,
+        ) = explainer.shap_values([photos1_val, None, ft_numerical_val])
+    else:
+        (
+            shap_values_photo1,
+            shap_values_photo2,
+            shap_values_numerical,
+        ) = explainer.shap_values([photos1_val])
 
     return (
         shap_values_photo1.reshape(-1, input_size, input_size, CHANNELS),
@@ -210,7 +238,11 @@ def get_sigmoid_pred(
     df_pred = pd.concat([train_df_pred, val_df_pred, oos_df_pred])
     df_pred["model_id"] = model_id
 
-    df_pred.to_csv(model_folder + str(model_id) + "/" + "pred.csv", index=False)
+    df_pred.to_csv(
+        model_folder + str(model_id) + "/" + model_name + "_pred.csv", index=False
+    )
+
+    return len(df_pred)
 
 
 def get_shap_values(
@@ -223,6 +255,8 @@ def get_shap_values(
     input_size,
     path,
     model_name,
+    double_img_bool,
+    output_tab,
 ):
 
     if balanced:
@@ -247,19 +281,27 @@ def get_shap_values(
         _,
     ) = get_samples_from_loader(val_loader, len(val_loader.dataset))
 
+    explainer = get_explainer(
+        model,
+        photos1_train,
+        photos2_train,
+        ft_numerical_train,
+        double_img_bool,
+        output_tab,
+    )
+
     (
         shap_values_photo1_val,
         shap_values_photo2_val,
         shap_values_numerical_val,
     ) = shap_values(
-        model,
-        photos1_train,
-        photos2_train,
-        ft_numerical_train,
+        explainer,
         photos1_val,
         photos2_val,
         ft_numerical_val,
         input_size,
+        double_img_bool,
+        output_tab,
     )
 
     shap_dict_val = {}
@@ -288,14 +330,13 @@ def get_shap_values(
             shap_values_photo2_oos,
             shap_values_numerical_oos,
         ) = shap_values(
-            model,
-            photos1_train,
-            photos2_train,
-            ft_numerical_train,
+            explainer,
             photos1_oos,
             photos2_oos,
             ft_numerical_oos,
             input_size,
+            double_img_bool,
+            output_tab,
         )
 
         shap_dict_oos = {}

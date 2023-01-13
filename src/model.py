@@ -171,8 +171,8 @@ def init_model(
     ft_size: int,
 ):
 
-    if model_name == "regnetx" or model_name == "regnet":
-        if "regnet" == model_name:
+    if model_name == "regnetx" or model_name == "regnety":
+        if "regnety" == model_name:
             model = models.regnet_y_800mf(pretrained)
             in_features = 784
         else:
@@ -193,8 +193,8 @@ def init_model(
             model.fc = nn.Linear(num_ftrs, 1)
         input_size = 224
 
-    if model_name == "regnet16x" or model_name == "regnet16":
-        if "regnet16" == model_name:
+    if model_name == "regnet16x" or model_name == "regnet16y":
+        if "regnet16y" == model_name:
             model = models.regnet_y_1_6gf(pretrained)
             in_features = 888
         else:
@@ -215,8 +215,8 @@ def init_model(
             model.fc = nn.Linear(num_ftrs, 1)
         input_size = 224
 
-    if model_name == "regnet32x" or model_name == "regnet32":
-        if "regnet32" == model_name:
+    if model_name == "regnet32x" or model_name == "regnet32y":
+        if "regnet32y" == model_name:
             model = models.regnet_y_3_2gf(pretrained)
             in_features = 1512
         else:
