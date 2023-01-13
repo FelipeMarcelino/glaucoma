@@ -696,7 +696,7 @@ def main(
             output_tab,
             ft_size,
         )
-        inference_ms = None
+        inference_ms_all = None
 
         if row["frac_val"].values[0] is pd.NA:
             model_name = "model"
@@ -733,7 +733,6 @@ def main(
                 train_loader_name = "train_dataloader_fold_" + str(i)
                 val_loader_name = "val_dataloader_fold_" + str(i)
 
-                start_shap = time.time()
                 inference_ms = inference(
                     path,
                     model,
@@ -756,12 +755,13 @@ def main(
                     train_loader_name,
                     val_loader_name,
                 )
-                print("Final shap:", (time.time() - start_shap) / 3600)
+                if not inference_ms_all:
+                    inference_ms_all = inference_ms
 
         if inference_ms:
             summary.loc[
                 summary["model_id"] == model_id, "inference_time"
-            ] = inference_ms
+            ] = inference_ms_all
         if score:
             summary.loc[summary["model_id"] == model_id, "pred_val"] = 1
 
