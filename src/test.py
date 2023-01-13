@@ -217,10 +217,10 @@ def get_sigmoid_pred(
         true_list_train.extend(labels.data.cpu().detach().numpy().tolist())
 
     for imgs_photo_1, imgs_photo_2, ft_numerical, labels in val_loader:
-        imgs_photo_1.to(device)
-        imgs_photo_2.to(device)
-        ft_numerical.to(device)
-        labels.to(device)
+        imgs_photo_1 = imgs_photo_1.to(device)
+        imgs_photo_2 = imgs_photo_2.to(device)
+        ft_numerical = ft_numerical.to(device)
+        labels = labels.to(device)
 
         if double_img and not output_tab:
             outputs = model(imgs_photo_1, imgs_photo_2, None)
@@ -241,10 +241,10 @@ def get_sigmoid_pred(
     if oos_loader:
 
         for imgs_photo_1, imgs_photo_2, ft_numerical, labels in oos_loader:
-            imgs_photo_1.to(device)
-            imgs_photo_2.to(device)
-            ft_numerical.to(device)
-            labels.to(device)
+            imgs_photo_1 = imgs_photo_1.to(device)
+            imgs_photo_2 = imgs_photo_2.to(device)
+            ft_numerical = ft_numerical.to(device)
+            labels = labels.to(device)
 
             if double_img and not output_tab:
                 outputs = model(imgs_photo_1, imgs_photo_2, None)
