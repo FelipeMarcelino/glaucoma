@@ -21,11 +21,10 @@ from torchinfo import summary as torchsummary
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import GroupShuffleSplit
 from torchvision.ops.boxes import torchvision
-from dataset import init_dataloader, init_k_fold
+from dataset import init_k_fold
 from model import init_model, init_transforms
-from test import get_sigmoid_pred, get_shap_values
 from train import pre_train, train_model
-from params import ROOT_DIR, SUMMARY_PATH, DF_PEAK_SUMMARY
+from params import SUMMARY_PATH, DF_PEAK_SUMMARY
 from utils import calculate_mem_size, check_execution_already
 from dotenv import load_dotenv
 from test_procedure import inference

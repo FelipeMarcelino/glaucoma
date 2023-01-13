@@ -20,11 +20,21 @@ def get_explainer(
 
     if double_img and not output_tab:
         explainer = shap.DeepExplainer(
-            model, [photos1_train, photos2_train, ft_numerical_train]
+            model,
+            [
+                photos1_train.to(device),
+                photos2_train.to(device),
+                ft_numerical_train.to(device),
+            ],
         )
     elif double_img and output_tab:
         explainer = shap.DeepExplainer(
-            model, [photos1_train, photos2_train, ft_numerical_train]
+            model,
+            [
+                photos1_train.to(device),
+                photos2_train.to(device),
+                ft_numerical_train.to(device),
+            ],
         )
     elif not double_img and output_tab:
         explainer = shap.DeepExplainer(
@@ -36,7 +46,7 @@ def get_explainer(
             ],
         )
     else:
-        explainer = shap.DeepExplainer(model, [photos1_train])
+        explainer = shap.DeepExplainer(model, [photos1_train.to(device)])
 
     return explainer
 
@@ -185,10 +195,10 @@ def get_sigmoid_pred(
     true_list_oos = []
 
     for imgs_photo_1, imgs_photo_2, ft_numerical, labels in train_loader:
-        imgs_photo_1.to(device)
-        imgs_photo_2.to(device)
-        ft_numerical.to(device)
-        labels.to(device)
+        imgs_photo_1 = imgs_photo_1.to(device)
+        imgs_photo_2 = imgs_photo_2.to(device)
+        ft_numerical = ft_numerical.to(device)
+        labels = labels.to(device)
 
         if double_img and not output_tab:
             outputs = model(imgs_photo_1, imgs_photo_2, None)
