@@ -689,19 +689,21 @@ def main(
             else None
         )
         double_img_bool = True if row["double_img"].values[0] > 0 else False
-        model, input_size = init_model(
-            backbone,
-            pretrained,
-            double_img_bool,
-            output_tab,
-            ft_size,
-        )
         inference_ms_all = None
 
         if row["frac_val"].values[0] is pd.NA:
             model_name = "model"
             train_loader_name = "train_dataloader"
             val_loader_name = "val_dataloader"
+
+            model, input_size = init_model(
+                backbone,
+                pretrained,
+                double_img_bool,
+                output_tab,
+                ft_size,
+            )
+            model.to(device)
 
             inference_ms = inference(
                 path,
@@ -724,14 +726,24 @@ def main(
                 model_name,
                 train_loader_name,
                 val_loader_name,
+                ft_size,
             )
         else:
             k_fold = int(row["k_fold"])
 
             for i in range(1, k_fold + 1):
+
+                model, input_size = init_model(
+                    backbone,
+                    pretrained,
+                    double_img_bool,
+                    output_tab,
+                    ft_size,
+                )
                 model_name = "model_fold_" + str(i)
                 train_loader_name = "train_dataloader_fold_" + str(i)
                 val_loader_name = "val_dataloader_fold_" + str(i)
+                model.to(device)
 
                 inference_ms = inference(
                     path,
@@ -754,6 +766,7 @@ def main(
                     model_name,
                     train_loader_name,
                     val_loader_name,
+                    ft_size,
                 )
                 if not inference_ms_all:
                     inference_ms_all = inference_ms

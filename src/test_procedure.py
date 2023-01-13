@@ -29,6 +29,7 @@ def inference(
     model_name,
     train_loader_name,
     val_loader_name,
+    ft_size,
 ):
     print(model.load_state_dict(torch.load(path + model_name + ".pth")))
 
@@ -84,6 +85,7 @@ def inference(
             model_id,
             model_folder,
             model_name,
+            device,
         )
         inference_time_stop = time.time()
         inference_ms = round(
@@ -103,6 +105,8 @@ def inference(
             model_name,
             double_img_bool,
             output_tab,
+            ft_size,
+            device,
         )
 
     return inference_ms

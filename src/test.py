@@ -9,16 +9,32 @@ CHANNELS = 3
 
 
 def get_explainer(
-    model, photos1_train, photos2_train, ft_numerical_train, double_img, output_tab
+    model,
+    photos1_train,
+    photos2_train,
+    ft_numerical_train,
+    double_img,
+    output_tab,
+    device,
 ):
+
     if double_img and not output_tab:
-        explainer = shap.DeepExplainer(model, [photos1_train, photos2_train, None])
+        explainer = shap.DeepExplainer(
+            model, [photos1_train, photos2_train, ft_numerical_train]
+        )
     elif double_img and output_tab:
         explainer = shap.DeepExplainer(
             model, [photos1_train, photos2_train, ft_numerical_train]
         )
     elif not double_img and output_tab:
-        explainer = shap.DeepExplainer(model, [photos1_train, None, ft_numerical_train])
+        explainer = shap.DeepExplainer(
+            model,
+            [
+                photos1_train.to(device),
+                photos2_train.to(device),
+                ft_numerical_train.to(device),
+            ],
+        )
     else:
         explainer = shap.DeepExplainer(model, [photos1_train])
 
@@ -33,17 +49,23 @@ def shap_values(
     input_size,
     double_img,
     output_tab,
+    ft_size,
+    device,
 ):
     """
     Return shap_values_photo1, shap_values_photo2, shap_values_nuermical
     """
+
+    photos1_val.to(device)
+    photos2_val.to(device)
+    ft_numerical_val.to(device)
 
     if double_img and not output_tab:
         (
             shap_values_photo1,
             shap_values_photo2,
             shap_values_numerical,
-        ) = explainer.shap_values([photos1_val, photos2_val, None])
+        ) = explainer.shap_values([photos1_val, photos2_val])
     elif double_img and output_tab:
         (
             shap_values_photo1,
@@ -55,13 +77,13 @@ def shap_values(
             shap_values_photo1,
             shap_values_photo2,
             shap_values_numerical,
-        ) = explainer.shap_values([photos1_val, None, ft_numerical_val])
+        ) = explainer.shap_values([photos1_val, photos2_val, ft_numerical_val])
     else:
-        (
-            shap_values_photo1,
-            shap_values_photo2,
-            shap_values_numerical,
-        ) = explainer.shap_values([photos1_val])
+        (shap_values_photo1,) = explainer.shap_values([photos1_val])
+        shap_values_photo2 = np.zeros(
+            (len(photos1_val), input_size, input_size, CHANNELS)
+        )
+        shap_values_numerical = np.zeros((len(photos1_val), ft_size))
 
     return (
         shap_values_photo1.reshape(-1, input_size, input_size, CHANNELS),
@@ -152,6 +174,7 @@ def get_sigmoid_pred(
     model_id,
     model_folder,
     model_name,
+    device,
 ):
 
     pred_list_train = []
@@ -162,6 +185,10 @@ def get_sigmoid_pred(
     true_list_oos = []
 
     for imgs_photo_1, imgs_photo_2, ft_numerical, labels in train_loader:
+        imgs_photo_1.to(device)
+        imgs_photo_2.to(device)
+        ft_numerical.to(device)
+        labels.to(device)
 
         if double_img and not output_tab:
             outputs = model(imgs_photo_1, imgs_photo_2, None)
@@ -180,6 +207,10 @@ def get_sigmoid_pred(
         true_list_train.extend(labels.data.cpu().detach().numpy().tolist())
 
     for imgs_photo_1, imgs_photo_2, ft_numerical, labels in val_loader:
+        imgs_photo_1.to(device)
+        imgs_photo_2.to(device)
+        ft_numerical.to(device)
+        labels.to(device)
 
         if double_img and not output_tab:
             outputs = model(imgs_photo_1, imgs_photo_2, None)
@@ -200,6 +231,10 @@ def get_sigmoid_pred(
     if oos_loader:
 
         for imgs_photo_1, imgs_photo_2, ft_numerical, labels in oos_loader:
+            imgs_photo_1.to(device)
+            imgs_photo_2.to(device)
+            ft_numerical.to(device)
+            labels.to(device)
 
             if double_img and not output_tab:
                 outputs = model(imgs_photo_1, imgs_photo_2, None)
@@ -257,6 +292,8 @@ def get_shap_values(
     model_name,
     double_img_bool,
     output_tab,
+    ft_size,
+    device,
 ):
 
     if balanced:
@@ -288,6 +325,7 @@ def get_shap_values(
         ft_numerical_train,
         double_img_bool,
         output_tab,
+        device,
     )
 
     (
@@ -302,6 +340,8 @@ def get_shap_values(
         input_size,
         double_img_bool,
         output_tab,
+        ft_size,
+        device,
     )
 
     shap_dict_val = {}
@@ -314,7 +354,7 @@ def get_shap_values(
         "balanced_shap_values_dict_val.pkl" if balanced else "shap_values_dict_val.pkl"
     )
 
-    with open(path + name_file, "wb") as handle:
+    with open(path + model_name + "_" + name_file, "wb") as handle:
         pickle.dump(shap_dict_val, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
     if oos_loader:
@@ -337,6 +377,8 @@ def get_shap_values(
             input_size,
             double_img_bool,
             output_tab,
+            ft_size,
+            device,
         )
 
         shap_dict_oos = {}
@@ -351,5 +393,5 @@ def get_shap_values(
             else "shap_values_dict_oos.pkl"
         )
 
-        with open(path + model_name + name_file, "wb") as handle:
+        with open(path + model_name + "_" + name_file, "wb") as handle:
             pickle.dump(shap_dict_oos, handle, protocol=pickle.HIGHEST_PROTOCOL)
