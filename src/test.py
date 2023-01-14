@@ -194,7 +194,7 @@ def get_sigmoid_pred(
     pred_list_oos = []
     true_list_oos = []
 
-    model.test()
+    model.eval()
 
     for imgs_photo_1, imgs_photo_2, ft_numerical, labels in train_loader:
         imgs_photo_1 = imgs_photo_1.to(device)
