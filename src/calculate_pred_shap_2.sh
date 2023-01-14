@@ -1,11 +1,3 @@
-python main.py --model_id 65373da88d434c8eb46f6a281075dfb4 -oos ../data_oos.csv --shap --balanced_shap --score
 python main.py --model_id b14f9dd34704488abbb3be82cb9aa124 -oos ../data_oos.csv --shap --balanced_shap --score
 python main.py --model_id 5dc7ecb231344d38b5c4f83dc5e24f95 -oos ../data_oos.csv --shap --balanced_shap --score
 python main.py --model_id b674627d958947d79102841cdd7e2d90 -oos ../data_oos.csv --shap --balanced_shap --score
-python main.py --model_id 86200d909a164bb58e2cfb12bf8cbb60 -oos ../data_oos.csv --shap --balanced_shap --score
-python main.py --model_id 3c7d5f518e4b41ba856be357d074ddaf -oos ../data_oos.csv --shap --balanced_shap --score
-python main.py --model_id fc6844cdd10442dc9547ef99311b76df -oos ../data_oos.csv --shap --balanced_shap --score
-python main.py --model_id bf4b21066ec34e049f1448b8ee351cea -oos ../data_oos.csv --shap --balanced_shap --score
-python main.py --model_id d1a9ffcb9a9a4dcb844c13765f814473 -oos ../data_oos.csv --shap --balanced_shap --score
-python main.py --model_id b0443691a9cd47e48f38aeaa442be98a -oos ../data_oos.csv --shap --balanced_shap --score
-python main.py --model_id 2d513aba253b40a68dcc1f3c2ed415fc -oos ../data_oos.csv --shap --balanced_shap --score
