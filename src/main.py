@@ -13,6 +13,7 @@ import uuid
 import socket
 import os
 import time
+import sys
 
 
 from pathlib import Path
@@ -689,6 +690,22 @@ def main(
         )
         double_img_bool = True if row["double_img"].values[0] > 0 else False
         inference_ms_all = None
+
+        if score:
+            if row["pred_val"] == 1 and row["pred_oos"] == 1 and not overwrite:
+                score = False
+            if row["pred_val"] == 1 and not oos_dataset_path and not overwrite:
+                score = False
+
+        if shap:
+            if row["shap_val"] == 1 and row["shap_oos"] == 1 and not overwrite:
+                shap = False
+            if row["shap_val"] == 1 and not oos_dataset_path and not overwrite:
+                shap = False
+
+        if not shap and not score and not overwrite:
+            print("Already calculated!!!")
+            return 0
 
         if row["frac_val"].values[0] is not pd.NA:
             model_name = "model"
