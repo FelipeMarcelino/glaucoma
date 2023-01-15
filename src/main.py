@@ -692,15 +692,23 @@ def main(
         inference_ms_all = None
 
         if score:
-            if row["pred_val"] == 1 and row["pred_oos"] == 1 and not overwrite:
+            if (
+                row["pred_val"].values == 1
+                and row["pred_oos"].values == 1
+                and not overwrite
+            ):
                 score = False
-            if row["pred_val"] == 1 and not oos_dataset_path and not overwrite:
+            if row["pred_val"].values == 1 and not oos_dataset_path and not overwrite:
                 score = False
 
         if shap:
-            if row["shap_val"] == 1 and row["shap_oos"] == 1 and not overwrite:
+            if (
+                row["shap_val"].values == 1
+                and row["shap_oos"].values == 1
+                and not overwrite
+            ):
                 shap = False
-            if row["shap_val"] == 1 and not oos_dataset_path and not overwrite:
+            if row["shap_val"].values == 1 and not oos_dataset_path and not overwrite:
                 shap = False
 
         if not shap and not score and not overwrite:
