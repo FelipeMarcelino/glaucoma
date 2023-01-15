@@ -690,7 +690,7 @@ def main(
         double_img_bool = True if row["double_img"].values[0] > 0 else False
         inference_ms_all = None
 
-        if row["frac_val"].values[0] is pd.NA:
+        if row["frac_val"].values[0] is not pd.NA:
             model_name = "model"
             train_loader_name = "train_dataloader"
             val_loader_name = "val_dataloader"
