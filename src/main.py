@@ -715,7 +715,7 @@ def main(
             print("Already calculated!!!")
             return 0
 
-        if row["frac_val"].values[0] is not pd.NA:
+        if not row["frac_val"].isnull().values[0]:
             model_name = "model"
             train_loader_name = "train_dataloader"
             val_loader_name = "val_dataloader"
