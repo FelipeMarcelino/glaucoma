@@ -1,0 +1,13 @@
+backbone,inference_time
+regnety,6.90
+regnet16y,9.32
+regnety32y,10.23
+regnetx,4.92
+regnet16x,5.98
+regnetx32x,7.62
+mobile,5.22
+shuffle,5.12
+inception,11.31
+efficient,6.66
+resnet,7.89
+vit,

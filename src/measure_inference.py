@@ -60,8 +60,10 @@ def main(model_id):
     )
     model.to(device)
     model.eval()
-    dummy_input = torch.ones(2, 3, input_size, input_size, dtype=torch.float).to(device)
-    ft_dummy = torch.ones(2, ft_size, dtype=torch.float).to(device)
+    dummy_input = torch.ones(16, 3, input_size, input_size, dtype=torch.float).to(
+        device
+    )
+    ft_dummy = torch.ones(16, ft_size, dtype=torch.float).to(device)
 
     # INIT LOGGERS
     starter, ender = torch.cuda.Event(enable_timing=True), torch.cuda.Event(
