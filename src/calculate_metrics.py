@@ -91,6 +91,7 @@ def main():
         if row["history_added"] == 1:
             model_id = summary["model_id"].values[0]
 
+            print(model_id)
             if not math.isnan(row["frac_val"]):
                 history_filtered = history[history["model_id"] == model_id]
                 index_max = history_filtered["val_auc_history"].idxmax()
