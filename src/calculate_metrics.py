@@ -36,7 +36,7 @@ def main():
 
     for _, row in summary.iterrows():
         if row["pred_oos"] == 1:
-            model_id = summary["model_id"].values[0]
+            model_id = row["model_id"]
 
             if not math.isnan(row["frac_val"]):
                 file_name = "model_pred.csv"
@@ -89,9 +89,8 @@ def main():
                 assign(summary, model_id, "std_sn_oos", std_sn)
 
         if row["history_added"] == 1:
-            model_id = summary["model_id"].values[0]
+            model_id = row["model_id"]
 
-            print(model_id)
             if not math.isnan(row["frac_val"]):
                 history_filtered = history[history["model_id"] == model_id]
                 index_max = history_filtered["val_auc_history"].idxmax()
@@ -142,10 +141,7 @@ def main():
                     assign(summary, model_id, "idx_avg_sn_val", avg_sn)
                     assign(summary, model_id, "idx_std_sn_val", std_sn)
 
-    pd.options.display.max_columns = None
-    pd.options.display.max_rows = None
-    print(summary.iloc[0])
-
+    summary.to_csv(SUMMARY_PATH, index=False)
 
 if __name__ == "__main__":
     main()
