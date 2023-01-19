@@ -329,6 +329,7 @@ def get_shap_values(
         ft_numerical_val,
         _,
     ) = get_samples_from_loader(val_loader, len(val_loader.dataset))
+    print(photos1_val)
 
     explainer = get_explainer(
         model,
@@ -339,6 +340,7 @@ def get_shap_values(
         output_tab,
         device,
     )
+    print(explainer)
 
     (
         shap_values_photo1_val,
@@ -355,6 +357,8 @@ def get_shap_values(
         ft_size,
         device,
     )
+
+    print(shap_values_photo1_val)
 
     shap_dict_val = {}
 

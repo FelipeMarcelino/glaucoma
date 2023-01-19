@@ -178,3 +178,4 @@ nohup.*
 .direnv
 /direnv
 .direnv/
+output.txt
