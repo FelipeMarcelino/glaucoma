@@ -75,7 +75,7 @@ def shap_values(
             shap_values_photo1,
             shap_values_photo2,
             shap_values_numerical,
-        ) = explainer.shap_values([photos1_val, photos2_val])
+        ) = explainer.shap_values([photos1_val, photos2_val, ft_numerical_val])
     elif double_img and output_tab:
         (
             shap_values_photo1,
