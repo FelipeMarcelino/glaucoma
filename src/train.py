@@ -255,7 +255,7 @@ def pre_train(
         batch_size,
         ft_columns,
         double_img,
-        device,
+        True,
     )
 
     dataloader_val = init_dataloader(
@@ -265,7 +265,7 @@ def pre_train(
         batch_size,
         ft_columns,
         double_img,
-        device,
+        False,
     )
 
     criterion = nn.BCEWithLogitsLoss()

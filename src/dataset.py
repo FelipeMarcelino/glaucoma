@@ -70,7 +70,7 @@ def init_dataloader(
     batch_size,
     ft_columns,
     double_img,
-    device,
+    shuffle,
 ):
 
     dataset = GlaucomaRandomDataset(
@@ -79,7 +79,7 @@ def init_dataloader(
     dataloader = DataLoader(
         dataset,
         batch_size=batch_size,
-        shuffle=True,
+        shuffle=shuffle,
         pin_memory=True,
         num_workers=int(os.getenv("NUM_WORKERS")),
     )

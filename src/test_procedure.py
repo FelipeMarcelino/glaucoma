@@ -69,7 +69,7 @@ def inference(
             batch_size,
             numerical_columns,
             double_img_bool,
-            device,
+            False,
         )
 
     inference_ms = None
