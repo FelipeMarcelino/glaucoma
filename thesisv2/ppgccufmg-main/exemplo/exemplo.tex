@@ -3,8 +3,8 @@
 %	mscproposta, %% Para propostas de dissertação de mestrado, OU
 	msc, %% Para teses de doutorado, OU
 %	phdproposta, %% Para propostas de tese de doutorado
-%	portugues %% Para documentos em português, OU
-	english %% Para documentos em inglês
+	portugues %% Para documentos em português, OU
+%english %% Para documentos em inglês
 ]{../ppgccufmg}
 
 \usepackage[brazil]{babel} %% se o documento for em português, OU
@@ -15,11 +15,16 @@
 \usepackage{csvsimple}
 \usepackage{booktabs}
 %\usepackage{xcolor}[table]
+\usepackage{booktabs}
 \usepackage{adjustbox}
 \usepackage{graphicx}
 \usepackage{subcaption}
 \usepackage{lipsum}
 \usepackage{multirow}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{colortbl}
+\usepackage{array}
 \usepackage[
 	colorlinks=true,
 	linkcolor=blue, %% Cor dos links do sumário
@@ -71,8 +76,9 @@
 	\chapter{Introdução}\label{intro}
         Glaucoma é uma doença neuropática progressiva que resulta na mudanças de caracteŕisticas do
         disco ótico e causa danos irreversíveis nas fibras nervosas \citep{felipemedeiros2014}. Apesar de ser irreversível, é
-        possível que com tratamente a evolução da doença seja mais lenta \citep{GARWAYHEATH201368}. O
-        diagnóstico do glaucoma é feito através de imagens requer análise e interpretação de um especialista da
+        possível que com tratamente a evolução da doença seja mais lenta
+        \citep{GARWAYHEATH201368}. Uma das formas de
+        diagnóstico do glaucoma é feito através de imagens que requer análise e interpretação de um especialista da
         área. Dado que o número de pessoas com a doença aumentará em 111,8 milhões até 2040
         \citep{Ottaiano2019}, métodos utilizando inteligência artificial vem sendo utilizados para
         automatizar o processo \citep{Barros2020}.
@@ -99,7 +105,7 @@
 
         O fundoscopia do olho possibilita que especialista consiga identificar todas as
         estruturas oculares necessárias para identificaro glaucoma, como por exemplo: disco óptico
-        (OD), copo óptico (OD-cup), mácula lútea, fóvea e os vasos sanguíneos \citep{SON202085jk,
+        (DO), copo óptico (CO), mácula lútea, fóvea e os vasos sanguíneos \citep{SON202085,
         albander201891,ZHU201768}. As maiores vantagens de se utilizar a imagem do fundo do olho são: Não é
         um processo invaso, é seguro e ajuda na detecção de outras doenças.
 
@@ -111,28 +117,35 @@
         dando mais recurso para uma melhor avaliação do glaucoma.
 
 
-        \begin{figure}\label{glaucomadiff}
+        \begin{figure}
             \centering
-            \includegraphics[width=0.6\linewidth]{./img/glaucoma_diff.png}
             \caption{Exemplos de imagem do fundo do olho com presença e ausência de glaucoma.}
+            \label{glaucomadiff}
+            \includegraphics[width=0.6\textwidth]{./img/glaucoma_diff.png}
+            \small{Fonte:
+            \href{https://www.nature.com/articles/s41598-021-81554-4}{Nature, 2021}}
         \end{figure}
 
-        A fígura\ref{glaucomadiff} traz duas imagens de fundo de olho para compararmos o caso em
+        A fígura~\ref{glaucomadiff} traz duas imagens de fundo de olho para compararmos o caso em
         que há presença de glaucoma. É possível ver na segunda imagem do fundo do olho o aumento da
         proporção entre o copo óptico e o disco óptico (\textit{cup-to-disc}).
 
-        \begin{figure}\label{octdiff}
+        \begin{figure}
             \centering
-            \includegraphics[width=0.6\linewidth]{./img/oct.jpg}
             \caption{Exemplo de exame OCT, sendo o olho direito (OD) com a presença de glaucoma e o
             esquerdo(OS) em estado saudável}
+            \label{octdiff}
+            \includegraphics[width=0.6\textwidth]{./img/oct.jpg}
+            \small{Fonte:
+            \href{https://glaucomatoday.com/articles/2016-may-june/optical-coherence-tomography-as-a-glaucoma-screening-tool}{Glaucoma
+            Today, 2016}}
         \end{figure}
 
-        A fígura\ref{octdiff} mostra um exame OCT com suas respectivas medidas de espessura das
-        fibras da retina. A espessura da fibras em dividido em 6 setores: nasal(N), nasal super(NS),
-        nasal inferior(NI), temporal(T), temporal superior(TS), temporal inferior(TI). Além disso,
+        A fígura~\ref{octdiff} mostra um exame OCT com suas respectivas medidas de espessura das
+        fibras da retina. A espessura da fibras em dividido em 6 setores: nasal (N), nasal super (NS),
+        nasal inferior (NI), temporal (T), temporal superior (TS), temporal inferior (TI). Além disso,
         temos o valor G que é média dos quadrantes dos setores. Dado isso, quanto menor o valor G
-        maior a probabilidade de se ter glaucoma. A fígura\ref{octdiff} nos mostra que o olho
+        maior a probabilidade de se ter glaucoma. A fígura~\ref{octdiff} nos mostra que o olho
         direito está com as fibras danificadas, com possibilidade de glaucoma, enquanto o olho esquerdo apresenta um estado
         saudável.
 
@@ -167,7 +180,7 @@
         de classificação (presença ou ausência do glaucoma). Quanto aos métodos análisados eles se
         dividem em métodos que extraem as características da imagem e fazem redução de dimensão
         enquanto outros utilizamos modelos profundos como redes
-        convolucionais(CNN)\citep{GoodBengCour16} para detecção direta da doença.
+        convolucionais (CNN)\citep{GoodBengCour16} para detecção direta da doença.
         A maior influência da escolha do método se resume ao
         número de dados disponíveis e o custo necessário para processar estas imagens.
 
@@ -179,7 +192,11 @@
         também trazer a explicabilidade do modelo quanto ao diagnóstico. Além disso,
         com a exploração de diferente arquiteturas, é possível adaptar o diagnóstico aos recursos
         disponibilizados. Podendo este recurso ser supercomputadores ou combinações de computadores
-        (cluster\footnote{Adicionar significado de cluster!!!!}) ou até mesmo um smartphone com acesso a
+        (cluster\footnote{Um cluster (do inglês cluster: 'grupo, aglomerado') consiste em
+        computadores fracamente ou fortemente ligados que trabalham em conjunto, de modo que, em
+        muitos aspectos, podem ser considerados como um único sistema. Diferentemente dos
+        computadores em grade, computadores em cluster têm cada conjunto de nós, para executar a
+        mesma tarefa, controlado e programado por software. Fonte: Wikipedia}) ou até mesmo um smartphone com acesso a
         uma câmera.
 
 			\subsection{Flexibiliade}
@@ -208,7 +225,7 @@
                 do glaucoma.
 
                 Para explicar os modelos iremos utilizar uma biblitoeca conhecida como SHAP
-                \citep{shapley1988shapley}. Esta biblioteca será abordada na seção\ref{sec:shap} com
+                \citep{shapley1988shapley}. Esta biblioteca será abordada na seção~\ref{sec:shap} com
                 maior detalhes, no entanto, a ideia do SHAP é calcular o impacto de cada uma das
                 características da imagem ou dos dados clinícos quanto ao diagnóstico do modelo.
 
@@ -234,7 +251,7 @@
     Além disso, todos os passos de limpeza e engenharia dos dados também serão explicítiadas, e
     todas as decisões tomadas para que o projeto seja concluído, como por exemplo a seleção dos
     melhores modelos. Também será apresentado técnicas de manipulações de dados do tipo
-    imagem/tabular para melhorar a desempenho do modelo.
+    imagem e tabular para melhorar a desempenho do modelo.
 
     E por fim, teremos o resultado comparando cada um dos modelos experimentados e testados com um
     intervalo de confiança, levando em consideração também flexibilidade, usabilidade e custo
@@ -242,21 +259,20 @@
 
     \section{Organização}
 
-    Esta dissertação está separada em 7 cápitulos. O primeiro cápitulo\ref{intro} contém a introdução, motivação, a
-    pergunta a ser respondida e as contribuições do projeto. O segundo cápitulo\ref{background}
+    Esta dissertação está separada em 7 cápitulos. O primeiro cápitulo~\ref{intro} contém a introdução, motivação, a
+    pergunta a ser respondida e as contribuições do projeto. O segundo cápitulo~\ref{background}
     contém referências teóricas quanto a utilização de modelos de aprendizado de máquina para
-    diagnóstico e detecção de doenças. O terceiro cápitulo\ref{method} possui as arquiteturas de redes neurais
+    diagnóstico e detecção de doenças. O terceiro cápitulo~\ref{method} possui as arquiteturas de redes neurais
     testadas, as técnicas de manipulação dos dados, métricas utilizadas e técnicas de avaliação e
-    melhoraria dos modelos. O quarto cápitulo\ref{preprocessing} contém todos os passos realizados antes da testagem
-    dos modelos de cada um dos modelos. O quinto cápitulo\ref{experiments} descreve todos os
-    experimentos realizados. O sexto cápitulo\ref{results} contém os resultados dos experimentos realizados,
+    melhoraria dos modelos. O quarto cápitulo~\ref{preprocessing} contém todos os passos realizados antes da testagem
+    dos modelos de cada um dos modelos. O quinto cápitulo~\ref{experiments} descreve todos os
+    experimentos realizados. O sexto cápitulo~\ref{results} contém os resultados dos experimentos realizados,
     conténdo as avaliação as métricas escolhidas e também da explicabilidade dos modelos. E o último
-    cápitulo\ref{conclusion} conclui esta dissertação.
+    cápitulo~\ref{conclusion} conclui esta dissertação.
 
 
 
-    \chapter{Referências Teóricas}
-    \label{background}
+    \chapter{Referências Teóricas}\label{background}
 
     \section{Aplicações Gerais}
 
@@ -265,7 +281,7 @@
     Neste trabalho os autores exploram diferentes modelos, entre eles RegNet \citep{https://doi.org/10.48550/arxiv.2101.00590}
     e EfficientNet \citep{efficientnet} como modelos mais eficientes, e também modelos tradicionais
     como ResNet \citep{DBLP:journals/corr/HeZRS15} e VGG \citep{vgg}. Além disso, os autores também
-    trouxeram uma versão modificada do \textit{RandAugment}, explicado na seção\ref{sec:aug}, para
+    trouxeram uma versão modificada do \textit{RandAugment}, explicado na seção~\ref{sec:aug}, para
     melhorar a desempenho do modelo utilizando \textit{Data Augmentation}. Com tudo, utilizando um
     conjunto de dados extremamente desbalanceado, os autores também criam uma função de aprendizado
     que leva em consideração o desbalanceamento dos dados. Ao final, os autores apresentaram os
@@ -279,20 +295,20 @@
     \citep{DBLP:journals/corr/ZhangZLS17, efficientnet, https://doi.org/10.48550/arxiv.2101.00590,
     DBLP:journals/corr/HowardZCKWWAA17, DBLP:journals/corr/abs-1807-10165}. Dentre os modelos
     citados anteriormente, o que atingiu a melhor acurácia de 99.8\% foi o modelo RegNet.
-    Todos os modelos foram treinados com 4 diferentes otimizadores, explicado na seção\ref{sec:optimizer},
-    e 5 diferentes taxa de aprendizado\ref{sec:learningrate}.
+    Todos os modelos foram treinados com 4 diferentes otimizadores, explicado na seção~\ref{sec:optimizer},
+    e 5 diferentes taxa de aprendizado~\ref{sec:learningrate}.
 
     Utilizando uma combinação de imagens e dados clinícos, é possível utilizar de modelos de
     aprendizado de máquina para detectar cancer de mama \citep{SANCHEZCAUCE2021106045}.
     O modelo convolucional processa múltiplas imagens com diferentes ângulos de uma tomografia do torax. Cada
     imagem é processada por um modelo independente, ou seja, eles não compartilham os pesos
-    e parâmetros entre si\ref{sec:weight}. Os dados clinícos, contendo idade, histórico da família
-    em relação ao cancer, presença de diabetes, é processado por uma outra rede neural multicamadas
-    \ref{sec:model}. Ao final, os resultados é concatenados por uma outra rede neural multicamdas e
+    e parâmetros entre si~\ref{sec:weight}. Os dados clinícos, contendo idade, histórico da família
+    em relação ao cancer, presença de diabetes, é processado por uma outra rede neural multicamadas~\ref{sec:model}.
+    Ao final, os resultados é concatenados por uma outra rede neural multicamdas e
     em seguida o modelo faz o diagnóstico quanto a presença do cancer. Os autores concluem
-    que a adição de um modelo convolucional com múltiplas entradas(\textit{multi-input}) e dados
+    que a adição de um modelo convolucional com múltiplas entradas (\textit{multi-input}) e dados
     clinícos conseguem trazer resultados melhores do que o modelo utilizando somente uma
-    imagem(\textit{single-input}) frontal do torax.
+    imagem (\textit{single-input}) frontal do torax.
 
     É possível de utilizar modelos de IA para detectar doenças cardiovasculares
     \citep{APOSTOLOPOULOS2021168}. Os modelos foram divididos em dois grupos:
@@ -304,11 +320,11 @@
     dos dois modelos. O modelo \textit{multi-input} atingiu uma acurácia 0.79 enquanto o
     \textit{single-input} atingiu uma acurácia de 0.75.
 
-    Utilizando \textit{Visual Tranformers} (Vit)\ref{sec:model}, foi capaz de detectar Pneunomia nos
+    Utilizando \textit{Visual Tranformers} (Vit)~\ref{sec:model}, foi capaz de detectar Pneunomia nos
     pulmões, inclusive quando adivindo do Covid-19 \citep{sbcas}.
     Utilizando tomografia computadorizada, a imagem em dividida em vários pedaços e cada um destes pedaços é codificados
     dentro do modelo ViT e em seguida repassado para uma rede neural multicamadas para diagnosticar
-    a imagem com a presença de pneumonia (Ocasinada pelo vírus da COVID-10 ou outro vírus) ou não.
+    a imagem com a presença de pneumonia (Ocasionada pelo vírus da COVID-10 ou outro vírus) ou não.
     Ao final, o modelo dos autores apresentaram uma acurácia de 97\% na detecção da doença.
 
     O trabalho apresentado a seguir traz a uma forma diferente de trabalhar com redes neurais convolucionais
@@ -330,7 +346,7 @@
     ResNet34 pre-treinada, para poder prever a espessura das camadas das fibras nervosas
     do disco ótico \citep{Medeiros2019-au}.
     Para evitar que que haja qualquer tipo de vazamento de dados entre os dados de treino e de
-    teste\ref{trainval}, a divisão dos dados foram feita por paciente,
+    teste~\ref{sec:trainval}, a divisão dos dados foram feita por paciente,
     desta forma nenhum dado de paciente está presente no treino e no
     teste ao mesmo tempo. As imagens foram padronizadas altura e largura de  256$\times$256 pixels,
     e os valores de pixels foram normalizados entre 0 e 1. Adicionado a isso,
@@ -341,7 +357,7 @@
     utilizando fotografias do disco ótico. As métricas utilizadas foram MAE (\textit{Mean Absolute Error}) para predição da
     espessura da fibra e AUC (\textit{Area under the ROC curve}) para a classificação binária.
     Dado um total de aproximadamente 1200 amostras (pacientes), com um total de 2312 olhos,
-    os modelos apresentaram resultados de 0.944 para curva ROC,  uma acurácia de 83.7\% e um erro de predição(MAE) da espessura da
+    os modelos apresentaram resultados de 0.944 para curva ROC,  uma acurácia de 83.7\% e um erro de predição (MAE) da espessura da
     fibra de aproximadamente 7.39 micromilimetros.
 
     Neste trabalho, a imagem do fundo do olho foi utilizada para extrair uma característica da
@@ -363,7 +379,7 @@
 
     O próximo artigo utiliza o modelo Inception-V3 \citep{DBLP:journals/corr/SzegedyVISW15} para
     detecção do Glaucoma \citep{LI20181199}. O autor também traz técnicas de Data
-    Augmentation\ref{sec:aug} para aumentar heterogeneidade
+    Augmentation~\ref{sec:aug} para aumentar heterogeneidade
     dos dados mas mantendo características prognósticas das imagens. As fotos foram padronizadas
     para o tamanho 299$\times$299 e os piexels foram normalizados
     entre 0 e 1. Quanto ao Data Augmentation, foram aplicado as seguintes operações: rotações
@@ -382,7 +398,11 @@
 
     Para um uso mais extensivo ao público, é possível misturar acesso um acesso público e aprendizado
     de máquina para detecção do Glaucoma \citep{Garg2022}.
-    Esta framework\footnote{ESCREVER AQUI!!!!} é acessível para o publico envias as fotos do fundo dos olhos e em seguida recebe o
+    Esta framework\footnote{Um framework em desenvolvimento de software, é uma abstração que une
+    códigos comuns entre vários projetos de software provendo uma funcionalidade genérica. Um
+    framework pode atingir uma funcionalidade específica, por configuração, durante a programação de
+    uma aplicação. Ao contrário das bibliotecas, é o framework quem dita o fluxo de controle da
+    aplicação, chamado de Inversão de Controle. Fonte: Wikipedia} é acessível para o publico envias as fotos do fundo dos olhos e em seguida recebe o
     resultado do modelo. Se o resultado for negativo é enviado direto para o paciente. Caso
     resultado seja positivo, este é enviado para um oftamologista para um análise mais profunda. A
     framework é dívida em duas partes: a parte pública onde as pessoas podem carregar as imagens do
@@ -390,7 +410,7 @@
     acesso público pode ser pela web ou por um dispositivo mobile.  O resultado é baseado na
     proporção entre o disco e copo ótico (CDR). Se o CDR é maior que 0.5 o modelo retorna
     possibilidade de glaucoma. Para segmentar e classificar a imagem, os modelos utilizados foram:
-    EfficientNet \citep{DBLP:journals/corr/abs-1905-11946} (Codificador) e UNet++
+    EfficientNet \citep{efficientnet} (Codificador) e UNet++
     \citep{DBLP:journals/corr/abs-1807-10165} (Decodificador). O codificador cria um mapa de
     características que será decodificadoo, pelo decodificador, de forma que cada segmento da imagem seja separada e
     o CDR seja calculado. O acesso ao banco de dados também é manuseado por um servidor público, de
@@ -399,13 +419,13 @@
 
     O seguinte trabalho compara a acurácia do modelo de aprendizado
     de máquina quanto as fotos coletadas utilizando a câmera padrão dos centros óticos e das fotos
-    coletadas utilizando um smartphone e um aparelho acoplado D-Eye Lens\citep{Nakahara587}. O autor descreve que a
+    coletadas utilizando um smartphone e um aparelho acoplado D-Eye Lens \citep{Nakahara587}. O autor descreve que a
     utilização do smartphone possibilita que mais pessoas sejam avaliadas dêvido ao fácil acesso e
     lomoção do dispositivo. Para capturar as fotos pelo smartphone um vídeo de 1 minuto é gravado, e
     deste video, uma imagem é extraída, sendo a imagem a que melhor captura o disco ótico.
     Além de possibilitar que pacientes com dêmencia também sejam diagnosticados. Os autores utilizaram uma
     ResNet para classificar a presenção do glaucoma. Quanto aos dados foram utilizadas técnicas de \textit{Data
-    Augmentation}, abordado na seção\ref{sec:aug}, para diversificar o dado e por consequência melhorar a desempenho do
+    Augmentation}, abordado na seção~\ref{sec:aug}, para diversificar o dado e por consequência melhorar a desempenho do
     modelo quanto a generalização. Dentre elas, estão: rotação da imagem (10 grauss),
     translação vertical e horizontal, mudança de contraste e saturação de forma randômica e variação
     do tamanho das bordas da imagem. O modelo apresentou uma desempenho AUC de 0.98 para a câmera
@@ -462,11 +482,11 @@
     camadas conhecida como MLP, ou do inglês \textit{Multi Layer Perceptron}. As MLP são modelos
     mais simples, no entanto, com alto poder de generalização. Neste projeto, o modelos MLP serão
     utilizadas na parte de classificação e concatenação das arquiteturas que serão citadas na
-    próxima seção\ref{sec:arqui}.
+    próxima seção~\ref{sec:arqui}.
 
     \section{RegNet: O modelo mais flexível para visão computacional}
 
-    O modelo RegNet é um tipo de rede neural criada através de um \textit{Network Design Space}(NDS).
+    O modelo RegNet é um tipo de rede neural criada através de um \textit{Network Design Space} (NDS).
     Diferente dos modelos de arquitetura padrão, onde existe uma arquitetura que foi descoberta através de
     NAS\footnote{\textit{Neural Architecture Search} é uma técnia de automatizar o processo de busca
     de arquitetura de redes neurais, desempenhando melhor do que redes neurais montadas manualmente.}
@@ -487,44 +507,49 @@
     Dentre os parâmetros e estruturas de uma RegNet, esta é composta por:
     \subsection{Parâmetros}
     \begin{itemize}
-        \item Total de blocos: Cada bloco é composto por um grupo de convoluções\ref{sec:conv}.
-        \item Largura do bloco: Total de canais\ref{sec:conv} de cada um das convoluções.
+        \item Total de blocos: Cada bloco é composto por um grupo de convoluções~\ref{sec:conv}.
+        \item Largura do bloco: Total de canais~\ref{sec:conv} de cada um das convoluções.
         \item Razão do gargalo: Utilizado para diminuir o número de canais entre uma convolução e
             outra, diminuindo o total de operações a serem executadas.
         \item Largura do grupo: Total de convoluções para cada bloco.
     \end{itemize}
     \subsection{Estrutura}
     \begin{itemize}
-        \item Tronco: Contém as camadas\ref{sec:layer} de entrada da rede neural.
+        \item Tronco: Contém as camadas~\ref{sec:layer} de entrada da rede neural.
         \item Corpo: A parte principal da rede neural, sendo esta a estrutura que vai ser influência
             pelos parâmetros citados acima.
         \item head: Camada de saída do modelo, contendo o classificador.
     \end{itemize}
 
-    A fígura a seguir\ref{fig:regnet}, apresenta um modelo RegNet.
+    A fígura a seguir~\ref{fig:regnet}, apresenta um modelo RegNet.
 
     \begin{figure}
-        \begin{center}
-            \includegraphics[width=0.95\textwidth]{img/regnetbody2.jpg}
-        \end{center}
-        \caption{Corpo de um modelo RegNet contendo 4(Fixo) estágios. Cada estágio contém número X
-        de blocos. Imagem retirada de \citep{designspace}}
+        \centering
+        \caption{Corpo de um modelo RegNet contendo 4 (Fixo) estágios. Cada estágio contém número X
+        de blocos.}
         \label{fig:regnet}
+        \includegraphics[width=0.95\textwidth]{img/regnetbody2.jpg}
+        \small{Fonte: Imagem retirada do artigo \citep{designspace}.}
     \end{figure}
 
     Um ponto de atenção citado pelos autores é a decisão de manter todos os blocos iguais e com a
-    mesma estrutura de uma ResNet \citep{DBLP:journals/corr/HeZRS15}. A imagem\ref{fig:regnet2} a seguir exemplifica:
+    mesma estrutura de uma ResNet \citep{DBLP:journals/corr/HeZRS15}. A imagem~\ref{fig:regnet2} a seguir exemplifica:
 
     \begin{figure}
-        \begin{center}
-            \includegraphics[width=0.95\textwidth]{img/regnetbody.jpg}
-        \end{center}
-        \caption{Exemplo de um bloco \textbf{X} baseado em uma rede residual. Imagem retirada de \citep{designspace}}
+        \caption{Exemplo de um bloco \textbf{X} baseado em uma rede residual.}
+        \centering
         \label{fig:regnet2}
+        \includegraphics[width=0.95\textwidth]{img/regnetbody.jpg}
+        \small{Imagem retirada do artigo \citep{designspace}.}
     \end{figure}
 
     \begin{table}[!h]\label{tab:any}
-    \begin{center}
+    \centering
+        \caption{Tabela de restrições dos modelos até chegar no modelo RegNet \citep{designspace}. O índice $i$ é o
+    estágio, fixado em 4. O $b_{i}$ representa
+    razão do gargalo, $g_{i}$ representa o total de canais da convolução , $d_{i}$ representa o
+        total de blocos e o $w_{i}$ represnta o tamanho do bloco.}
+    \label{tab:any}
     \begin{tabular}{l|l|c|l|l}
     & restriction & dim. & combinations & total \\
     \hline AnyNet \(_{\mathrm{A}}\) & none & 16 & \((16 \cdot 128 \cdot 3 \cdot 6)^{4}\) & \(\sim 1.8 \cdot 10^{18}\) \\
@@ -534,15 +559,9 @@
     AnyNet & \(+d_{i+1} \geq d_{i}\) & 10 & \((16 \cdot 128)^{4} \cdot 3 \cdot 6 /(4 !)^{2}\) & \(\sim 5.5 \cdot 10^{11}\) \\
     RegNet & quantized linear & 6 & \(\sim 64^{4} \cdot 6 \cdot 3\) & \(\sim 3.0 \cdot 10^{8}\)
     \end{tabular}
-        \caption{Tabela de restrições dos modelos até chegar no modelo RegNet. O índice $i$ é o
-        estágio, fixado em 4. O $b_{i}$ representa
-        razão do gargalo, $g_{i}$ representa o total de canais da convolução , $d_{i}$ representa o
-        total de blocos e o $w_{i}$ represnta o tamanho do bloco. Tabela retirada de
-        \citep{designspace}}
-    \end{center}
     \end{table}
 
-    A tabela \ref{tab:any} explica um pouco como o modelo RegNet é montado. Como citado
+    A tabela~\ref{tab:any} explica um pouco como o modelo RegNet é montado. Como citado
     anteriormente, é possíveis infinitas combinações de arquitetura de redes neurais dependendo dos
     parâmetros a serem testados. A primeira arquitetura de rede neural, \textbf{AnyNetA}, não possui nenhuma restrição,
     totalizando aproximadamente $1.8 \cdot 10^{18}$ combinações possíveis. No último modelo, após
@@ -551,18 +570,18 @@
     todo os blocos do mesmo estágio tenham o mesmo tamanho.
 
     A desempenho dos modelos amostrados do NDS é calculada através de um procedimento que se resume
-    em treinar o modelo no conjunto de dados ImageNet \citep{5206848} por 10 épocas \ref{sec:batch}
+    em treinar o modelo no conjunto de dados ImageNet \citep{5206848} por 10 épocas~\ref{sec:batch}
     e calcular o erro de inferência nesse mesmo conjunto de dados. É amostrado em torno de 100
     modelos para cada NDS com seu conjunto de parâmetros e restrições.
 
     \begin{figure}
-        \begin{center}
-            \includegraphics[width=0.95\textwidth]{img/design_space.jpg}
-        \end{center}
+        \centering
         \caption{A imagem da esquerda mostra os \textit{Design Spaces} A, B, e C, sendo o C mais
         restritivo entre eles. A imagem da direita mostra a distribuição de erro de cada desses
-        espaços, sendo o C aquele que possui melhor desempenho entre eles. Imagem retirada de \citep{designspace}}
+        espaços, sendo o C aquele que possui melhor desempenho entre eles.}
         \label{fig:space}
+        \includegraphics[width=0.95\textwidth]{img/design_space.jpg}
+        \small{Fonte: Imagem retirada do artigo \citep{designspace}.}
     \end{figure}
 
     Ao final, os autores chegam a conclusão que os modelos amostrados do espaço\textbf{RegNet} possuem desempenho
@@ -572,9 +591,6 @@
     \citep{squeeze} para
     que cada bloco seja capaz de adaptar os pesos para capturar as partes mais importantes da imagem
     com um adicional de custo computacional baixo.
-
-    !!! Apresentar detalhes sobre as versões utlizadas, total de parâmetros e desempenho de
-    inferência.
 
     \section{Conceitos}
 
@@ -596,20 +612,22 @@
     primeira camada do modelo, também conhecida como camada de entrada, do inglês \textit{input
     layer}.
 
-    A fígura \ref{fig:redeneuralmlp} representa uma MLP contendo três camadas. Uma camada de entrada,
+    A fígura~\ref{fig:redeneuralmlp} representa uma MLP contendo três camadas. Uma camada de entrada,
     uma camada intermediária e uma camada de saída. Cada uma desses camadas possui um número N de
     neurônios. Cada neurônio, ou unidade de processamento, possui conexões com outras unidades,
     sendo essa conexão seria o \textbf{peso} ou \textbf{parâmetro}. O peso então é múltiplicado pela saída de
     um neurônio que entra em um próximo neurônio. Dentro do neurônio, todas as entradas são somadas e em seguida
     passa o resultado da soma em uma função de ativação, como por exemplo uma sigmoid
-    \citep{GoodBengCour16}, para transformar/limitar os valores. Todos os neurônios de uma camada
+    \citep{GoodBengCour16}, para transformar ou limitar os valores. Todos os neurônios de uma camada
     possuí ligações com todos os neurônios da próxima camada.
 
-    \begin{figure}\label{fig:redeneuralmlp}
+    \begin{figure}
         \centering
-        \includegraphics[width=0.6\linewidth]{./img/rede_neural_4.png}
         \caption{Uma rede neural MLP, com 3 camadas. Uma de entrada com 3 neurônios,uma camada
         intermediária com 4 neurônios e uma de saída com dois neurônios.}
+        \label{fig:redeneuralmlp}
+        \includegraphics[width=0.6\textwidth]{./img/rede_neural_4.png}
+        \small{Fonte: Imagem elaborada pelo autor.}
     \end{figure}
 
     \subsection{Taxa de aprendizado}\label{sec:learningrate}
@@ -684,7 +702,7 @@
     aprendizado. Por exemplo, citado anteriormente\ref{sec:learningrate}, a taxa de aprendizado é
     um hiperparâmetro a ser escolhido e indica a magnitude de atualização dos parâmetros. Outro
     hiperparâmetro é o tamanho do \textit{minibatch}
-    \ref{sec:batch} e também qual otimizador \ref{sec:optimizer} será utilizado \citep{GoodBengCour16}. Normalmente, para
+   ~\ref{sec:batch} e também qual otimizador~\ref{sec:optimizer} será utilizado \citep{GoodBengCour16}. Normalmente, para
     encontrar os melhores hiperpâmetros para o modelo é necessário repetir o processo de treino e
     teste múltiplas vezes, tornando este processo extremamente caro.
 
@@ -709,32 +727,38 @@
     X é diferente de Y \citep{GoodBengCour16}.
 
     Com isto, para se evitar o sobreajuste do modelo, este projeto aplicou uma técnica conhecida como
-    \textit{Early Stopping} \ref{sec:trainval}. A técnica tem como intuito parar o processo de
-    treinamento quando o modelo começa a aumentar sua desempenho no conjunto de dados de treino(X) e
-    sofre uma piora significativa no conjunto de dados de teste(Y) utilizado para avaliação.
-    A fígura \ref{fig:overfitting} a seguir mostra visualmente como acontece o sobreajuste.
+    \textit{Early Stopping}~\ref{sec:trainval}. A técnica tem como intuito parar o processo de
+    treinamento quando o modelo começa a aumentar sua desempenho no conjunto de dados de treino (X) e
+    sofre uma piora significativa no conjunto de dados de teste (Y) utilizado para avaliação.
+    A fígura~\ref{fig:overfitting} a seguir mostra visualmente como acontece o sobreajuste.
 
     \begin{figure}
         \centering
-        \includegraphics[width=0.6\linewidth]{./img/classic_overfitting.jpg}
-        \caption{Uma imagem representando o problema de sobreajuste. Imagem retirada de: https://www.ibm.com/cloud/learn/overfitting}
+        \caption{Uma imagem representando o problema de sobreajuste e subajuste.}
         \label{fig:overfitting}
+        \includegraphics[width=0.6\textwidth]{./img/classic_overfitting.jpg}
+        \small{Fonte: \href{https://www.ibm.com/cloud/learn/overfitting}{IBM}}
     \end{figure}
 
 
     \subsection{Convolução}\label{sec:conv}
 
     As convoluções funcionam como filtros que enxergam pequenos quadrados e vão “escorregando” por
-    toda a imagem captando os traços mais marcantes. Explicando melhor, com uma imagem 32x32x3 e um
-    filtro que cobre uma área de 5x5 da imagem com movimento de 2 saltos (chamado de stride), o
+    toda a imagem captando os traços mais marcantes. Explicando melhor, com uma imagem
+    32$\times$32$\times$3 e um
+    filtro que cobre uma área de 5$\times$5 da imagem com movimento de 2 saltos (chamado de stride), o
     filtro passará pela imagem inteira, por cada um dos canais, formando no final um \textit{feature
-    map} ou \textit{activation map} de 28x28x1. A image a seguir mostra como uma convolução
-    funciona:
+    map} ou \textit{activation map} de 28$\times$28$\times$1. A image~\ref{fig:convexp} mostra como uma convolução
+    funciona.
 
-    \begin{figure}\label{convexp}
+    \begin{figure}
         \centering
-        \includegraphics[width=0.6\linewidth]{./img/convoex.jpg}
-        \caption{Exemplo de uma convolução.}
+        \caption{Exemplo de uma convolução com filtro 5$\times$5. Cada quadrado com este tamanho
+        produz um número com utilizndo operações matemáticas. Em seguida, o quadrado é deslocado
+        para o lado ou para baixo e um novo filtro é formado.}
+        \label{fig:convexp}
+        \includegraphics[width=0.6\textwidth]{./img/convoex.jpg}
+        \small{}
     \end{figure}
 
 
@@ -751,68 +775,70 @@
     redes neurais. Cada uma das arquiteturas visuais apresentadas a
     seguir será testada com diferente combinações de hiperparâmetros. O intuito de testar diferentes
     arquiteturas é que cada uma delas pode se sair melhor à depender da tarefa a ser realizada e os
-    dados disponíveis. Dado isso, iremos testar as seguintes arquiteturas mostradas na fígura
-    \ref{fig:arqui}:
+    dados disponíveis. Dado isso, iremos testar as seguintes arquiteturas mostradas na
+    fígura~\ref{fig:arqui}.
 
 
-    \begin{figure}[ht]
-    \begin{subfigure}[b]{0.5\linewidth}
+    \begin{figure}[H]
+    \caption{Arquitura de modelos. O \textit{backbone} pode ser um dos modelos citados
+    anteriormente (RegNet, ResNet, Inception e etc), e o
+    \textit{classifier} é uma rede neural de múltiplas camadas (MLP), assim como o modelo \textit{MLP}
+    que recebe os dados tabelados e também o que faz operação de concatenar (\textit{concat})
+    juntando todas as saídas e passar para o classificador.}
+    \label{fig:arqui}
+    \begin{subfigure}[h]{0.48\textwidth}
         \centering
-        \includegraphics[width=0.75\linewidth]{./img/arqui1.png}
         \caption{Arquitetura utilizando uma imagem de olho (Single Input)}
         \label{fig:arqui1}
+        \includegraphics[width=0.78\textwidth]{./img/arqui1.png}
         \vspace{4ex}
     \end{subfigure}%%
-    \begin{subfigure}[b]{0.5\linewidth}
+    \begin{subfigure}[h]{0.48\textwidth}
         \centering
-        \includegraphics[width=0.75\linewidth]{./img/arqui4.png}
         \caption{Arquitura utilizando uma imagem do olho e os dados tabulados (Single Input Tabular)}
         \label{fig:arqui2}
+        \includegraphics[width=0.78\textwidth]{./img/arqui4.png}
         \vspace{4ex}
     \end{subfigure}
-    \begin{subfigure}[b]{0.5\linewidth}
+    \begin{subfigure}[h]{0.48\textwidth}
         \centering
-        \includegraphics[width=0.75\linewidth]{./img/arqui2.png}
         \caption{Arquitetura utilizando duas imagens do mesmo olho (Dual Input)}
         \label{fig:arqui3}
+        \includegraphics[width=0.78\textwidth]{./img/arqui2.png}
         \vspace{4ex}
     \end{subfigure}
-    \begin{subfigure}[b]{0.5\linewidth}
+    \hfill
+    \begin{subfigure}[h]{0.48\textwidth}
         \centering
-        \includegraphics[width=0.75\linewidth]{./img/arqui3.png}
         \caption{Arquitetura utilizando duas imagens do mesmo olho e os dados tabulados (Dual Input
         Tabular)}
         \label{fig:arqui4}
+        \includegraphics[width=0.78\textwidth]{./img/arqui3.png}
         \vspace{4ex}
-    \end{subfigure}%%
-        \caption{Arquitura de modelos. O \textit{backbone} pode ser um dos modelos citados
-        anteriormente (RegNet, ResNet, Inception e etc), e o
-        \textit{classifier} é uma rede neural de múltiplas camadas (MLP), assim como o modelo \textit{MLP}
-        que recebe os dados tabelados e também o que faz operação de concatenar (\textit{concat})
-        juntando todas as saídas e passar para o classificador.}
-    \label{fig:arqui}
+    \end{subfigure}
+    \small{Fonte: Imagem elaborada pelo autor.}
     \end{figure}
 
-    Todos as arquiteturas de modelos citados na fígura \ref{fig:arqui}, representados por um retângulo e com exceção
+    Todos as arquiteturas de modelos citados na fígura~\ref{fig:arqui}, representados por um retângulo e com exceção
     do \textit{backbone}, é um modelo de múltiplas camadas (MLP). Os modelos \textit{backbone},
     com tradução literária de \textit{espinha dorsal}, são os modelos principais e os utilizados
     para extrair os padrões mais importantes dos dados. No nosso caso, estes dados serão um conjunto
     de imagens de fundo de olho.
 
-    A primeira arquitetura (SI)\ref{fig:arqui1} utilizará somente uma imagem do fundo do olho. Entre
-    asarquiteturas citadas na fígura \ref{fig:arqui} esta é a arquitetura mais simples e que utiliza a menor quantiade de
+    A primeira arquitetura (SI)~\ref{fig:arqui1} utilizará somente uma imagem do fundo do olho. Entre
+    asarquiteturas citadas na fígura~\ref{fig:arqui} esta é a arquitetura mais simples e que utiliza a menor quantiade de
     recurso computacional. Além disso, temos a arquitetura que utiliza uma imagem do fundo de olho e
-    os dados tabelados do OCT \ref{fig:arqui2}. Esta segunda arquitetura junta os dados de imagens e os dados
+    os dados tabelados do OCT~\ref{fig:arqui2}. Esta segunda arquitetura junta os dados de imagens e os dados
     clínicos para trazer mais informações e consequentemente ajudar na classificação/diagnóstico da
-    presença/ausência do glaucoma (SIT) .
+    presença/ausência do glaucoma (SIT).
 
-    A terceira arquitura (DI)\ref{fig:arqui3} utiliza duas imagens do fundo de olho. Para que isso fosse possível, foi
+    A terceira arquitura (DI)~\ref{fig:arqui3} utiliza duas imagens do fundo de olho. Para que isso fosse possível, foi
     feita uma limpeza dos dados e uma avaliação manual de cada uma das fotos para cada paciente da
     base de dados. Escolhendo uma foto mais próxima e outra mais distante.
-    A limpeza de dados é descrita e explicada na seção \ref{sec:limpeza}. A quarta e última
+    A limpeza de dados é descrita e explicada na seção~\ref{sec:limpeza}. A quarta e última
     arquitetura é a que utiliza duas imagens do fundo do olho e os dados clinícos. Esta é a
     arquitetura que utiliza mais recurso computacional, dado que o modelo de imagem é
-    duplicado(\textit{backbone}), utilizando o dobro de memória e adicionamos uma rede
+    duplicado (\textit{backbone}), utilizando o dobro de memória e adicionamos uma rede
     MLP para processar os dados clinícos (DIT).
 
     Um \textbf{ponto de atenção}, a arquitetura de modelo utilizando somente uma imagem, seleciona
@@ -826,24 +852,23 @@
     treinado e é utilizado.
 
     \section{Métricas de Avaliação}
-    \ref{sec:metrics}
+    \label{sec:metrics}
 
     Para modelagem de diagnóstico na área médica, as métricas certas devem utilizadas para que
     possamos avaliar a qualidade do modelo com robustez. Neste projeto, as métricas utilizadas são:
 
     \begin{itemize}
-        \item Acurácia: Quantos diagnósticos certos foram realizados pelo modelo.
-        \item sensibilididade: É a capacidade do modelo de ser acertivo ao fazer diagnósticos positivo
+        \item Sensibilididade (SN): É a capacidade do modelo de ser acertivo ao fazer diagnósticos positivo
             quanto a presença do glaucoma no paciente.
-        \item Especificidade: É a capacidade do modelo em detectar todos os casos verdadeiros de
+        \item Especificidade (SP): É a capacidade do modelo em detectar todos os casos verdadeiros de
             glaucoma.
-        \item Caracterítica de Operação do Receptor(ROC): Esta curva ajuda os profissionais e
+        \item Caracterítica de Operação do Receptor (ROC): Esta curva ajuda os profissionais e
             desenvolvedores do modelo a escolher um limiar de corte entre sensibilididade e especificidade
             que esteja de acordo com o problema de negócio. Esta métrica é a mais importante e
             utilizada em diagnósticos, pois como citado anteriormente, é possível termos uma
             flexibilidade de acordo com a regra de negócio, dado mais importância para sensibilidade
             ou para especificidade \citep{rocc}.
-        \item Aréa sob a curva ROC(AUC): Permite verificar o quão bom o clasisficar binário desempenha no
+        \item Aréa sob a curva ROC (AUC): Permite verificar o quão bom o clasisficar binário desempenha no
             problema. O cálculo é feito utilizando a área sob a curva ROC. Quanto maior este valor
             mais flexível o modelo consegue ser quanto a especificidade e sensibilididade.
             Esta métrica varia de 0 á 1, sendo o melhor modelo aquele que tem valor igual
@@ -852,37 +877,40 @@
 
     \begin{figure}
     \centering
-    \begin{subfigure}[b]{0.5\linewidth}
+        \caption{AUC e curva ROC.}
+    \label{fig:rocauc}
+    \begin{subfigure}[b]{0.5\textwidth}
         \centering
-        \includegraphics[width=0.75\linewidth]{./img/roc_curvas_threshold.png}
         \caption{Curva ROC}
         \label{fig:curvaroc}
+        \includegraphics[width=0.98\textwidth]{./img/roc_curvas_threshold.png}
     \end{subfigure}%%
-    \begin{subfigure}[b]{0.5\linewidth}
+    \begin{subfigure}[b]{0.5\textwidth}
         \centering
-        \includegraphics[width=0.75\linewidth]{./img/auc_todas_curvas.png}
         \caption{Area sobre a curva (AUC)}
         \label{fig:auc}
+        \includegraphics[width=0.98\textwidth]{./img/auc_todas_curvas.png}
     \end{subfigure}
-    \caption{AUC e curva ROC. Imagens retirada de: https://cienciaenegocios.com/curva-roc-e-auc-em-machine-learning}
-    \label{fig:rocauc}
+        \small{Fonte:
+        \href{https://cienciaenegocios.com/curva-roc-e-auc-em-machine-learning}{Ciencias e Negocios,
+        2020}}
     \end{figure}
 
 
     Para selecionar o melhor modelo entre todos os experimentados, iremos utilizar a AUC como
     métrica principal, já que esta métrica consegue sumarizar, utilizando somente um número, o quão bom
-    a curva ROC se encontra para cada um dos modelos. A fígura \ref{fig:rocauc} explica, de forma
+    a curva ROC se encontra para cada um dos modelos. A fígura~\ref{fig:rocauc} explica, de forma
     ilustrativa, como a curva ROC e a AUC funcionam.  Em aplicações médicas, é mais válido trazer o maior
     número de verdadeiro positivos sem aumentar significativamente a taxa dos falsos positivos.
     Normalmente é mais prejudicial deixar de diagnosticar uma doença do que dar um diagnóstico
     positivo falso. Neste caso, o interesse maior é na sensibilidade. No entanto, se abaixarmos o
     threshold demais iremos ter bastante falso positivos, ou seja, muito casos para serem análisados
-    pelos especialista, gerando um custo humano e de tempo \ref{fig:curvaroc}. As duas métricas, sensibilidade e
+    pelos especialista, gerando um custo humano e de tempo~\ref{fig:curvaroc}. As duas métricas, sensibilidade e
     especificidade, interegem entre si. Quando se aumenta uma, movimentando threshold, é possível
     que se perca desempenho na outra. Contudo, o valor da métrica AUC carrega consigo a informação de
     variação desse ganho e dessa perda, ou seja, quanto melhor o AUC mais fácil movimentar o
     threshold ganhando de um lado e abdicando menos do outro. O modelo perfeito, com 100\% de AUC,
-    na imagem da direta \ref{auc}, mostra que se movimentarmos o threshold não perderíamos nada, e
+    na imagem da direta~\ref{fig:auc}, mostra que se movimentarmos o threshold não perderíamos nada, e
     seria possível capturar todos os casos verdadeiro sem nenhum caso de falso positivo.
     No entanto, é impossível construir um modelo perfeito, e normalmente os modelos ficam entre 50\% e 100\%.
 
@@ -894,7 +922,7 @@
     caso, operações são aplicadas na imagem de forma que novas imagens sejam criadas a
     partir das originais e por fim aumentando heterogeneidade do dados para modelagem. Com os dados
     mais heterogeneo é possível atingir desempenhos melhores para o modelo sem aumentar de forma
-    exponencial o custo computacional(mais poder computacional) que por fim será refletido em custo
+    exponencial o custo computacional (mais poder computacional) que por fim será refletido em custo
     real.
 
     \par Para realizar o \textit{Data Augmentation} utilizamos neste projeto o
@@ -927,15 +955,16 @@
     todos os grupos passem pela fase de teste. Com isto, é possível que o modelo seja avaliado com
     mais robustez e com variabilidade controlada.
 
-    \begin{figure}
-        \label{fig:cross}
+    \begin{figure}[h]
         \centering
-        \includegraphics[width=0.6\linewidth]{./img/cross.png}
         \caption{Imagem contendo ilustrando a validação cruzada. Cada parte assume o papel de teste
         uma vez e treino K-1 vezes.}
+        \label{fig:cross}
+        \includegraphics[width=0.98\textwidth]{./img/cross.png}
+        \small{Fonte: Elaborado pelo autor.}
     \end{figure}
 
-    A imagem \ref{fig:cross} mostra como os dados são divididos. Existem dois conjunto de dados que
+    A imagem~\ref{fig:cross} mostra como os dados são divididos. Existem dois conjunto de dados que
     são AC (Amostras Conhecidas) e o AD (Amostras Desconhecidas). Dado isso, utilizando o conjunto
     AC aplicando a metodologia de validação cruzada, validando assim os melhores modelos. Em
     seguida, utilizados o conjunto AD para mensurar o desempenho do modelo. Este conjunto AD não
@@ -970,18 +999,18 @@
     baseado em lógica fuzzy \citep{fuzzy} e linguagem natural para poder criar um formulário que os médicos e os
     pacientes pudessem consumir a explicação do modelo.
 
-    Utilizando modelos mais simples, como Árvores de Decisão\citep{quinlan:induction},
-    Regressão Logística\citep{cox1958regression} e kNN\citep{kNN} e
-    modelos mais complexos, como SVM\citep{svm}, XGBoost\citep{DBLP:journals/corr/ChenG16}, e
-    RF\citep{breiman2001random}, os autores criaram
+    Utilizando modelos mais simples, como Árvores de Decisão \citep{quinlan:induction},
+    Regressão Logística \citep{cox1958regression} e kNN \citep{kNN} e
+    modelos mais complexos, como SVM \citep{svm}, XGBoost \citep{DBLP:journals/corr/ChenG16}, e
+    RF \citep{breiman2001random}, os autores criaram
     um sistema de prognóstico da doença de hepatite \citep{PengJunfeng2021AEAI}. Os autores
     utilizaram o modelo SHAP para verificar as variáveis
     mais importantes para os modelos, fornecem explicação para cada um dos pacientes e também
-    geraram gráficos de dependência entre as váriaveis de entrada e a rótulo dos dados(Presen ou
+    geraram gráficos de dependência entre as váriaveis de entrada e a rótulo dos dados (presença ou
     ausência de hepatite).
 
-    Utilizando modelos como XGBoost\citep{DBLP:journals/corr/ChenG16} para selecionar qual cirurgia refratória
-    deve ser aplicada em um paciente\citep{10.1167/tvst.9.2.8}. A escolha certa de uma cirurgia aumenta a satisfação de um
+    Utilizando modelos como XGBoost \citep{DBLP:journals/corr/ChenG16} para selecionar qual cirurgia refratória
+    deve ser aplicada em um paciente \citep{10.1167/tvst.9.2.8}. A escolha certa de uma cirurgia aumenta a satisfação de um
     paciente ao final do processo. Antes da escolha da cirurgia, o paciente consulta um expert da
     área e em seguida 80 características da tomografia da cornea são extraídas, 40 características
     demográficas são coletadas e mais 22 características de exames oftamológicos, como por exemplo diâmetro da
@@ -995,14 +1024,16 @@
     características \citep{shapley1988shapley}. Isto é caracterizado pelo impacto que cada um destas
     características tem no valor preditivo do modelo \citep{strumbel}.
 
-    \begin{figure}
-        \label{boston}
+    \begin{figure}[H]
         \centering
-        \includegraphics[width=0.6\linewidth]{./img/shap_boston.png}
-        \caption{Gráfico sumarizado para o dataset Boston Housing}
+        \caption{Gráfico sumarizado para o dataset Boston Housing ordenado pelas características
+        mais importantes do modelo.}
+        \label{fig:boston}
+        \includegraphics[width=0.98\textwidth]{./img/shap_boston.png}
+        \small{Fonte: \href{https://github.com/slundberg/shap}{SHAP Github}}
     \end{figure}
 
-    Na figura \ref{boston} representa um gráfico SHAP para previsão dos preços de moradias em
+    Na figura~\ref{fig:boston} representa um gráfico SHAP para previsão dos preços de moradias em
     Boston-MA. Se o ponto é azul a variável apresentação um valor baixo, se o ponto é vermelho ela
     apresenta um valor alto. Se o ponto está do lado direito quer dizer que aquele valor da variável
     contribui para a resposta seja positiva ou maior, se do lado esquerdo, negativa ou menor. Por exemplo, a variável
@@ -1014,13 +1045,17 @@
 
 
     \begin{figure}
-        \label{imgshap}
         \centering
-        \includegraphics[width=0.6\linewidth]{./img/gradient_imagenet_plot.png}
-        \caption{Explicação de uma imagem utilizando SHAP.}
+        \caption{Explicação de uma imagem utilizando SHAP. Os pontos vermelhos e azul mostram onde o
+        modelo julgou como parte importante para a imagem. Seguindo a mesma lógica
+        do~\ref{fig:boston}, pontos vermelhos aumenta a probabilidade na saída do modelo, enquanto
+        pontos azuis diminuem.}
+        \label{imgshap}
+        \includegraphics[width=0.98\textwidth]{./img/gradient_imagenet_plot.png}
+        \small{Fonte: \href{https://github.com/slundberg/shap}{SHAP Github}}
     \end{figure}
 
-    No entanto, para imagens, o SHAP funciona um pouco diferente. Na fígura \ref{imgshap} a
+    No entanto, para imagens, o SHAP funciona um pouco diferente. Na fígura~\ref{imgshap} a
     explicabilidade do modelo fornce quais são as áreas das imagens mais importantes para
     identificação de um animal. Por exemplo, para o passaro podemos observar que existem vários
     pontos vermelhos fortes na mesma área do bico, indicando dessa forma que essa parte foi uma das
@@ -1047,29 +1082,31 @@
             quadrantes (G).
     \end{itemize}
 
-    Um exemplo na fígura\ref{fig:fundus2} contendo duas imagens do fundo dos olhos:
+    Um exemplo na fígura~\ref{fig:fundus2} contendo duas imagens do fundo dos olhos:
 
     \begin{figure}[ht]
     \centering
-    \begin{subfigure}[b]{0.5\linewidth}
-        \centering
-        \includegraphics[width=0.75\linewidth]{./img/foto1fundus.jpg}
-        \caption{Imagem do fundo do olho distante do disco e copo}
-        \label{fig:fundus2a}
-    \end{subfigure}%%
-    \begin{subfigure}[b]{0.5\linewidth}
-        \centering
-        \includegraphics[width=0.75\linewidth]{./img/foto2fundus.jpg}
-        \caption{Imagem do fundo do olho próxima do disco e copo}
-        \label{fig:fundus2b}
-    \end{subfigure}
     \caption{Duas imagens do fundo do olho com distâncias diferentes}
     \label{fig:fundus2}
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \caption{Imagem do fundo do olho distante do disco e copo}
+        \label{fig:fundus2a}
+        \includegraphics[width=0.9\textwidth]{./img/foto1fundus.jpg}
+        \hspace{2ex}
+    \end{subfigure}\hfill
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \caption{Imagem do fundo do olho próxima do disco e copo}
+        \label{fig:fundus2b}
+        \includegraphics[width=0.9\textwidth]{./img/foto2fundus.jpg}
+    \end{subfigure}
+    \small{Fonte: Imagem extraída do conjutno de dados.}
     \end{figure}
 
 
-    A primeira imagem \ref{fig:fundus2a} é mais distante quando comparada a segunda imagem
-    \ref{fig:fundus2b}, que possui um zoom mais próximo do
+    A primeira imagem~\ref{fig:fundus2a} é mais distante quando comparada a segunda imagem
+   ~\ref{fig:fundus2b}, que possui um zoom mais próximo do
     disco. Cada paciente testado aqui deve possuir pelo menos duas fotos similares à essa.
 
     Portnato, na próxima seção, será descrito todo o processo de limpeza dos dados realizados como
@@ -1108,54 +1145,56 @@
     entendimento sólido para dar base aos resultados que irão ser apresentados nas próxima seção.
 
     \begin{figure}[ht]
-    \begin{subfigure}[b]{0.5\linewidth}
+    \caption{Contagem de casos de glaucoma por gênero e por olhos}
+    \label{fig:explorer}
+    \begin{subfigure}[b]{0.5\textwidth}
         \centering
-        \includegraphics[width=0.75\linewidth]{./img/total_pacientes.png}
+        \includegraphics[width=0.75\textwidth]{./img/total_pacientes.png}
         \caption{total de pacientes por gênero}
         \label{figexplorer:a}
         \vspace{4ex}
     \end{subfigure}%%
-    \begin{subfigure}[b]{0.5\linewidth}
+    \begin{subfigure}[b]{0.5\textwidth}
         \centering
-        \includegraphics[width=0.75\linewidth]{./img/total_olhos.png}
-        \caption{total de pacientes com presença de glaucoma em 0(ausência), 1 , 2}
+        \includegraphics[width=0.75\textwidth]{./img/total_olhos.png}
+        \caption{total de pacientes com presença de glaucoma em 0(ausência), 1 ,2}
         \label{figexplorer:b}
         \vspace{4ex}
     \end{subfigure}
-    \begin{subfigure}[b]{0.5\linewidth}
+    \begin{subfigure}[b]{0.5\textwidth}
         \centering
-        \includegraphics[width=0.75\linewidth]{./img/total_glaucoma.png}
+        \includegraphics[width=0.75\textwidth]{./img/total_glaucoma.png}
         \caption{Total de olhos com e sem glaucoma}
         \label{figexplorer:c}
     \end{subfigure}%%
-    \begin{subfigure}[b]{0.5\linewidth}
+    \begin{subfigure}[b]{0.5\textwidth}
         \centering
-        \includegraphics[width=0.75\linewidth]{./img/total_glaucoma_genero.png}
+        \includegraphics[width=0.75\textwidth]{./img/total_glaucoma_genero.png}
         \caption{Total de olhos com ou sem glaucoma por gênero}
         \label{figexplorer:d}
     \end{subfigure}
-        \caption{Contagem de casos de glaucoma por gênero e por olhos}
-    \label{figexplorer}
+        \small{Fonte: Elaborado pelo autor.}
     \end{figure}
 
-    Como podemos obervar nos histogramas da fígura \ref{figexplorer} é possível observar que temos mais
+    Como podemos obervar nos histogramas da fígura~\ref{fig:explorer} é possível observar que temos mais
     casos de pessoas contendo glaucoma, dentro da base de dados recebida, em somente um dos olhos do que
     nos dois olhos. Além disso, temos a maior presença de pacientes do gênero feminino comparado ao masculino.
     Em proporção, a presençá de glaucoma é maior em homens do que em mulheres. De acordo com Pesquisa Nacional
     Nacional de Saúde \citep{pns}, as mulheres continuam sendo em maior proporção as pessoas que vão
-    ao médico e procuram manter-se saudável . Com isto, o dado acima pode ser uma consequência dessa cultura, onde
+    ao médico e procuram manter-se saudável. Com isto, o dado acima pode ser uma consequência dessa cultura, onde
     temos a maior presença feminina, no entanto, com proporções menores quanto a presença de
     glaucoma. Na seção de resultados, iremos observar se o modelo coloca a variável gênero como uma
     das principais para predição do glaucoma.
 
     \begin{figure}
         \centering
-        \includegraphics[width=1.0\linewidth]{./img/dist.png}
         \caption{Distribuição do Glaucoma por variável}
-        \label{dist_glaucoma}
+        \label{fig:dist_glaucoma}
+        \includegraphics[width=1.0\textwidth]{./img/dist.png}
+        \small{Fonte: Elaborado pelo autor.}
     \end{figure}
 
-    Os gráficos da fígura \ref{dist_glaucoma} mostra a distriuição das variáveis do OCT quanto a
+    Os gráficos da fígura~\ref{fig:dist_glaucoma} mostra a distriuição das variáveis do OCT quanto a
     presença de glaucoma ou não. Existe uma separação visível das distribuições das variáveis G, TS, N e
     TI quanto a presença de glaucoma. Outro ponto importante, é a presença das distribuições contendo caudas
     para esquerda ou para direita. Estes pontos provavelmente serão detectados pelo modelo mais
@@ -1163,12 +1202,13 @@
 
     \begin{figure}
         \centering
-        \includegraphics[width=1.0\linewidth]{./img/boxplot.png}
         \caption{Boxplot do Glaucoma por variável.}
-        \label{boxplot}
+        \label{fig:boxplot}
+        \includegraphics[width=1.0\textwidth]{./img/boxplot.png}
+        \small{Fonte: Elaborado pelo autor.}
     \end{figure}
 
-    Existe uma presença de valores atípicos mostrados na fígura \ref{boxplot}. A idade, como
+    Existe uma presença de valores atípicos mostrados na fígura~\ref{fig:boxplot}. A idade, como
     mostrado na fígura, pode ser um bom separador, já que existe uma tendência a esquerda (menor
     idade) quando to a ausência do glaucoma.
     As variáveis TI, G e TS são as que mais distanciam os casos quanto a presença ou não do glaucoma.
@@ -1178,18 +1218,24 @@
 
     \begin{figure}
         \centering
-        \includegraphics[width=0.5\linewidth]{./img/correlacao.png}
         \caption{Correlação absoluta das variáveis}
-        \label{corr}
+        \label{fig:corr}
+        \includegraphics[width=1.0\textwidth]{./img/correlacao.png}
+        \small{Fonte: Elaborado pelo autor.}
     \end{figure}
 
-    Existe uma forte correlação entre a variável TS e G. Sendo G uma média global, existe a
+    Existe uma forte correlação entre a variável TS e G~\ref{fig:corr}. Sendo G uma média global, existe a
     possibilidade que a variável TS tenha uma influência forte na média. As variáveis que mais se correlacionam com a
-    classe são: TS, TI e G.
+    classe são: TS, TI e G. A seguir, uma sumarização dos dados após a limpeza:
 
-    A seguir, uma sumarização dos dados após a limpeza:
-
+    \begin{table}
+    \centering
+        \caption{Tabela contendo sumarização dos dados utilizando as estatísticas: máximo, mínimo, média,
+        desvio e contagem.}
+        \label{tab:estatisticas}
     \csvautobooktabular{./tables/description.csv}
+        \small{Fonte: Elaborado pelo autor.}
+    \end{table}
 
     \section{Engenharia de características e Normalização}\label{sec:engineering}
 
@@ -1215,7 +1261,7 @@
     mesma magnitude e o modelo escolhe a importância de cada um delas.
 
     Foi uma comparação entre  os modelos de redes neurais,
-    modelos de árvore de decisão e modelos matemáticos como SVM e regressão logística\citep{Maetschke2019-dy}.
+    modelos de árvore de decisão e modelos matemáticos como SVM e regressão logística \citep{Maetschke2019-dy}.
     Para os modelos que não são redes neurais, 22 características foram medidas utilizando
     um scanner OCT. Uma destas características é a razão entre o copo e o disco. Todas as
     características foram normalizadas antes de serem processadas pelos modelos de aprendizado de
@@ -1231,17 +1277,19 @@
     características.
 
 
-    \begin{figure}\label{fig:engcorr}
+    \begin{figure}
         \centering
-        \includegraphics[width=0.6\linewidth]{./img/corr_eng_f.png}
         \caption{Correlação das características criadas pela operação razão.}
+        \label{fig:engcorr}
+        \includegraphics[width=0.98\textwidth]{./img/corr_eng_f.png}
+        \small{Fonte: Elaborado pelo autor.}
     \end{figure}
 
-    A fígura\ref{fig:engcorr} mostra a correlação das características criadas sintéticamente com a
+    A fígura~\ref{fig:engcorr} mostra a correlação das características criadas sintéticamente com a
     operação de razão. Podemos observar que
     as duas características que mais apresentam correlação com a classe (presença ou ausência de
-    glaucoma) são: N/TI e T/TI\@. No cápitulo de resultados\ref{results}, mais especificamente na seção de
-    explicabilidade\ref{sec:resultexp}, será averiguado se alguma destas características criadas foram importantes para
+    glaucoma) são: N/TI e T/TI\@. No cápitulo de resultados~\ref{results}, mais especificamente na seção de
+    explicabilidade~\ref{sec:resultexp}, será averiguado se alguma destas características criadas foram importantes para
     o modelo.
 
 
@@ -1251,8 +1299,16 @@
     Todos os experimentos foram executados em uma máquina com processador i7\-3770, 16
     gigabytes\footnote{Gigabyte (símbolo Gbyte, GB, G) é uma unidade de medida de informação, segundo o
     Sistema Internacional de Unidades \- S.I., que equivale a um bilhão (milhar de milhões) de bytes,
-    ou seja, 1.000.000.000 bytes, ou ainda 109 bytes.[1]} de
+    ou seja, 1.000.000.000 bytes, ou ainda $10^{9}$ bytes} de
     ram e uma placa de video Nvidia RTX-3060 com 12 gigabytes de memória.
+
+    Dentre os \textit{softwares}\footnote{Software é um termo técnico que foi traduzido para
+    a língua portuguesa como suporte lógico
+    e trata-se de uma sequência de instruções a serem seguidas e/ou executadas, na manipulação, redirecionamento ou modificação de um dado (informação) ou acontecimento.} utilizados estão as seguintes bibliotecas de
+    Python\footnote{https://www.python.org/}: \textit{Pytorch}\footnote{https://pytorch.org/},
+    \textit{Seaborn}\footnote{https://seaborn.pydata.org/}, \textit{SHAP}~\footnote{https://github.com/slundberg/shap} e
+    \textit{Pandas}\footnote{https://pandas.pydata.org/}. Para execução das análises foi utilizada o
+    \textit{Jupyter Notebook}\footnote{https://jupyter.org/}.
 
 
     \section{\textit{Fine-Tunning}}\label{sec:fineextraction}
@@ -1265,7 +1321,7 @@
     parâmetros de forma randômica e em seguida aplicamos nossos dados para que o modelo consiga aprender padrões
     do zero. O segundo método é conhecido como \textit{feature extract} que é quando
     utilizamos os modelos \textit{backbones}, com os pesos já treinados em um grupo de dados
-    diferente, e queremos utilizar deste pesos e apenas adicionar uma nova camada(normalmente a
+    diferente, e queremos utilizar deste pesos e apenas adicionar uma nova camada (normalmente a
     última) que será adaptada
     para o nosso conjunto de dados. Neste caso, todo o treinamento será feito apenas nessa última
     camada adicionada, enquanto os pesos das redes neurais pretreinadas serão congelados. E existe
@@ -1305,7 +1361,7 @@
     % O Optuna utiliza diferentes estratégias e algoritmos para testagem de parâmetros. É possível
     % configurar a ferramenta para utilizar a otimização bayesiana \citep{bayesian} ou algoritmos
     % evolucionários \citep{evolutionary} para a busca de hiperparâmetros (\textit{Sampling Strategy)}. A segunda estratégia foca
-    % em no método de \textit{Early Stopping} \ref{sec:trainval} citada anteriormente com o objetivo
+    % em no método de \textit{Early Stopping}~\ref{sec:trainval} citada anteriormente com o objetivo
     % de eliminar tentativas não promissoras (\textit{Pruning Strategy}).
 
 
@@ -1314,17 +1370,17 @@
     % tentados pela ferramenta e os resultados obtidos por ao final do processo.
 
 
-    \section{\textit{Learning Decay}}\label{sec:decay}
+    \section{\textit{Learning Rate Decay}}\label{sec:decay}
 
-    \textit{Learning Decay} é uma tećnica de treinamento de rede neurais. O modelo começa com taxa
-    de aprendizagem \textit{lr} e vai decaindo essa taxa múltiplas vezes durante o treinamento.
+    \textit{Learning Rate Decay} (LRD) é uma tećnica de treinamento de rede neurais. O modelo começa com taxa
+    de aprendizagem   e vai decaindo essa taxa múltiplas vezes durante o treinamento.
     Dessa maneira, o modelo começa atualizando os pesos mais rapidamente até que se chega em um
     certo ponto onde é necessário trabalhar com números menores e atualizações mais lentas. Dado isto, a taxa de
     aprendizagem do modelo irá diminuir, diminuindo os valores de atualização dos parâmetros e
     consequetemente atingindo valores melhores em desempenho.
 
-    Os seguinte trabalhos trazem um pouco do benefício do \textit{learning decay} \citep{lrpaper1,
-    lrpaper2}. A imagem na figura \ref{fig:lrdecay} mostra que em um certo momento os modelos ResNet-18 e
+    Os seguinte trabalhos trazem um pouco do benefício do \textit{learning rate decay} \citep{lrpaper1,
+    lrpaper2}. A imagem na figura~\ref{fig:lrdecay} mostra que em um certo momento os modelos ResNet-18 e
     ResNet-34 chegam em um platô onde o erro do modelo não decrementa. A partir deste momento, a
     taxa de aprendizagem é subtraída por um valor e em seguida, o modelo volta a melhorar
     sua desempenho. Com isso, o modelo com taxas menores consegue fazer ajustes mais finos, ou em
@@ -1332,9 +1388,10 @@
 
     \begin{figure}
         \centering
-        \includegraphics[width=0.6\linewidth]{./img/learning_decay.png}
-        \caption{\textit{Learning Rate Decay} aplicado a modelos visuais. Image retirada de \citep{lrpaper2}}
+        \caption{\textit{Learning Rate Decay} aplicado a modelos visuais.}
         \label{fig:lrdecay}
+        \includegraphics[width=0.98\textwidth]{./img/learning_decay.png}
+            \small{Fonte: \href{https://towardsdatascience.com/the-subtle-art-of-fixing-and-modifying-learning-rate-f1e22b537303}{Towards Data Science}}
     \end{figure}
 
 
@@ -1344,17 +1401,17 @@
 
     \begin{itemize}
         \item Primeiro foram testados os seguintes modelos utilizando diferente configurações:
-            Mobile,RegNet(X e Y), ShuffleNet,
+            Mobile,RegNet (X e Y), ShuffleNet,
             EfficientNet, Inception-V3, ResNet, e ViT. Cada um dos modelos citados anteriormente foram testados com 4 diferente
             otimizadores (Adam, RAdam, SGD, Ranger) de parâmetros e 4 valores de taxa de
             aprendizagem (0.01, 0.001, 0.0001, 0.0005). Ao final desta etapa, foram selecionado os
             melhores modelos de acordo com a métrica AUC para a próxima etapa. Além disso, esta
-            etapa fornceu o melhor momento para aplicar o \textit{Learning Decay} e o \textit{Early
+            etapa fornceu o melhor momento para aplicar o \textit{Learning Rate Decay} e o \textit{Early
             Stopping} para ser utilizado nas próximas etapas.
         \item Em seguida os melhores K modelos são testado, utilizando decaimento de taxa de
             aprendizagem e \textit{Early Stopping} utilizando validação cruzada.
         \item Em seguida, os melhores M modelos dos K foram selecionados e é aplicado o
-            \textit{RandAugment} \ref{sec:aug} para trazer mais diversidade para os dados de treino e
+            \textit{RandAugment}~\ref{sec:aug} para trazer mais diversidade para os dados de treino e
             verificar o impacto, em questão de desempenho, do \textit{Data Augmentation}
     \end{itemize}
 
@@ -1369,32 +1426,80 @@
     um olho no treino e dados de outro olho no teste. Desta modo, evitou-se que houvesse vazamento de
     dados e o modelo demostre uma desempenho irreal.
 
+    \begin{table}[H]
+    \centering
+    \setlength{\extrarowheight}{0pt}
+    \addtolength{\extrarowheight}{\aboverulesep}
+    \addtolength{\extrarowheight}{\belowrulesep}
+    \setlength{\aboverulesep}{0pt}
+    \setlength{\belowrulesep}{0pt}
+    \caption{Versões dos modelos visuais utilizados como Backbones  e o total de parâmetros de cada um. O modelo ViT é o que possui maior número de parâmetros, aproximadamente 86 milhões, enquanto o modelo Shuffle possui somente 2.5 milhões. }
+    \label{tab:bversions}
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{!{\vrule width \heavyrulewidth}>{\hspace{0pt}}m{0.51\textwidth}!{\vrule width \heavyrulewidth}>{\hspace{0pt}}m{0.363\textwidth}!{\vrule width \heavyrulewidth}}
+    \toprule
+    \textit{\textbf{Backbone}} & \textbf{Parâmetros} \\
+    \toprule
+    \rowcolor[rgb]{0.761,0.761,0.761} RegNet800MFX & 6.586.329 \\
+    \toprule
+    RegNet800MFY & 5.648.297 \\
+    \toprule
+    \rowcolor[rgb]{0.761,0.761,0.761} RegNet1.6GFX & 8.279.048 \\
+    \toprule
+    RegNet1.6GFY & 10.314.319 \\
+    \toprule
+    \rowcolor[rgb]{0.761,0.761,0.761} RegNet3.2GFX & 14.288.561 \\
+    \toprule
+    RegNet3.2GFY & 17.824.851 \\
+    \toprule
+    \rowcolor[rgb]{0.761,0.761,0.761} MobileV3Large & 4.203.313 \\
+    \toprule
+    Resnet50 & 23.510.081 \\
+    \toprule
+    \rowcolor[rgb]{0.761,0.761,0.761} EfficientNetb0 & 4.008.829 \\
+    \toprule
+    ShuffleNetV1X1.5 & 2.479.649 \\
+    \toprule
+    \rowcolor[rgb]{0.761,0.761,0.761} VitBase16\_224 & 85.799.425 \\
+    \toprule
+    InceptionV3 & 24.346.082 \\
+    \bottomrule
+    \end{tabular}
+    }
+        \small{Fonte: Elaborado pelo autor.}
+    \end{table}
+
+
+   A tabela~\ref{tab:bversions} possui a versão e o total de par&aemtros dos modelos citados na seção~\ref{sec:model}
+   implementados dentro da biblitoeca Pytorch\footnote{Biblioteca Python de aprendizado de máquina}.
+
 
     %% Contudo é possível ainda melhorar o modelo utizando um otimizador bayesiano tipo optuna. esta biblioteca fornece múltiplos algoritmos para seleção do melhor modelo
     %% Com isso é possível fazer testes rápidos. Testando mais possibilidades é possível convergir mais rápido, já que teremos mais trials por minuto. Logo, com iterações
     %% é possível chegar no mínimo local. Completude de features, podemos usar o ilca.
 
 
-    \chapter{Resultados}
-    \label{results}
+    \chapter{Resultados}\label{results}
 
     Neste cápitulo iremos apresentar os resultados. Na primeira seção iremos apresentar uma visão
-    geral dos modelos quanto a desempenho relação a nossa métrica principal, AUC
-    \ref{sec:metrics}. Além disso, pela gráfico de perda (loss) teremos um ponto ideal para cada um
-    dos modelos quanto a hora de aplicarmos a técnica de \textit{Learning Decay} \ref{sec:decay}
+    geral dos modelos quanto a desempenho relação a nossa métrica principal, AUC~\ref{sec:metrics}.
+    Além disso, pela gráfico de perda (loss) teremos um ponto ideal para cada um
+    dos modelos quanto a hora de aplicarmos a técnica de \textit{Learning Rate Decay}~\ref{sec:decay}
     para conseguirmos uma desempenho ainda melhor nas próximas etapas.
 
-    \section{Desempenho Geral}
+    \section{Desempenho Geral}\label{sec:general}
 
-    \begin{figure}\label{fig:geralauc}
+    \begin{figure}[ht]
         \centering
-        \includegraphics[width=0.6\linewidth]{./img/melhor_auc_lr_learning.png}
         \caption{Avaliação geral dos modelos divididos em uso de duas imagens e presença das métricas do
-            OCT. O gráfico violino mostra a distruição dos valores máximos atingindos por cada
-            \textit{backbone}}
+        OCT. O gráfico violino mostra a distruição dos valores máximos atingindos por cada
+        \textit{backbone}}
+        \label{fig:geralauc}
+        \includegraphics[width=0.98\textwidth]{./img/melhor_auc_lr_learning.png}
+        \small{Fonte: Elaborado pelo autor.}
     \end{figure}
 
-    A fígura \ref{fig:geralauc} mostra como foi a desempenho geral dos modelos. Nota-se que os
+    A fígura~\ref{fig:geralauc} mostra como foi a desempenho geral dos modelos. Nota-se que os
     modelos utilizando os dados de OCT atingiram melhores resultados do que aqueles que não usa,
     tanto para modelos utilizando uma imagem quanto para modelos utilizando duas imagens. A
     distruição do modelo que não utiliza OCT é menos esparsa quanto aus resultados no teste, com
@@ -1402,39 +1507,40 @@
     Enquanto, os modelos utilizando OCT possuem uma variabilidade maior quanto ao desempenho. Este
     compartamento é encontrado quanto nos modelos utilizando uma ou duas imagens.
 
-
-    \begin{figure}\label{scatter}
-        \begin{subfigure}[b]{0.5\linewidth}
-            \centering
-            \includegraphics[width=0.55\linewidth]{./img/scatter1.png}
-            \caption{Comparação entre os modelos RegNet e todos os outros.}
-            \label{fig:scatter1}
-            \vspace{4ex}
-        \end{subfigure}%%
-        \begin{subfigure}[b]{0.5\linewidth}
-            \centering
-            \includegraphics[width=0.55\linewidth]{./img/scatter2.png}
-            \caption{Comparação entre os modelos j}
-            \label{fig:scatter2}
-            \vspace{4ex}
-        \end{subfigure}%%
-        \captio{Comparação das estatisticas da métrica AUC. O eixo y é o melhor resultado do modelo
-        durante todas as épocas, enquanto o eixo x é a média do modelo durante o treinamento.}
-    \end{figure}
-
-    O gráfico \ref{scatter} usa a média da AUC no treinamento e o valor máximo atingido para
+    O gráfico~\ref{fig:scatter} usa a média da AUC no treinamento e o valor máximo atingido para
     comparar os modelos. É perceptível que os modelos estão distribuídos de forma uniforme no
     gráfico quando comparamos os grupos. Os modelos RegNetY e RegNetX não sobreasem quanto ao
     desempenho quando comparados juntos. Além disso, existe uma relação direta entre a média de AUC
     no treinamento e o valor máximo que essa atinge durante todo o processo, com raros casos de
     discrepância.
 
+    \begin{figure}[ht]
+        \centering
+        \caption{Comparação das estatisticas da métrica AUC. O eixo y é o melhor resultado do modelo
+        durante todas as épocas, enquanto o eixo x é a média do modelo durante o treinamento.}
+        \label{fig:scatter}
+        \begin{subfigure}[ht]{0.48\textwidth}
+            \centering
+            \caption{Comparação entre grupo de modelos RegNet e todos os outros.}
+            \label{fig:scatter1}
+            \includegraphics[width=0.98\textwidth]{./img/scatter1.png}
+        \end{subfigure}
+        \begin{subfigure}[ht]{0.48\textwidth}
+            \centering
+            \caption{Comparação entre os modelos RegNet por si.}
+            \label{fig:scatter2}
+            \includegraphics[width=0.98\textwidth]{./img/scatter2.png}
+        \end{subfigure}
+        \small{Fonte: Elaborado pelo autor.}
+    \end{figure}
+
+
     \begin{center}
         \input{./tables/mean_std_min_max_backbone_auc.tex}\label{tab:aucbackbone}
         \input{./tables/mean_std_min_max_double_oct_auc.tex}\label{tab:aucdboct}
     \end{center}
 
-    As tabelas \ref{tab:aucbackbone} e \ref{tab:aucdboct} sumarizam todas as execuções dos
+    As tabelas~\ref{tab:aucbackbone} e~\ref{tab:aucdboct} sumarizam todas as execuções dos
     \textit{backbone} em todas as arquiteturas discutidas\ref{fig:arqui}. Quanto a máxima AUC
     atingida pelos modelos, todos estes tiveram valor próximo de 0.93. Quanto as arquiteturas
     testadas, podemos obsevar que a presença do OCT traz benefícios para o modelo, aumentando até em
@@ -1444,11 +1550,11 @@
 
     \begin{figure}\label{distarqui}
         \centering
-        \includegraphics[width=0.6\linewidth]{./img/distarqui.png}
+        \includegraphics[width=0.6\textwidth]{./img/distarqui.png}
         \caption{Distribuição dos desempenhos separado por arquiteturas de modelos}
     \end{figure}
 
-    A distruição dos desempenhos apresentados na fígura \ref{distarqui} mostra uma seperação clara
+    A distruição dos desempenhos apresentados na fígura~\ref{distarqui} mostra uma seperação clara
     entre OCT e não. No entanto, como citado anteriormente não há diferença do modelo utilizando uma
     ou duas imagens. Dado isso, foi selecionado os melhores 5\%, baseado na AUC, dos modelos usando uma image e uma
     imagem mais os dados de OCT. Para seleção foi utilizado o percentil\footnote{Em estatística
@@ -1460,29 +1566,29 @@
 
 
 
-    E por útlimo, o gráfico \ref{fig:lossepochs} da função de custo durante o treinamento. O gráfico mostrau uma média
+    E por útlimo, o gráfico~\ref{fig:lossepochs} da função de custo durante o treinamento. O gráfico mostrau uma média
     global de todos os modelos treinados com um intervalo de confiança de 0.95. O gráfico mostra que
     a partir da época 30 o modelo não consegue ter uma melhoria no seu desempenho. Portanto, é nesse
-    momento que aplicamos o \textit{Early Stopping} e o \textit{Learning Decay} para próxima fase de
+    momento que aplicamos o \textit{Early Stopping} e o \textit{Learning Rate Decay} para próxima fase de
     experimentos utilizando validação cruzada.
 
 
     \begin{figure}\label{fig:lossepochs}
         \centering
-        \includegraphics[width=0.6\linewidth]{./img/lossepochs.png}
+        \includegraphics[width=0.6\textwidth]{./img/lossepochs.png}
         \caption{Comportamento da função de custo durante as épocas de treinamento. O gráfico mostra
         um valor médio e um intervalo de confiança de 0.95}
     \end{figure}
 
-    \subsection{Validação Cruzada e \textit{Learning Decay}}
+    \subsection{Validação Cruzada e \textit{Learning Rate Decay}}
 
     Nesta seção iremos avaliar os melhores modelos selecionados na etapa anterior e verificar seu
     desempenho utilizando a validção cruzada \citep{cross-val}. O total de grupos para experimento
     foi igual 5, ou seja, cada configuração de hiperparâmetros gerou 5 modelos diferentes,
     totalizando 140 modelos, com seus respectivos desempenhos. Além disso, foram será ilustrada uma
-    comparação entre a utilização do \textit{Learning Decay} utilizando validação cruzada.
+    comparação entre a utilização do \textit{Learning Rate Decay} utilizando validação cruzada.
 
-    A seguir \ref{tab:summarytop}, a tabela contendo os hiperparâmetros e os \textit{backbones} dos modelos testados. O
+    A seguir~\ref{tab:summarytop}, a tabela contendo os hiperparâmetros e os \textit{backbones} dos modelos testados. O
     campo \textbf{Usando OCT} se refere a usar os dados do exame OCT junto com o modelo de imagem.
     Dentre os melhores modelos, a família de modelos RegNet aparece em 16 dos 18 melhores modelos.
     Isso mostra que o RegNet além ter um desempenho bom, é também um modelo a ser escolhido na
@@ -1492,15 +1598,15 @@
 
     \input{./tables/results_ld.tex}
 
-    A fígura \ref{fig:crosscompare} mostra a distribuição do desempenho dos modelos testados. O
-    \textit{Learning Decay} trouxe uma melhora significativa para as duas arquiteturas. Apesar de
+    A fígura~\ref{fig:crosscompare} mostra a distribuição do desempenho dos modelos testados. O
+    \textit{Learning Rate Decay} trouxe uma melhora significativa para as duas arquiteturas. Apesar de
     ter aumentando a variabilidade da AUC, a técnica trouxe benefícios positivos quanto a métrica. O
     salto maior foi para a arquitetura de modelos utilizando somente imagem.
 
     \begin{figure}\label{fig:crosscompare}
         \centering
-        \includegraphics[width=0.6\linewidth]{./img/cross_compare.png}
-        \caption{Comparação do uso do \textit{Learning Decay} nos melhores modelos. Os melhores
+        \includegraphics[width=0.6\textwidth]{./img/cross_compare.png}
+        \caption{Comparação do uso do \textit{Learning Rate Decay} nos melhores modelos. Os melhores
         modelos da etapa anterior foram re-executados utilizando validação cruzada para uma
         comparação justa.}
     \end{figure}
@@ -1532,13 +1638,13 @@
     métrica de AUC quanto nas métricas de especificidade(sp) e sensitividade(sn).
 
 
-    \section{Explicabilidade}\ref{sec:resultexp}
+    \section{Explicabilidade}\label{sec:resultexp}
 
     Nesta seção iremos trazer a explicabilidade dos melhores modelos. O objetivo é entender a
     interação do modelos com os dados, tanto de imagen quanto os tabulares, para então seja possível
     entender o porque da decisão do modelo. Iremos avaliar tanto as imagens do fundo do olho e
     verificar quais foram as partes cruciais das imagens, quanto os valores tabelados conténdo as
-    medições e as características criadas e descritas na seção \ref{sec:engineering}.
+    medições e as características criadas e descritas na seção~\ref{sec:engineering}.
 
     \subsection{Compara arquitetura 1 olho e dois olhos}
 
@@ -1566,7 +1672,7 @@
     quanto sua variabilidade. No entanto, apesar de não ter sido um sucesso neste projeto, este tipo
     de técnia não deve descartada já que aqui não foram testados todos as combinações de
     hiperparâmetros e modelagens possíveis devido ao limitante computacional. Por outra lado, a
-    técnica de \textit{Learning Decay} apresentou benefícios para os modelos, aumentando seu
+    técnica de \textit{Learning Rate Decay} apresentou benefícios para os modelos, aumentando seu
     desempenho quanto a métrica AUC.
 
     %% Referências

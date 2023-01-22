@@ -1,0 +1,13 @@
+backbone,rank_avg
+efficient,171
+inception,91
+mobile,167
+regnet,137
+regnet16,117
+regnet16x,142
+regnet32,132
+regnet32x,184
+regnetx,164
+resnet,100
+shuffle,137
+vit,149

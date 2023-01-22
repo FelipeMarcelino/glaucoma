@@ -4,6 +4,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import copy
+from torchinfo import summary
 
 # from pytorch_forecasting.optim import Ranger
 from torch_optimizer import Ranger, RAdam
@@ -366,4 +367,6 @@ def init_model(
 
         input_size = 224
 
+    print(summary(model))
+    sys.exit(1)
     return model, input_size
