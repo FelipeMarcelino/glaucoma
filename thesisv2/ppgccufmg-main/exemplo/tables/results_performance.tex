@@ -1,0 +1,40 @@
+\begin{table}
+\centering
+\caption{Total de uso de memória e tempo de inferência}
+\label{tab:results_performance}
+\begin{tabular}{c|c|c|c|c|c|}
+\toprule
+{} &   optim &      lr &  output\_tab &  inference\_time &  total\_mem\_mb \\
+\textbf{backbone } &         &         &             &                 &               \\
+\midrule
+\textbf{regnet16x} &   radam &  0.0010 &         0.0 &             NaN &          2402 \\
+\textbf{regnet16x} &   radam &  0.0001 &         0.0 &             NaN &          2402 \\
+\textbf{inception} &  ranger &  0.0005 &         0.0 &             NaN &          4722 \\
+\textbf{inception} &     sgd &  0.0100 &         0.0 &             NaN &          4722 \\
+\textbf{inception} &  ranger &  0.0010 &         0.0 &             NaN &          4722 \\
+\textbf{regnet32x} &   radam &  0.0010 &         0.0 &             NaN &          3592 \\
+\textbf{resnet   } &    adam &  0.0100 &         5.0 &             NaN &          3762 \\
+\textbf{resnet   } &  ranger &  0.0100 &         5.0 &             NaN &          3762 \\
+\textbf{regnet32y} &    adam &  0.0005 &         5.0 &             NaN &          4182 \\
+\textbf{regnet32y} &    adam &  0.0100 &         5.0 &             NaN &          4182 \\
+\textbf{mobile   } &   radam &  0.0100 &         5.0 &             NaN &          1662 \\
+\textbf{shuffle  } &  ranger &  0.0100 &         5.0 &             NaN &          1057 \\
+\textbf{shuffle  } &   radam &  0.0010 &         5.0 &             NaN &          1057 \\
+\textbf{shuffle  } &  ranger &  0.0010 &         5.0 &             NaN &          1057 \\
+\textbf{shuffle  } &   radam &  0.0100 &         5.0 &             NaN &          1057 \\
+\textbf{regnetx  } &    adam &  0.0100 &         5.0 &             NaN &          1679 \\
+\textbf{regnetx  } &    adam &  0.0010 &         5.0 &             NaN &          1679 \\
+\textbf{regnetx  } &   radam &  0.0100 &         5.0 &             NaN &          1679 \\
+\textbf{regnet16y} &  ranger &  0.0100 &         5.0 &             NaN &          2812 \\
+\textbf{regnet16y} &    adam &  0.0100 &         5.0 &             NaN &          2812 \\
+\textbf{regnet16y} &   radam &  0.0100 &         5.0 &             NaN &          2812 \\
+\textbf{efficient} &    adam &  0.0100 &         5.0 &             NaN &          3002 \\
+\textbf{regnet32x} &   radam &  0.0100 &         5.0 &             NaN &          3602 \\
+\textbf{regnet32x} &   radam &  0.0010 &         5.0 &             NaN &          3602 \\
+\textbf{regnet32x} &  ranger &  0.0100 &         5.0 &             NaN &          3602 \\
+\textbf{regnet32x} &    adam &  0.0100 &         5.0 &             NaN &          3602 \\
+\textbf{regnet16x} &   radam &  0.0100 &         5.0 &             NaN &          2412 \\
+\textbf{inception} &  ranger &  0.0100 &         5.0 &             NaN &          4822 \\
+\bottomrule
+\end{tabular}
+\end{table}

@@ -1,0 +1,29 @@
+\begin{document}
+\begin{table}
+\centering
+    \caption{Tabela contendo os resultados separado por dois grupos: OCT e Dual Image. A tabela
+    mostra que Dual Image não trás benefícios, enquanto a utilização do exame OCT agrega performance
+    aos resultados}
+\setlength{\extrarowheight}{0pt}
+\addtolength{\extrarowheight}{\aboverulesep}
+\addtolength{\extrarowheight}{\belowrulesep}
+\setlength{\aboverulesep}{0pt}
+\setlength{\belowrulesep}{0pt}
+\resizebox{\linewidth}{!}{%
+\label{tab:aucdualoct}
+\begin{tabular}{>{\hspace{0pt}}m{0.16\linewidth}>{\hspace{0pt}}m{0.181\linewidth}>{\hspace{0pt}}m{0.06\linewidth}>{\hspace{0pt}}m{0.069\linewidth}>{\hspace{0pt}}m{0.085\linewidth}>{\hspace{0pt}}m{0.069\linewidth}>{\hspace{0pt}}m{0.06\linewidth}>{\hspace{0pt}}m{0.069\linewidth}>{\hspace{0pt}}m{0.085\linewidth}>{\hspace{0pt}}m{0.069\linewidth}}
+\toprule
+\multirow{2}{0.16\linewidth}{\hspace{0pt}Dual Image} & \multirow{2}{0.181\linewidth}{\hspace{0pt}Usando OCT} & \multicolumn{4}{>{\hspace{0pt}}m{0.283\linewidth}}{Melhor AUC} & \multicolumn{4}{>{\hspace{0pt}}m{0.283\linewidth}}{AUC Média} \\
+\cmidrule{3-6}\cmidrule(lr){7-10}
+ &  & min & max & mean & std & min & max & mean & std \\
+\midrule
+Não & Não & 0.5 & 0.85 & 0.75 & 0.08 & 0.5 & 0.74 & 0.66 & 0.07 \\
+\rowcolor[rgb]{0.761,0.761,0.761} Não & Sim & 0.5 & 0.95 & 0.85 & 0.1 & 0.5 & 0.88 & 0.75 & 0.1 \\
+Sim & Não & 0.5 & 0.85 & 0.74 & 0.11 & 0.5 & 0.77 & 0.66 & 0.09 \\
+\rowcolor[rgb]{0.761,0.761,0.761} Sim & Sim & 0.5 & 0.95 & 0.83 & 0.11 & 0.5 & 0.87 & 0.74 & 0.1 \\
+\bottomrule
+\end{tabular}
+}
+    \small{Fonte: Elaborado pelo autor.}
+\end{table}
+\end{document}

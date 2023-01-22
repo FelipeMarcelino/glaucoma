@@ -1,0 +1,39 @@
+\begin{table}
+\centering
+\caption{Sumário dos melhores modelos testados na primeira etapa. Além disso, os resultados e os hiperparâmetros associados aos resultados.}
+\label{tab:aucdboct}
+\begin{tabular}{c|c|c|c|c|c|}
+\toprule
+{} &  val\_best\_auc &  val\_avg\_auc &   optim &      lr &   backbone & Usando OCT \\
+\midrule
+\textbf{657} &      0.791911 &     0.708945 &   radam &  0.0010 &  regnet16x &        Não \\
+\textbf{659} &      0.828241 &     0.720717 &   radam &  0.0001 &  regnet16x &        Não \\
+\textbf{760} &      0.811790 &     0.665427 &     sgd &  0.0100 &  inception &        Não \\
+\textbf{761} &      0.809929 &     0.720317 &  ranger &  0.0005 &  inception &        Não \\
+\textbf{762} &      0.811790 &     0.717394 &  ranger &  0.0010 &  inception &        Não \\
+\textbf{823} &      0.848903 &     0.723695 &   radam &  0.0010 &  regnet32x &        Não \\
+\textbf{418} &      0.930278 &     0.816278 &    adam &  0.0005 &  regnet32y &        Sim \\
+\textbf{503} &      0.932139 &     0.815444 &  ranger &  0.0010 &    shuffle &        Sim \\
+\textbf{504} &      0.933999 &     0.843732 &   radam &  0.0010 &    shuffle &        Sim \\
+\textbf{557} &      0.938504 &     0.864828 &    adam &  0.0100 &     resnet &        Sim \\
+\textbf{611} &      0.925774 &     0.827405 &   radam &  0.0100 &     mobile &        Sim \\
+\textbf{612} &      0.949373 &     0.876458 &  ranger &  0.0100 &    shuffle &        Sim \\
+\textbf{613} &      0.932139 &     0.851292 &   radam &  0.0100 &    shuffle &        Sim \\
+\textbf{619} &      0.927634 &     0.850609 &    adam &  0.0100 &  efficient &        Sim \\
+\textbf{621} &      0.932139 &     0.847814 &  ranger &  0.0100 &  regnet16y &        Sim \\
+\textbf{622} &      0.933999 &     0.846120 &   radam &  0.0100 &  regnet16y &        Sim \\
+\textbf{623} &      0.938504 &     0.871970 &    adam &  0.0100 &  regnet16y &        Sim \\
+\textbf{627} &      0.925774 &     0.858880 &    adam &  0.0100 &  regnet32y &        Sim \\
+\textbf{668} &      0.925774 &     0.864038 &    adam &  0.0100 &    regnetx &        Sim \\
+\textbf{669} &      0.914904 &     0.845020 &    adam &  0.0010 &    regnetx &        Sim \\
+\textbf{713} &      0.936643 &     0.841773 &  ranger &  0.0100 &     resnet &        Sim \\
+\textbf{725} &      0.932139 &     0.863667 &  ranger &  0.0100 &  regnet32x &        Sim \\
+\textbf{730} &      0.932139 &     0.872122 &    adam &  0.0100 &  regnet32x &        Sim \\
+\textbf{805} &      0.932139 &     0.854924 &   radam &  0.0100 &    regnetx &        Sim \\
+\textbf{811} &      0.932139 &     0.840509 &   radam &  0.0100 &  regnet16x &        Sim \\
+\textbf{826} &      0.925774 &     0.817942 &   radam &  0.0010 &  regnet32x &        Sim \\
+\textbf{828} &      0.925774 &     0.842557 &   radam &  0.0100 &  regnet32x &        Sim \\
+\textbf{856} &      0.929495 &     0.843764 &  ranger &  0.0100 &  inception &        Sim \\
+\bottomrule
+\end{tabular}
+\end{table}

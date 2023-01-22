@@ -1,0 +1,40 @@
+\begin{table}
+\centering
+\caption{Melhora, em porcetagem, de cada um dos modelos comparando a técnica de Learning Decay(ld)}
+\label{tab:results_improvement}
+\begin{tabular}{c|c|c|c|c|c|c|c|c|c|c|c|c|}
+\toprule
+{} &   optim &      lr &  output\_tab &  best\_auc\_improvement(\%) &  avg\_auc\_improvement(\%) &  best\_sn\_improvement(\%) &  avg\_sn\_improvement(\%) &  best\_sp\_improvement(\%) &  avg\_sp\_\_improvement(\%) \\
+\textbf{backbone } &         &         &             &                          &                         &                         &                        &                         &                         \\
+\midrule
+\textbf{regnet16x} &   radam &  0.0010 &         0.0 &                    13.50 &                     NaN &                     NaN &                    NaN &                     NaN &                     NaN \\
+\textbf{regnet16x} &   radam &  0.0001 &         0.0 &                     7.26 &                     NaN &                    8.99 &                    NaN &                    5.71 &                     NaN \\
+\textbf{inception} &  ranger &  0.0005 &         0.0 &                     6.05 &                     NaN &                   17.84 &                    NaN &                    0.53 &                     NaN \\
+\textbf{inception} &     sgd &  0.0100 &         0.0 &                    -0.13 &                     NaN &                   17.61 &                    NaN &                    3.66 &                     NaN \\
+\textbf{inception} &  ranger &  0.0010 &         0.0 &                    10.72 &                     NaN &                   26.84 &                    NaN &                    0.72 &                     NaN \\
+\textbf{regnet32x} &   radam &  0.0010 &         0.0 &                     3.88 &                     NaN &                   15.97 &                    NaN &                    1.06 &                     NaN \\
+\textbf{resnet   } &    adam &  0.0100 &         5.0 &                     0.50 &                     NaN &                   -0.14 &                    NaN &                    3.74 &                     NaN \\
+\textbf{resnet   } &  ranger &  0.0100 &         5.0 &                     2.63 &                     NaN &                    5.60 &                    NaN &                    0.88 &                     NaN \\
+\textbf{regnet32y} &    adam &  0.0005 &         5.0 &                     1.54 &                     NaN &                    9.77 &                    NaN &                   -0.88 &                     NaN \\
+\textbf{regnet32y} &    adam &  0.0100 &         5.0 &                     1.21 &                     NaN &                    1.47 &                    NaN &                    1.83 &                     NaN \\
+\textbf{mobile   } &   radam &  0.0100 &         5.0 &                     0.26 &                     NaN &                    8.24 &                    NaN &                    1.83 &                     NaN \\
+\textbf{shuffle  } &  ranger &  0.0100 &         5.0 &                     3.36 &                     NaN &                    6.98 &                    NaN &                    1.10 &                     NaN \\
+\textbf{shuffle  } &   radam &  0.0010 &         5.0 &                    -0.86 &                     NaN &                    6.30 &                    NaN &                   -0.18 &                     NaN \\
+\textbf{shuffle  } &  ranger &  0.0010 &         5.0 &                    -3.12 &                     NaN &                   -1.00 &                    NaN &                   -0.16 &                     NaN \\
+\textbf{shuffle  } &   radam &  0.0100 &         5.0 &                     6.06 &                     NaN &                    9.65 &                    NaN &                    2.78 &                     NaN \\
+\textbf{regnetx  } &    adam &  0.0100 &         5.0 &                     6.29 &                     NaN &                   12.39 &                    NaN &                    0.93 &                     NaN \\
+\textbf{regnetx  } &    adam &  0.0010 &         5.0 &                     7.77 &                     NaN &                   17.95 &                    NaN &                   -0.87 &                     NaN \\
+\textbf{regnetx  } &   radam &  0.0100 &         5.0 &                     5.78 &                     NaN &                   12.20 &                    NaN &                    2.78 &                     NaN \\
+\textbf{regnet16y} &  ranger &  0.0100 &         5.0 &                     4.34 &                     NaN &                    7.10 &                    NaN &                    1.82 &                     NaN \\
+\textbf{regnet16y} &    adam &  0.0100 &         5.0 &                     0.05 &                     NaN &                   -0.14 &                    NaN &                    3.74 &                     NaN \\
+\textbf{regnet16y} &   radam &  0.0100 &         5.0 &                     5.85 &                     NaN &                    7.03 &                    NaN &                    4.72 &                     NaN \\
+\textbf{efficient} &    adam &  0.0100 &         5.0 &                     5.57 &                     NaN &                    9.65 &                    NaN &                    2.86 &                     NaN \\
+\textbf{regnet32x} &   radam &  0.0100 &         5.0 &                     6.50 &                     NaN &                   15.00 &                    NaN &                    0.93 &                     NaN \\
+\textbf{regnet32x} &   radam &  0.0010 &         5.0 &                    -6.55 &                     NaN &                   -5.29 &                    NaN &                   -3.98 &                     NaN \\
+\textbf{regnet32x} &  ranger &  0.0100 &         5.0 &                     2.05 &                     NaN &                    9.65 &                    NaN &                    1.87 &                     NaN \\
+\textbf{regnet32x} &    adam &  0.0100 &         5.0 &                     5.78 &                     NaN &                   12.20 &                    NaN &                    2.78 &                     NaN \\
+\textbf{regnet16x} &   radam &  0.0100 &         5.0 &                     6.28 &                     NaN &                   12.20 &                    NaN &                    1.80 &                     NaN \\
+\textbf{inception} &  ranger &  0.0100 &         5.0 &                     5.36 &                     NaN &                    7.03 &                    NaN &                    4.71 &                     NaN \\
+\bottomrule
+\end{tabular}
+\end{table}

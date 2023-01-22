@@ -1,0 +1,5 @@
+PWD /data/home/felipemarcelino/google_drive/comp_science/projects/glaucoma/thesis/ppgccufmg/exemplo/tables
+INPUT /nix/store/qqpazcyznf99j3cxdi68r08g81mg3s7c-texlive-combined-2021/share/texmf/web2c/texmf.cnf
+INPUT /nix/store/qqpazcyznf99j3cxdi68r08g81mg3s7c-texlive-combined-2021/share/texmf-var/web2c/pdftex/pdflatex.fmt
+INPUT /data/home/felipemarcelino/google_drive/comp_science/projects/glaucoma/thesis/ppgccufmg/exemplo/tables/mean_std_min_max_backbone.tex
+OUTPUT mean_std_min_max_backbone.log

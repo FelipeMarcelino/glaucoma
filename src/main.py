@@ -1,5 +1,3 @@
-# TODO: adding time cross validation and total, datetime.now, and torch/torchvision version. Add
-# shallow copy to double img shared parameters model.
 #!/usr/bin/env python
 import click
 import pickle
