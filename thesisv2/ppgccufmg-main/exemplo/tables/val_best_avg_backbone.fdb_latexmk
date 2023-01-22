@@ -1,0 +1,14 @@
+# Fdb version 3
+["pdflatex"] 1674367411 "/data/home/felipemarcelino/google_drive/comp_science/projects/glaucoma/thesisv2/ppgccufmg-main/exemplo/tables/val_best_avg_backbone.tex" "val_best_avg_backbone.pdf" "val_best_avg_backbone" 1674367411
+  "/data/home/felipemarcelino/google_drive/comp_science/projects/glaucoma/thesisv2/ppgccufmg-main/exemplo/tables/val_best_avg_backbone.tex" 1674367411 2053 e7d33ac9d189e046473a373160e72c36 ""
+  "/nix/store/qqpazcyznf99j3cxdi68r08g81mg3s7c-texlive-combined-2021/share/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1 4410432 6adca85435cb280033940c2b1fc842af ""
+  "/nix/store/qqpazcyznf99j3cxdi68r08g81mg3s7c-texlive-combined-2021/share/texmf-var/web2c/pdftex/pdflatex.fmt" 1 2828625 b9b4569184f22b30f4b2cf951cc3ede5 ""
+  "/nix/store/qqpazcyznf99j3cxdi68r08g81mg3s7c-texlive-combined-2021/share/texmf/fonts/type1/public/amsfonts/cm/cmr10.pfb" 1 35752 024fb6c41858982481f6968b5fc26508 ""
+  "/nix/store/qqpazcyznf99j3cxdi68r08g81mg3s7c-texlive-combined-2021/share/texmf/tex/latex/l3backend/l3backend-pdftex.def" 1 29921 d0acc05a38bd4aa3af2017f0b7c137ce ""
+  "/nix/store/qqpazcyznf99j3cxdi68r08g81mg3s7c-texlive-combined-2021/share/texmf/web2c/texmf.cnf" 1 41601 a31f0c5991077cac88ce71e0155fe75e ""
+  "val_best_avg_backbone.aux" 1674366958 32 3985256e7290058c681f74d7a3565a19 "pdflatex"
+  "val_best_avg_backbone.tex" 1674367411 2053 e7d33ac9d189e046473a373160e72c36 ""
+  (generated)
+  "val_best_avg_backbone.aux"
+  "val_best_avg_backbone.log"
+  "val_best_avg_backbone.pdf"

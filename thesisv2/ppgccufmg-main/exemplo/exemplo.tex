@@ -13,7 +13,6 @@
 \usepackage{xcolor}
 \usepackage{natbib}
 \usepackage{csvsimple}
-\usepackage{booktabs}
 %\usepackage{xcolor}[table]
 \usepackage{booktabs}
 \usepackage{adjustbox}
@@ -21,7 +20,6 @@
 \usepackage{subcaption}
 \usepackage{lipsum}
 \usepackage{multirow}
-\usepackage{float}
 \usepackage{graphicx}
 \usepackage{colortbl}
 \usepackage{array}
@@ -32,12 +30,6 @@
 	urlcolor=magenta, %% Cor das urls
 ]{hyperref}
 
-%% Exemplo de lista customizada ==================
-%% Para criar uma lista customizada (como Lista de Algoritmos, Lista de Exemplos) que ficará juntamente com as Lista de Figuras e Lista de Tabelas, execute os 3 comandos abaixo substituindo "algoritmos" pelo tipo de lista que estará criando. Para adicionar a lista ao documento, deverá passar o seguinte parâmetro no comando \ppgccufmg:
-%% \ppgccufmg{
-%% 		...
-%% 		listacustomizada={\listadealgoritmos}
-%% }
 \newfloat[chapter]{algoritmo}{lol}{Algoritmo}
 \newcommand{\listaalgoritmosname}{Lista de Algoritmos} %% Título da lista
 \newlistof{listadealgoritmos}{lol}{\listaalgoritmosname} %% O primeiro parâmetro é o nome da lista, e este deverá ser passado no parâmetro listacustomizada={\nomedalista}
@@ -543,7 +535,7 @@
         \small{Imagem retirada do artigo \citep{designspace}.}
     \end{figure}
 
-    \begin{table}[!h]\label{tab:any}
+    \begin{table}[!h]
     \centering
         \caption{Tabela de restrições dos modelos até chegar no modelo RegNet \citep{designspace}. O índice $i$ é o
     estágio, fixado em 4. O $b_{i}$ representa
@@ -779,7 +771,7 @@
     fígura~\ref{fig:arqui}.
 
 
-    \begin{figure}[H]
+    \begin{figure}[h]
     \caption{Arquitura de modelos. O \textit{backbone} pode ser um dos modelos citados
     anteriormente (RegNet, ResNet, Inception e etc), e o
     \textit{classifier} é uma rede neural de múltiplas camadas (MLP), assim como o modelo \textit{MLP}
@@ -1024,7 +1016,7 @@
     características \citep{shapley1988shapley}. Isto é caracterizado pelo impacto que cada um destas
     características tem no valor preditivo do modelo \citep{strumbel}.
 
-    \begin{figure}[H]
+    \begin{figure}[h]
         \centering
         \caption{Gráfico sumarizado para o dataset Boston Housing ordenado pelas características
         mais importantes do modelo.}
@@ -1426,7 +1418,7 @@
     um olho no treino e dados de outro olho no teste. Desta modo, evitou-se que houvesse vazamento de
     dados e o modelo demostre uma desempenho irreal.
 
-    \begin{table}[H]
+    \begin{table}[h]
     \centering
     \setlength{\extrarowheight}{0pt}
     \addtolength{\extrarowheight}{\aboverulesep}
@@ -1464,8 +1456,7 @@
     \toprule
     InceptionV3 & 24.346.082 \\
     \bottomrule
-    \end{tabular}
-    }
+    \end{tabular}}
         \small{Fonte: Elaborado pelo autor.}
     \end{table}
 
@@ -1489,6 +1480,14 @@
 
     \section{Desempenho Geral}\label{sec:general}
 
+    A fígura~\ref{fig:geralauc} mostra como foi a desempenho geral dos modelos. Nota-se que os
+    modelos utilizando os dados de OCT atingiram melhores resultados do que aqueles que não usa,
+    tanto para modelos utilizando uma imagem quanto para modelos utilizando duas imagens. A
+    distruição do modelo que não utiliza OCT é menos esparsa quanto aus resultados no teste, com
+    exceção do ViT.
+    Enquanto, os modelos utilizando OCT possuem uma variabilidade maior quanto ao desempenho. Este
+    compartamento é encontrado quanto nos modelos utilizando uma ou duas imagens.
+
     \begin{figure}[ht]
         \centering
         \caption{Avaliação geral dos modelos divididos em uso de duas imagens e presença das métricas do
@@ -1499,13 +1498,6 @@
         \small{Fonte: Elaborado pelo autor.}
     \end{figure}
 
-    A fígura~\ref{fig:geralauc} mostra como foi a desempenho geral dos modelos. Nota-se que os
-    modelos utilizando os dados de OCT atingiram melhores resultados do que aqueles que não usa,
-    tanto para modelos utilizando uma imagem quanto para modelos utilizando duas imagens. A
-    distruição do modelo que não utiliza OCT é menos esparsa quanto aus resultados no teste, com
-    exceção do ViT.
-    Enquanto, os modelos utilizando OCT possuem uma variabilidade maior quanto ao desempenho. Este
-    compartamento é encontrado quanto nos modelos utilizando uma ou duas imagens.
 
     O gráfico~\ref{fig:scatter} usa a média da AUC no treinamento e o valor máximo atingido para
     comparar os modelos. É perceptível que os modelos estão distribuídos de forma uniforme no
@@ -1514,7 +1506,7 @@
     no treinamento e o valor máximo que essa atinge durante todo o processo, com raros casos de
     discrepância.
 
-    \begin{figure}[ht]
+    \begin{figure}[H]
         \centering
         \caption{Comparação das estatisticas da métrica AUC. O eixo y é o melhor resultado do modelo
         durante todas as épocas, enquanto o eixo x é a média do modelo durante o treinamento.}
@@ -1525,6 +1517,7 @@
             \label{fig:scatter1}
             \includegraphics[width=0.98\textwidth]{./img/scatter1.png}
         \end{subfigure}
+        \hfill
         \begin{subfigure}[ht]{0.48\textwidth}
             \centering
             \caption{Comparação entre os modelos RegNet por si.}
@@ -1535,34 +1528,92 @@
     \end{figure}
 
 
-    \begin{center}
-        \input{./tables/mean_std_min_max_backbone_auc.tex}\label{tab:aucbackbone}
-        \input{./tables/mean_std_min_max_double_oct_auc.tex}\label{tab:aucdboct}
-    \end{center}
-
-    As tabelas~\ref{tab:aucbackbone} e~\ref{tab:aucdboct} sumarizam todas as execuções dos
-    \textit{backbone} em todas as arquiteturas discutidas\ref{fig:arqui}. Quanto a máxima AUC
+    As tabelas~\ref{tab:aucbackbone} e~\ref{tab:aucdualoct} sumarizam todas as execuções dos
+    \textit{backbone} em todas as arquiteturas discutidas~\ref{fig:arqui}. Quanto a máxima AUC
     atingida pelos modelos, todos estes tiveram valor próximo de 0.93. Quanto as arquiteturas
     testadas, podemos obsevar que a presença do OCT traz benefícios para o modelo, aumentando até em
     em 12\% o desempenho dos modelos. No entanto, não houve melhora dos modelos quando utilizamos
     uma ou duas imagens na arquitetura. Dito isso, foi limitado daqui pra frente o uso de modelos
     utilizando somente uma imagem de entrada.
 
-    \begin{figure}\label{distarqui}
-        \centering
-        \includegraphics[width=0.6\textwidth]{./img/distarqui.png}
-        \caption{Distribuição dos desempenhos separado por arquiteturas de modelos}
-    \end{figure}
+    \begin{table}[ht]
+    \centering
+    \caption{Tabela contendo os resultados quanto a métrica AUC separado por backbone. Todos os
+    modelos parecem possuir resultados próximos.}
+    \setlength{\extrarowheight}{0pt}
+    \addtolength{\extrarowheight}{\aboverulesep}
+    \addtolength{\extrarowheight}{\belowrulesep}
+    \setlength{\aboverulesep}{0pt}
+    \setlength{\belowrulesep}{0pt}
+    \resizebox{\linewidth}{!}{%
+    \label{tab:aucbackbone}
+    \begin{tabular}{>{\hspace{0pt}}m{0.175\linewidth}>{\hspace{0pt}}m{0.087\linewidth}>{\hspace{0pt}}m{0.087\linewidth}>{\hspace{0pt}}m{0.106\linewidth}>{\hspace{0pt}}m{0.087\linewidth}>{\hspace{0pt}}m{0.075\linewidth}>{\hspace{0pt}}m{0.087\linewidth}>{\hspace{0pt}}m{0.106\linewidth}>{\hspace{0pt}}m{0.087\linewidth}}
+    \toprule
+    Backbone & \multicolumn{4}{>{\hspace{0pt}}m{0.367\linewidth}}{Melhor AUC} & \multicolumn{4}{>{\hspace{0pt}}m{0.355\linewidth}}{AUC Média} \\
+    \cmidrule(lr){2-5}\cmidrule(lr){6-9}
+    & min & max & mean & std & min & max & mean & std \\
+    \midrule
+    efficient & 0.5 & 0.93 & 0.8 & 0.11 & 0.5 & 0.85 & 0.72 & 0.1 \\
+    \rowcolor[rgb]{0.761,0.761,0.761} inception & 0.5 & 0.94 & 0.79 & 0.14 & 0.5 & 0.86 & 0.7 & 0.12 \\
+    mobile & 0.5 & 0.93 & 0.79 & 0.11 & 0.5 & 0.84 & 0.69 & 0.1 \\
+    \rowcolor[rgb]{0.761,0.761,0.761} regnet16x & 0.5 & 0.93 & 0.79 & 0.1 & 0.5 & 0.86 & 0.71 & 0.09 \\
+    regnet16y & 0.5 & 0.94 & 0.79 & 0.11 & 0.5 & 0.87 & 0.71 & 0.09 \\
+    \rowcolor[rgb]{0.761,0.761,0.761} regnet32x & 0.5 & 0.94 & 0.79 & 0.11 & 0.5 & 0.87 & 0.71 & 0.1 \\
+    regnet32y & 0.52 & 0.93 & 0.8 & 0.1 & 0.5 & 0.86 & 0.71 & 0.09 \\
+    \rowcolor[rgb]{0.761,0.761,0.761} regnetx & 0.5 & 0.94 & 0.79 & 0.11 & 0.5 & 0.86 & 0.71 & 0.09 \\
+    regnety & 0.51 & 0.93 & 0.78 & 0.11 & 0.5 & 0.85 & 0.7 & 0.09 \\
+    \rowcolor[rgb]{0.761,0.761,0.761} resnet & 0.5 & 0.95 & 0.79 & 0.1 & 0.5 & 0.87 & 0.7 & 0.1 \\
+    shuffle & 0.5 & 0.95 & 0.8 & 0.09 & 0.5 & 0.88 & 0.7 & 0.1 \\
+    \rowcolor[rgb]{0.761,0.761,0.761} vit & 0.5 & 0.92 & 0.75 & 0.15 & 0.5 & 0.85 & 0.67 & 0.12 \\
+    \bottomrule
+    \end{tabular}}
+    \small{Fonte: Elaborado pelo autor.}
+    \end{table}
 
-    A distruição dos desempenhos apresentados na fígura~\ref{distarqui} mostra uma seperação clara
+    \begin{table}[ht]
+    \centering
+        \caption{Tabela contendo os resultados separado por dois grupos: OCT e Dual Image. A tabela
+        mostra que Dual Image não trás benefícios, enquanto a utilização do exame OCT agrega performance
+        aos resultados}
+    \setlength{\extrarowheight}{0pt}
+    \addtolength{\extrarowheight}{\aboverulesep}
+    \addtolength{\extrarowheight}{\belowrulesep}
+    \setlength{\aboverulesep}{0pt}
+    \setlength{\belowrulesep}{0pt}
+    \resizebox{\linewidth}{!}{%
+    \label{tab:aucdualoct}
+    \begin{tabular}{>{\hspace{0pt}}m{0.16\linewidth}>{\hspace{0pt}}m{0.181\linewidth}>{\hspace{0pt}}m{0.06\linewidth}>{\hspace{0pt}}m{0.069\linewidth}>{\hspace{0pt}}m{0.085\linewidth}>{\hspace{0pt}}m{0.069\linewidth}>{\hspace{0pt}}m{0.06\linewidth}>{\hspace{0pt}}m{0.069\linewidth}>{\hspace{0pt}}m{0.085\linewidth}>{\hspace{0pt}}m{0.069\linewidth}}
+    \toprule
+    \multirow{2}{0.16\linewidth}{\hspace{0pt}Dual Image} & \multirow{2}{0.181\linewidth}{\hspace{0pt}Usando OCT} & \multicolumn{4}{>{\hspace{0pt}}m{0.283\linewidth}}{Melhor AUC} & \multicolumn{4}{>{\hspace{0pt}}m{0.283\linewidth}}{AUC Média} \\
+    \cmidrule{3-6}\cmidrule(lr){7-10}
+    &  & min & max & mean & std & min & max & mean & std \\
+    \midrule
+    Não & Não & 0.5 & 0.85 & 0.75 & 0.08 & 0.5 & 0.74 & 0.66 & 0.07 \\
+    \rowcolor[rgb]{0.761,0.761,0.761} Não & Sim & 0.5 & 0.95 & 0.85 & 0.1 & 0.5 & 0.88 & 0.75 & 0.1 \\
+    Sim & Não & 0.5 & 0.85 & 0.74 & 0.11 & 0.5 & 0.77 & 0.66 & 0.09 \\
+    \rowcolor[rgb]{0.761,0.761,0.761} Sim & Sim & 0.5 & 0.95 & 0.83 & 0.11 & 0.5 & 0.87 & 0.74 & 0.1 \\
+    \bottomrule
+    \end{tabular}}
+        \small{Fonte: Elaborado pelo autor.}
+    \end{table}
+
+    A distribuiçãodos desempenhos apresentados na fígura~\ref{fig:distarqui} mostra uma seperação clara
     entre OCT e não. No entanto, como citado anteriormente não há diferença do modelo utilizando uma
     ou duas imagens. Dado isso, foi selecionado os melhores 5\%, baseado na AUC, dos modelos usando uma image e uma
     imagem mais os dados de OCT. Para seleção foi utilizado o percentil\footnote{Em estatística
     descritiva, os percentis são medidas que dividem a amostra (por ordem crescente dos dados) em
-    100 partes, cada uma com uma percentagem de dados aproximadamente igual. O k-ésimo percentil Pk
-    é o valor x (xk) que corresponde à frequência cumulativa de N .k/100, onde N é o tamanho
+    100 partes, cada uma com uma percentagem de dados aproximadamente igual. O k-ésimo percentil
+    $P_{k}$ é o valor x ($x_{k}$) que corresponde à frequência cumulativa de N.k/100, onde N é o tamanho
     amostral.} 95 e todos os modelos abaixo desse valor foram filtrados. Ao final, restaram um total
     28 modelos.
+
+    \begin{figure}[H]
+        \centering
+        \caption{Distribuição dos desempenhos separado por arquiteturas de modelos}
+        \label{fig:distarqui}
+        \includegraphics[width=0.98\textwidth]{./img/distarqui.png}
+        \small{Fonte: Elaborado pelo autor.}
+    \end{figure}
 
 
 
@@ -1573,14 +1624,16 @@
     experimentos utilizando validação cruzada.
 
 
-    \begin{figure}\label{fig:lossepochs}
+    \begin{figure}[H]
         \centering
-        \includegraphics[width=0.6\textwidth]{./img/lossepochs.png}
         \caption{Comportamento da função de custo durante as épocas de treinamento. O gráfico mostra
         um valor médio e um intervalo de confiança de 0.95}
+        \label{fig:lossepochs}
+        \includegraphics[width=0.98\textwidth]{./img/lossepochs.png}
+        \small{Fonte: Elaborado pelo autor.}
     \end{figure}
 
-    \subsection{Validação Cruzada e \textit{Learning Rate Decay}}
+    \section{Validação Cruzada e \textit{Learning Rate Decay}}
 
     Nesta seção iremos avaliar os melhores modelos selecionados na etapa anterior e verificar seu
     desempenho utilizando a validção cruzada \citep{cross-val}. O total de grupos para experimento
@@ -1596,7 +1649,7 @@
     aparece, mostra que este modelo é flexível e pode ser utilizado em diferentes contextos, com
     diferentes disponibilidades de recursos.
 
-    \input{./tables/results_ld.tex}
+    %\input{./tables/results_ld.tex}
 
     A fígura~\ref{fig:crosscompare} mostra a distribuição do desempenho dos modelos testados. O
     \textit{Learning Rate Decay} trouxe uma melhora significativa para as duas arquiteturas. Apesar de
