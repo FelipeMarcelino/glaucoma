@@ -1,0 +1,8 @@
+PWD /data/home/felipemarcelino/google_drive/comp_science/projects/glaucoma/thesisv2/ppgccufmg-main/exemplo/tables
+INPUT /nix/store/qqpazcyznf99j3cxdi68r08g81mg3s7c-texlive-combined-2021/share/texmf/web2c/texmf.cnf
+INPUT /nix/store/qqpazcyznf99j3cxdi68r08g81mg3s7c-texlive-combined-2021/share/texmf-var/web2c/pdftex/pdflatex.fmt
+INPUT /data/home/felipemarcelino/google_drive/comp_science/projects/glaucoma/thesisv2/ppgccufmg-main/exemplo/tables/randaug.tex
+OUTPUT randaug.log
+INPUT /nix/store/qqpazcyznf99j3cxdi68r08g81mg3s7c-texlive-combined-2021/share/texmf/fonts/map/fontname/texfonts.map
+INPUT /nix/store/qqpazcyznf99j3cxdi68r08g81mg3s7c-texlive-combined-2021/share/texmf/fonts/tfm/public/cm/cmti10.tfm
+INPUT /nix/store/qqpazcyznf99j3cxdi68r08g81mg3s7c-texlive-combined-2021/share/texmf/fonts/tfm/jknappen/ec/tcrm1000.tfm

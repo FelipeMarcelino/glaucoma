@@ -367,6 +367,4 @@ def init_model(
 
         input_size = 224
 
-    print(summary(model))
-    sys.exit(1)
     return model, input_size

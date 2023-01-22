@@ -22,6 +22,9 @@
 \usepackage{multirow}
 \usepackage{graphicx}
 \usepackage{colortbl}
+\usepackage{rotating}
+\usepackage{pdflscape}
+\usepackage{longtable}
 \usepackage{array}
 \usepackage[
 	colorlinks=true,
@@ -1649,7 +1652,7 @@
     aparece, mostra que este modelo é flexível e pode ser utilizado em diferentes contextos, com
     diferentes disponibilidades de recursos.
 
-    %\input{./tables/results_ld.tex}
+    %\input{./tables/cross.tex}
 
     A fígura~\ref{fig:crosscompare} mostra a distribuição do desempenho dos modelos testados. O
     \textit{Learning Rate Decay} trouxe uma melhora significativa para as duas arquiteturas. Apesar de
@@ -1682,13 +1685,16 @@
     \subsection{\textit{RandAugment}}
 
     Dado os resultados da seção anterior, foram selecionados 3 modelos para aplicar \textit{data
-    augmentation}. Um dos hiperparâmetros do \textit{RandAugument} é o nome de operações sequenciais
-    em uma foto. Por esse motivo, foram testados diferentes valores para este hiperparâmetro: 1, 2,
+    augmentation}. Um dos hiperparâmetros do \textit{RandAugument} (RandOP na seguinte tabela)
+    é o nome de operações sequenciais em uma foto. Por esse motivo, foram testados diferentes valores para este hiperparâmetro: 1, 2,
     3 e 4. Nesta etapa também foi utilizada validação cruzada para avaliar o modelo.
 
-    A tabela acima mostra que o \textit{RandAugment} não trouxe melhoras significativas para o
-    modelo. O resultado foi inverso do esperado, diminuindo o desempenho dos modelos, tanto na
-    métrica de AUC quanto nas métricas de especificidade(sp) e sensitividade(sn).
+    A tabela~\ref{tab:randaug} a seguir mostra os resultados dos experimentos. Apesar de não ter
+    trago benefícios significantes nas métricas, principalmente na AUC, o algoritmo diminuíu a
+    variação do desempenho da métrica AUC. Desta forma, é possível verificar que o \textit{Data
+    Augmentation} é uma ferramenta para lidar com o problema de sobreajsute\ref{sec:overfitting} dos modelos.
+
+    \input{./tables/randaug.tex}
 
 
     \section{Explicabilidade}\label{sec:resultexp}
