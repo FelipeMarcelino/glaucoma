@@ -1,0 +1,74 @@
+\begin{sidewaystable}
+\centering
+    \label{tab:cc1}
+\setlength{\extrarowheight}{0pt}
+\addtolength{\extrarowheight}{\aboverulesep}
+\addtolength{\extrarowheight}{\belowrulesep}
+\setlength{\aboverulesep}{0pt}
+\setlength{\belowrulesep}{0pt}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{>{\hspace{0pt}}m{0.068\linewidth}>{\hspace{0pt}}m{0.053\linewidth}>{\hspace{0pt}}m{0.047\linewidth}>{\hspace{0pt}}m{0.082\linewidth}>{\hspace{0pt}}m{0.047\linewidth}>{\hspace{0pt}}m{0.047\linewidth}>{\hspace{0pt}}m{0.047\linewidth}>{\hspace{0pt}}m{0.047\linewidth}>{\hspace{0pt}}m{0.047\linewidth}>{\hspace{0pt}}m{0.047\linewidth}>{\hspace{0pt}}m{0.047\linewidth}>{\hspace{0pt}}m{0.047\linewidth}>{\hspace{0pt}}m{0.047\linewidth}>{\hspace{0pt}}m{0.047\linewidth}>{\hspace{0pt}}m{0.047\linewidth}>{\hspace{0pt}}m{0.049\linewidth}}
+\toprule
+\multicolumn{1}{>{\Centering\hspace{0pt}}m{0.068\linewidth}}{\multirow{3}{0.068\linewidth}{\hspace{0pt}\Centering{}Backbone}} & \multicolumn{1}{>{\Centering\hspace{0pt}}m{0.053\linewidth}}{\multirow{3}{0.053\linewidth}{\hspace{0pt}\Centering{}Optim}} & \multicolumn{1}{>{\Centering\hspace{0pt}}m{0.047\linewidth}}{\multirow{3}{0.047\linewidth}{\hspace{0pt}\Centering{}LR}} & \multicolumn{1}{>{\Centering\hspace{0pt}}m{0.082\linewidth}}{\multirow{3}{0.082\linewidth}{\hspace{0pt}\Centering{}Usando OCT}} & \multicolumn{4}{>{\Centering\hspace{0pt}}m{0.188\linewidth}}{AUC} & \multicolumn{4}{>{\Centering\hspace{0pt}}m{0.188\linewidth}}{SP} & \multicolumn{4}{>{\Centering\hspace{0pt}}m{0.19\linewidth}}{SN} \\
+\cmidrule(lr){5-8}\cmidrule(lr){9-12}\cmidrule(lr){13-16}
+\multicolumn{1}{>{\Centering\hspace{0pt}}m{0.068\linewidth}}{} & \multicolumn{1}{>{\Centering\hspace{0pt}}m{0.053\linewidth}}{} & \multicolumn{1}{>{\Centering\hspace{0pt}}m{0.047\linewidth}}{} & \multicolumn{1}{>{\Centering\hspace{0pt}}m{0.082\linewidth}}{} & \multicolumn{2}{>{\Centering\hspace{0pt}}m{0.094\linewidth}}{Melhor} & \multicolumn{2}{>{\Centering\hspace{0pt}}m{0.094\linewidth}}{Média} & \multicolumn{2}{>{\hspace{0pt}}m{0.094\linewidth}}{Melhor} & \multicolumn{2}{>{\Centering\hspace{0pt}}m{0.094\linewidth}}{Média} & \multicolumn{2}{>{\Centering\hspace{0pt}}m{0.094\linewidth}}{Melhor} & \multicolumn{2}{>{\Centering\hspace{0pt}}m{0.096\linewidth}}{Média} \\
+\cmidrule(lr){5-6}\cmidrule(lr){7-8}\cmidrule(lr){9-10}\cmidrule(lr){11-12}\cmidrule(lr){13-14}\cmidrule(lr){15-16}
+\multicolumn{1}{>{\Centering\hspace{0pt}}m{0.068\linewidth}}{} & \multicolumn{1}{>{\Centering\hspace{0pt}}m{0.053\linewidth}}{} & \multicolumn{1}{>{\Centering\hspace{0pt}}m{0.047\linewidth}}{} & \multicolumn{1}{>{\Centering\hspace{0pt}}m{0.082\linewidth}}{} & C & LRD & C & LRD & C & LRD & C & LRD & C & LRD & C & LRD \\
+\midrule
+\rowcolor[rgb]{0.761,0.761,0.761} regnet16x & radam & 0.001 & Não & 0.792 & 0.899 & 0.733 & 0.818 & 0.78 & 0.929 & 0.753 & 0.913 & 0.72 & 0.882 & 0.601 & 0.722 \\
+regnet16x & radam & 0.0 & Não & 0.828 & 0.888 & 0.746 & 0.801 & 0.874 & 0.924 & 0.857 & 0.906 & 0.783 & 0.853 & 0.711 & 0.695 \\
+\rowcolor[rgb]{0.761,0.761,0.761} inception & ranger & 0.0 & Não & 0.81 & 0.859 & 0.724 & 0.781 & 0.946 & 0.951 & 0.911 & 0.891 & 0.674 & 0.794 & 0.526 & 0.67 \\
+inception & sgd & 0.01 & Não & 0.812 & 0.811 & 0.76 & 0.756 & 0.928 & 0.962 & 0.896 & 0.88 & 0.696 & 0.818 & 0.554 & 0.633 \\
+\rowcolor[rgb]{0.761,0.761,0.761} inception & ranger & 0.001 & Não & 0.812 & 0.899 & 0.745 & 0.795 & 0.928 & 0.935 & 0.894 & 0.923 & 0.696 & 0.882 & 0.627 & 0.666 \\
+regnet32x & radam & 0.001 & Não & 0.849 & 0.882 & 0.763 & 0.805 & 0.937 & 0.947 & 0.906 & 0.905 & 0.761 & 0.882 & 0.59 & 0.706 \\
+\rowcolor[rgb]{0.761,0.761,0.761} resnet & adam & 0.01 & Sim & 0.939 & 0.943 & 0.885 & 0.673 & 0.964 & 1.0 & 0.916 & 0.993 & 0.913 & 0.912 & 0.703 & 0.353 \\
+resnet & ranger & 0.01 & Sim & 0.937 & 0.961 & 0.813 & 0.836 & 0.982 & 0.991 & 0.949 & 0.969 & 0.891 & 0.941 & 0.756 & 0.702 \\
+\rowcolor[rgb]{0.761,0.761,0.761} regnet32y & adam & 0.0 & Sim & 0.93 & 0.945 & 0.833 & 0.897 & 0.991 & 0.982 & 0.95 & 0.951 & 0.87 & 0.955 & 0.696 & 0.842 \\
+regnet32y & adam & 0.01 & Sim & 0.926 & 0.937 & 0.837 & 0.845 & 0.982 & 1.0 & 0.953 & 0.989 & 0.87 & 0.882 & 0.787 & 0.771 \\
+\rowcolor[rgb]{0.761,0.761,0.761} mobile & radam & 0.01 & Sim & 0.926 & 0.928 & 0.828 & 0.892 & 0.982 & 1.0 & 0.955 & 0.946 & 0.87 & 0.941 & 0.623 & 0.839 \\
+shuffle & ranger & 0.01 & Sim & 0.949 & 0.981 & 0.858 & 0.935 & 0.964 & 0.975 & 0.945 & 0.963 & 0.935 & 1.0 & 0.748 & 0.907 \\
+\rowcolor[rgb]{0.761,0.761,0.761} shuffle & radam & 0.001 & Sim & 0.934 & 0.926 & 0.867 & 0.826 & 0.955 & 0.953 & 0.915 & 0.924 & 0.913 & 0.971 & 0.747 & 0.728 \\
+shuffle & ranger & 0.001 & Sim & 0.932 & 0.903 & 0.829 & 0.795 & 0.973 & 0.971 & 0.939 & 0.927 & 0.891 & 0.882 & 0.776 & 0.663 \\
+\bottomrule
+\end{tabular}
+}
+\small{Fonte: Elaborado pelo autor.}
+\end{sidewaystable}
+
+
+\begin{sidewaystable}
+\centering
+    \label{tab:cc2}
+\setlength{\extrarowheight}{0pt}
+\addtolength{\extrarowheight}{\aboverulesep}
+\addtolength{\extrarowheight}{\belowrulesep}
+\setlength{\aboverulesep}{0pt}
+\setlength{\belowrulesep}{0pt}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{>{\hspace{0pt}}m{0.068\linewidth}>{\hspace{0pt}}m{0.053\linewidth}>{\hspace{0pt}}m{0.047\linewidth}>{\hspace{0pt}}m{0.082\linewidth}>{\hspace{0pt}}m{0.047\linewidth}>{\hspace{0pt}}m{0.047\linewidth}>{\hspace{0pt}}m{0.047\linewidth}>{\hspace{0pt}}m{0.047\linewidth}>{\hspace{0pt}}m{0.047\linewidth}>{\hspace{0pt}}m{0.047\linewidth}>{\hspace{0pt}}m{0.047\linewidth}>{\hspace{0pt}}m{0.047\linewidth}>{\hspace{0pt}}m{0.047\linewidth}>{\hspace{0pt}}m{0.047\linewidth}>{\hspace{0pt}}m{0.047\linewidth}>{\hspace{0pt}}m{0.049\linewidth}}
+\toprule
+\multicolumn{1}{>{\Centering\hspace{0pt}}m{0.068\linewidth}}{\multirow{3}{0.068\linewidth}{\hspace{0pt}\Centering{}Backbone}} & \multicolumn{1}{>{\Centering\hspace{0pt}}m{0.053\linewidth}}{\multirow{3}{0.053\linewidth}{\hspace{0pt}\Centering{}Optim}} & \multicolumn{1}{>{\Centering\hspace{0pt}}m{0.047\linewidth}}{\multirow{3}{0.047\linewidth}{\hspace{0pt}\Centering{}LR}} & \multicolumn{1}{>{\Centering\hspace{0pt}}m{0.082\linewidth}}{\multirow{3}{0.082\linewidth}{\hspace{0pt}\Centering{}Usando OCT}} & \multicolumn{4}{>{\Centering\hspace{0pt}}m{0.188\linewidth}}{AUC} & \multicolumn{4}{>{\Centering\hspace{0pt}}m{0.188\linewidth}}{SP} & \multicolumn{4}{>{\Centering\hspace{0pt}}m{0.19\linewidth}}{SN} \\
+\cmidrule(lr){5-8}\cmidrule(lr){9-12}\cmidrule(lr){13-16}
+\multicolumn{1}{>{\Centering\hspace{0pt}}m{0.068\linewidth}}{} & \multicolumn{1}{>{\Centering\hspace{0pt}}m{0.053\linewidth}}{} & \multicolumn{1}{>{\Centering\hspace{0pt}}m{0.047\linewidth}}{} & \multicolumn{1}{>{\Centering\hspace{0pt}}m{0.082\linewidth}}{} & \multicolumn{2}{>{\Centering\hspace{0pt}}m{0.094\linewidth}}{Melhor} & \multicolumn{2}{>{\Centering\hspace{0pt}}m{0.094\linewidth}}{Média} & \multicolumn{2}{>{\hspace{0pt}}m{0.094\linewidth}}{Melhor} & \multicolumn{2}{>{\Centering\hspace{0pt}}m{0.094\linewidth}}{Média} & \multicolumn{2}{>{\Centering\hspace{0pt}}m{0.094\linewidth}}{Melhor} & \multicolumn{2}{>{\Centering\hspace{0pt}}m{0.096\linewidth}}{Média} \\
+\cmidrule(lr){5-6}\cmidrule(lr){7-8}\cmidrule(lr){9-10}\cmidrule(lr){11-12}\cmidrule(lr){13-14}\cmidrule(lr){15-16}
+\multicolumn{1}{>{\Centering\hspace{0pt}}m{0.068\linewidth}}{} & \multicolumn{1}{>{\Centering\hspace{0pt}}m{0.053\linewidth}}{} & \multicolumn{1}{>{\Centering\hspace{0pt}}m{0.047\linewidth}}{} & \multicolumn{1}{>{\Centering\hspace{0pt}}m{0.082\linewidth}}{} & C & LRD & C & LRD & C & LRD & C & LRD & C & LRD & C & LRD \\
+\midrule
+\rowcolor[rgb]{0.761,0.761,0.761} shuffle & radam & 0.01 & Sim & 0.932 & 0.989 & 0.865 & 0.937 & 0.973 & 1.0 & 0.945 & 0.976 & 0.891 & 0.977 & 0.691 & 0.897 \\
+regnetx & adam & 0.01 & Sim & 0.926 & 0.984 & 0.855 & 0.934 & 0.982 & 0.991 & 0.951 & 0.968 & 0.87 & 0.977 & 0.635 & 0.9 \\
+\rowcolor[rgb]{0.761,0.761,0.761} regnetx & adam & 0.001 & Sim & 0.915 & 0.986 & 0.885 & 0.914 & 0.982 & 0.973 & 0.949 & 0.967 & 0.848 & 1.0 & 0.618 & 0.86 \\
+regnetx & radam & 0.01 & Sim & 0.932 & 0.986 & 0.859 & 0.933 & 0.973 & 1.0 & 0.94 & 0.968 & 0.891 & 1.0 & 0.76 & 0.897 \\
+\rowcolor[rgb]{0.761,0.761,0.761} regnet16y & ranger & 0.01 & Sim & 0.932 & 0.973 & 0.829 & 0.89 & 0.973 & 0.991 & 0.94 & 0.947 & 0.891 & 0.955 & 0.74 & 0.833 \\
+regnet16y & adam & 0.01 & Sim & 0.939 & 0.939 & 0.884 & 0.863 & 0.964 & 1.0 & 0.941 & 0.991 & 0.913 & 0.912 & 0.712 & 0.815 \\
+\rowcolor[rgb]{0.761,0.761,0.761} regnet16y & radam & 0.01 & Sim & 0.934 & 0.989 & 0.864 & 0.933 & 0.955 & 1.0 & 0.936 & 0.973 & 0.913 & 0.977 & 0.685 & 0.893 \\
+efficient & adam & 0.01 & Sim & 0.928 & 0.979 & 0.865 & 0.847 & 0.964 & 0.992 & 0.927 & 0.96 & 0.891 & 0.977 & 0.728 & 0.734 \\
+\rowcolor[rgb]{0.761,0.761,0.761} regnet32x & radam & 0.01 & Sim & 0.926 & 0.986 & 0.829 & 0.94 & 0.982 & 0.991 & 0.953 & 0.958 & 0.87 & 1.0 & 0.716 & 0.922 \\
+regnet32x & radam & 0.001 & Sim & 0.926 & 0.865 & 0.852 & 0.801 & 0.982 & 0.943 & 0.958 & 0.892 & 0.87 & 0.824 & 0.673 & 0.711 \\
+\rowcolor[rgb]{0.761,0.761,0.761} regnet32x & ranger & 0.01 & Sim & 0.932 & 0.951 & 0.853 & 0.899 & 0.973 & 0.991 & 0.953 & 0.957 & 0.891 & 0.977 & 0.711 & 0.841 \\
+regnet32x & adam & 0.01 & Sim & 0.932 & 0.986 & 0.84 & 0.94 & 0.973 & 1.0 & 0.941 & 0.973 & 0.891 & 1.0 & 0.782 & 0.907 \\
+\rowcolor[rgb]{0.761,0.761,0.761} regnet16x & radam & 0.01 & Sim & 0.932 & 0.991 & 0.85 & 0.927 & 0.973 & 0.99 & 0.948 & 0.963 & 0.891 & 1.0 & 0.744 & 0.891 \\
+inception & ranger & 0.01 & Sim & 0.929 & 0.979 & 0.84 & 0.909 & 0.946 & 0.99 & 0.909 & 0.969 & 0.913 & 0.977 & 0.738 & 0.85 \\
+\bottomrule
+\end{tabular}
+}
+\small{Fonte: Elaborado pelo autor.}
+\end{sidewaystable}

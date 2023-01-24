@@ -1,5 +1,4 @@
-\documentclass[
-%	msc, %% Para dissertações de mestrado, OU
+\documentclass[ %	msc, %% Para dissertações de mestrado, OU
 %	mscproposta, %% Para propostas de dissertação de mestrado, OU
 	msc, %% Para teses de doutorado, OU
 %	phdproposta, %% Para propostas de tese de doutorado
@@ -13,18 +12,20 @@
 \usepackage{xcolor}
 \usepackage{natbib}
 \usepackage{csvsimple}
+\usepackage[longtable]{multirow}
 %\usepackage{xcolor}[table]
 \usepackage{booktabs}
 \usepackage{adjustbox}
 \usepackage{graphicx}
 \usepackage{subcaption}
 \usepackage{lipsum}
-\usepackage{multirow}
 \usepackage{graphicx}
 \usepackage{colortbl}
 \usepackage{rotating}
 \usepackage{pdflscape}
-\usepackage{longtable}
+\usepackage{listings}
+\usepackage{float}
+\usepackage{ragged2e}
 \usepackage{array}
 \usepackage[
 	colorlinks=true,
@@ -32,14 +33,6 @@
 	citecolor=red, %% Cor dos links das citações
 	urlcolor=magenta, %% Cor das urls
 ]{hyperref}
-
-\newfloat[chapter]{algoritmo}{lol}{Algoritmo}
-\newcommand{\listaalgoritmosname}{Lista de Algoritmos} %% Título da lista
-\newlistof{listadealgoritmos}{lol}{\listaalgoritmosname} %% O primeiro parâmetro é o nome da lista, e este deverá ser passado no parâmetro listacustomizada={\nomedalista}
-\newlistentry{algoritmo}{lol}{0} %% Nome do ambiente de cada algoritmo, e.g., \begin{algoritmo} ... \end{algoritmo}
-
-%% **** Caso não haja nenhuma lista adicional, os comandos acima podem ser apagados. ****
-%% ===============================================
 
 \begin{document}
 	\ppgccufmg{
@@ -65,7 +58,7 @@
 		epigrafeautor={},
 		listadefiguras={sim}, %% Remova (ou comente) este parâmetro para remover a lista de figuras
 		listadetabelas={sim}, %% Remova (ou comente) este parâmetro para remover a lista de tabelas
-		listascustomizadas={\listadealgoritmos} %% Lista customizada (e.g., lista de algoritmos).
+		%listascustomizadas={\listadealgoritmos} %% Lista customizada (e.g., lista de algoritmos).
 	}
 
 	\chapter{Introdução}\label{intro}
@@ -112,11 +105,11 @@
         dando mais recurso para uma melhor avaliação do glaucoma.
 
 
-        \begin{figure}
+        \begin{figure}[H]
             \centering
             \caption{Exemplos de imagem do fundo do olho com presença e ausência de glaucoma.}
             \label{glaucomadiff}
-            \includegraphics[width=0.6\textwidth]{./img/glaucoma_diff.png}
+            \includegraphics[width=0.98\textwidth]{./img/glaucoma_diff.png}
             \small{Fonte:
             \href{https://www.nature.com/articles/s41598-021-81554-4}{Nature, 2021}}
         \end{figure}
@@ -125,12 +118,12 @@
         que há presença de glaucoma. É possível ver na segunda imagem do fundo do olho o aumento da
         proporção entre o copo óptico e o disco óptico (\textit{cup-to-disc}).
 
-        \begin{figure}
+        \begin{figure}[H]
             \centering
             \caption{Exemplo de exame OCT, sendo o olho direito (OD) com a presença de glaucoma e o
             esquerdo(OS) em estado saudável}
             \label{octdiff}
-            \includegraphics[width=0.6\textwidth]{./img/oct.jpg}
+            \includegraphics[width=0.98\textwidth]{./img/oct.jpg}
             \small{Fonte:
             \href{https://glaucomatoday.com/articles/2016-may-june/optical-coherence-tomography-as-a-glaucoma-screening-tool}{Glaucoma
             Today, 2016}}
@@ -284,7 +277,7 @@
     desempenho próximo, igual ou até melhor do que os modelos tradicionais custosos.
 
     Utilizando modelos de computacionais visuais, é possível identificar
-    doenças nas folhas da maçã \citep{Li2021-vk}. De acordo com os autores, o conjutno de dados é
+    doenças nas folhas da maçã \citep{Li2021-vk}. De acordo com os autores, o de dados é conjunto
     pequeno, com um total de  2200 imagens aproximadamente e 5 diferentes doenças para serem
     detectadas. Os modelos testados foram ShuffleNet, EfficienteNet-B0, MobileNetV3, RegNet e ViT
     \citep{DBLP:journals/corr/ZhangZLS17, efficientnet, https://doi.org/10.48550/arxiv.2101.00590,
@@ -518,7 +511,7 @@
 
     A fígura a seguir~\ref{fig:regnet}, apresenta um modelo RegNet.
 
-    \begin{figure}
+    \begin{figure}[H]
         \centering
         \caption{Corpo de um modelo RegNet contendo 4 (Fixo) estágios. Cada estágio contém número X
         de blocos.}
@@ -530,7 +523,7 @@
     Um ponto de atenção citado pelos autores é a decisão de manter todos os blocos iguais e com a
     mesma estrutura de uma ResNet \citep{DBLP:journals/corr/HeZRS15}. A imagem~\ref{fig:regnet2} a seguir exemplifica:
 
-    \begin{figure}
+    \begin{figure}[H]
         \caption{Exemplo de um bloco \textbf{X} baseado em uma rede residual.}
         \centering
         \label{fig:regnet2}
@@ -569,7 +562,7 @@
     e calcular o erro de inferência nesse mesmo conjunto de dados. É amostrado em torno de 100
     modelos para cada NDS com seu conjunto de parâmetros e restrições.
 
-    \begin{figure}
+    \begin{figure}[H]
         \centering
         \caption{A imagem da esquerda mostra os \textit{Design Spaces} A, B, e C, sendo o C mais
         restritivo entre eles. A imagem da direita mostra a distribuição de erro de cada desses
@@ -577,7 +570,7 @@
         \label{fig:space}
         \includegraphics[width=0.95\textwidth]{img/design_space.jpg}
         \small{Fonte: Imagem retirada do artigo \citep{designspace}.}
-    \end{figure}
+    \end{figure}[H]
 
     Ao final, os autores chegam a conclusão que os modelos amostrados do espaço\textbf{RegNet} possuem desempenho
     melhor do que os modelos amostrados do \textbf{AnyNet} para qualquer valor dos parâmetros
@@ -616,7 +609,7 @@
     \citep{GoodBengCour16}, para transformar ou limitar os valores. Todos os neurônios de uma camada
     possuí ligações com todos os neurônios da próxima camada.
 
-    \begin{figure}
+    \begin{figure}[H]
         \centering
         \caption{Uma rede neural MLP, com 3 camadas. Uma de entrada com 3 neurônios,uma camada
         intermediária com 4 neurônios e uma de saída com dois neurônios.}
@@ -727,7 +720,7 @@
     sofre uma piora significativa no conjunto de dados de teste (Y) utilizado para avaliação.
     A fígura~\ref{fig:overfitting} a seguir mostra visualmente como acontece o sobreajuste.
 
-    \begin{figure}
+    \begin{figure}[H]
         \centering
         \caption{Uma imagem representando o problema de sobreajuste e subajuste.}
         \label{fig:overfitting}
@@ -746,7 +739,7 @@
     map} ou \textit{activation map} de 28$\times$28$\times$1. A image~\ref{fig:convexp} mostra como uma convolução
     funciona.
 
-    \begin{figure}
+    \begin{figure}[H]
         \centering
         \caption{Exemplo de uma convolução com filtro 5$\times$5. Cada quadrado com este tamanho
         produz um número com utilizndo operações matemáticas. Em seguida, o quadrado é deslocado
@@ -774,7 +767,7 @@
     fígura~\ref{fig:arqui}.
 
 
-    \begin{figure}[h]
+    \begin{figure}[H]
     \caption{Arquitura de modelos. O \textit{backbone} pode ser um dos modelos citados
     anteriormente (RegNet, ResNet, Inception e etc), e o
     \textit{classifier} é uma rede neural de múltiplas camadas (MLP), assim como o modelo \textit{MLP}
@@ -870,7 +863,7 @@
             a 1.
     \end{itemize}
 
-    \begin{figure}
+    \begin{figure}[H]
     \centering
         \caption{AUC e curva ROC.}
     \label{fig:rocauc}
@@ -950,7 +943,7 @@
     todos os grupos passem pela fase de teste. Com isto, é possível que o modelo seja avaliado com
     mais robustez e com variabilidade controlada.
 
-    \begin{figure}[h]
+    \begin{figure}[H]
         \centering
         \caption{Imagem contendo ilustrando a validação cruzada. Cada parte assume o papel de teste
         uma vez e treino K-1 vezes.}
@@ -1019,7 +1012,7 @@
     características \citep{shapley1988shapley}. Isto é caracterizado pelo impacto que cada um destas
     características tem no valor preditivo do modelo \citep{strumbel}.
 
-    \begin{figure}[h]
+    \begin{figure}[H]
         \centering
         \caption{Gráfico sumarizado para o dataset Boston Housing ordenado pelas características
         mais importantes do modelo.}
@@ -1039,7 +1032,7 @@
     residência.
 
 
-    \begin{figure}
+    \begin{figure}[H]
         \centering
         \caption{Explicação de uma imagem utilizando SHAP. Os pontos vermelhos e azul mostram onde o
         modelo julgou como parte importante para a imagem. Seguindo a mesma lógica
@@ -1079,7 +1072,7 @@
 
     Um exemplo na fígura~\ref{fig:fundus2} contendo duas imagens do fundo dos olhos:
 
-    \begin{figure}[ht]
+    \begin{figure}[H]
     \centering
     \caption{Duas imagens do fundo do olho com distâncias diferentes}
     \label{fig:fundus2}
@@ -1096,7 +1089,7 @@
         \label{fig:fundus2b}
         \includegraphics[width=0.9\textwidth]{./img/foto2fundus.jpg}
     \end{subfigure}
-    \small{Fonte: Imagem extraída do conjutno de dados.}
+    \small{Fonte: Imagem extraída do conjunto de dados.}
     \end{figure}
 
 
@@ -1139,7 +1132,7 @@
     glaucoma, a presença do glaucoma quanto a idade e o gênero do paciente, e por fim, criar um
     entendimento sólido para dar base aos resultados que irão ser apresentados nas próxima seção.
 
-    \begin{figure}[ht]
+    \begin{figure}[H]
     \caption{Contagem de casos de glaucoma por gênero e por olhos}
     \label{fig:explorer}
     \begin{subfigure}[b]{0.5\textwidth}
@@ -1181,7 +1174,7 @@
     glaucoma. Na seção de resultados, iremos observar se o modelo coloca a variável gênero como uma
     das principais para predição do glaucoma.
 
-    \begin{figure}
+    \begin{figure}[H]
         \centering
         \caption{Distribuição do Glaucoma por variável}
         \label{fig:dist_glaucoma}
@@ -1195,7 +1188,7 @@
     para esquerda ou para direita. Estes pontos provavelmente serão detectados pelo modelo mais
     fácilmente.
 
-    \begin{figure}
+    \begin{figure}[H]
         \centering
         \caption{Boxplot do Glaucoma por variável.}
         \label{fig:boxplot}
@@ -1211,7 +1204,7 @@
     para aqueles que usam os dados OCT.
 
 
-    \begin{figure}
+    \begin{figure}[H]
         \centering
         \caption{Correlação absoluta das variáveis}
         \label{fig:corr}
@@ -1272,7 +1265,7 @@
     características.
 
 
-    \begin{figure}
+    \begin{figure}[H]
         \centering
         \caption{Correlação das características criadas pela operação razão.}
         \label{fig:engcorr}
@@ -1329,7 +1322,7 @@
     possuem um número grande pesos ou parâmetros a serem treinados. Desta forma, quanto mais
     parâmetros mais dados são necessários para generalizar. Para o segundo caso de \textit{feature
     extraction} o modelo preserva os pesos em que foi treinado originalmente e então é treinado
-    somente a camada nova adicionada com o conjutno de dados que queremos utilizar.
+    somente a camada nova adicionada com o conjunto de dados que queremos utilizar.
     No entanto, o modelo não consegue se especializar já que teremos algumas poucas adaptações dos pesos para
     tarefa que queremos aplicar, limitado em pequenas mudanças nesta última camada adicionada.
     Enquanto no terceiro caso, o \textit{fine-tunning}, conseguimos aproveitar a complexidade do
@@ -1381,7 +1374,7 @@
     sua desempenho. Com isso, o modelo com taxas menores consegue fazer ajustes mais finos, ou em
     outras palavras, dar passos menores.
 
-    \begin{figure}
+    \begin{figure}[H]
         \centering
         \caption{\textit{Learning Rate Decay} aplicado a modelos visuais.}
         \label{fig:lrdecay}
@@ -1491,7 +1484,7 @@
     Enquanto, os modelos utilizando OCT possuem uma variabilidade maior quanto ao desempenho. Este
     compartamento é encontrado quanto nos modelos utilizando uma ou duas imagens.
 
-    \begin{figure}[ht]
+    \begin{figure}[H]
         \centering
         \caption{Avaliação geral dos modelos divididos em uso de duas imagens e presença das métricas do
         OCT. O gráfico violino mostra a distruição dos valores máximos atingindos por cada
@@ -1644,58 +1637,62 @@
     totalizando 140 modelos, com seus respectivos desempenhos. Além disso, foram será ilustrada uma
     comparação entre a utilização do \textit{Learning Rate Decay} utilizando validação cruzada.
 
-    A seguir~\ref{tab:summarytop}, a tabela contendo os hiperparâmetros e os \textit{backbones} dos modelos testados. O
-    campo \textbf{Usando OCT} se refere a usar os dados do exame OCT junto com o modelo de imagem.
-    Dentre os melhores modelos, a família de modelos RegNet aparece em 16 dos 18 melhores modelos.
-    Isso mostra que o RegNet além ter um desempenho bom, é também um modelo a ser escolhido na
-    tentativa de executar uma tarefa de visão computacional. As várias versões do modelo que
-    aparece, mostra que este modelo é flexível e pode ser utilizado em diferentes contextos, com
-    diferentes disponibilidades de recursos.
-
-    %\input{./tables/cross.tex}
-
     A fígura~\ref{fig:crosscompare} mostra a distribuição do desempenho dos modelos testados. O
     \textit{Learning Rate Decay} trouxe uma melhora significativa para as duas arquiteturas. Apesar de
     ter aumentando a variabilidade da AUC, a técnica trouxe benefícios positivos quanto a métrica. O
     salto maior foi para a arquitetura de modelos utilizando somente imagem.
 
-    \begin{figure}\label{fig:crosscompare}
+    \begin{figure}[H]
         \centering
-        \includegraphics[width=0.6\textwidth]{./img/cross_compare.png}
         \caption{Comparação do uso do \textit{Learning Rate Decay} nos melhores modelos. Os melhores
         modelos da etapa anterior foram re-executados utilizando validação cruzada para uma
         comparação justa.}
+        \label{fig:crosscompare}
+        \includegraphics[width=0.90\textwidth]{./img/cross_compare.png}
+        \small{Fonte: Elaborado pelo autor}
     \end{figure}
 
+    A tabela a seguir~\ref{tab:crosslrd} sumariza as melhorias da aplicação da técnia LRD. A
+    tabela mostra que houve melhorias nas métricas AUC, SP e SN.  O modelo que mais se beneficiou
+    foi o modelo RegNet16x quanto a AUC, no entanto possui uma variabilidade alta nos resultados.
+    Outra fator importante foi a perda de desempenho do modelo ResNet. O motivo por trás disto foi
+    que a aplicação da técnica \textit{Early Stopping} fez com que o modelo parasse seu treinamento
+    antes da hora após 10 épocas sem melhorar o desempenho em AUC. O desvio padrão maior está no
+    grupo de médias das métricas, os valores máximos de desempenho atingido pelos modelos trouxeram
+    menos variabilidade. Para os resultados completo, uma tabela contendo os hiperpâmetros
+    utilizados e os resultados detalhados estará presente no apêndice dessa dissertação.
 
-    Quanto ao uso de memória e tempo de inferência, é possível observar que o modelos RegNets
-    possuem  tempo de inferência menor quando comparado aos modelos mais complexos ou até
-    mesmo com os mais simples, como é no caso no ShuffleNet. Isto proporciona flexibilidade
+    \input{./tables/cross.tex}
+
+
+    \input{./tables/meminf.tex}
+
+    Quanto ao uso de memória e tempo de inferência, é possível observar na tabela~\ref{tab:meminf}
+    que o modelos RegNets possuem  tempo de inferência próximo dos modelos mais simples, como ShuffleNet e MobileNet, e
+    menor do que os modelos mais complexo, como por exemplo o Inception. Isto proporciona flexibilidade
     para que o modelo RegNet possa ser utilizado em diferente contextos que é necessário uma
-    resposta rápida, como por exemplo quadros de um video ou em algum sistema nuvem que recebe
+    resposta rápida, como por exemplo processamento de quadros de um video ou em algum sistema nuvem que recebe
     milhares de requisições ao mesmo tempo. Quanto ao uso de memória, os modelos RegNets apresentam
-    várias versões com diferentes uso de recursos computacionais. Variando de 1600 megabytes até
-    4182, o modelo consegue apresentar desempenho mesmo no modelo com menor uso, até mesmo que o
-    mobile (1662), ultrapassando
-    modelos mais caros como por exemplo inception (4722). Com tudo, os modelos acima ainda consegue
-    oferecer desempenhos satisfatórios para o caso de uso de uma imagem e de image somados ao exame
-    OCT.
-
+    versões com diferentes uso de recursos computacionais. Variando de 1600 até
+    4182 megabytes, o modelo consegue apresentar desempenho melhor ou próximo do que os modelos que
+    utilizam mais memória, e também aqueles que são mais eficientes computacionalmente.
 
     \subsection{\textit{RandAugment}}
 
     Dado os resultados da seção anterior, foram selecionados 3 modelos para aplicar \textit{data
     augmentation}. Um dos hiperparâmetros do \textit{RandAugument} (RandOP na seguinte tabela)
     é o nome de operações sequenciais em uma foto. Por esse motivo, foram testados diferentes valores para este hiperparâmetro: 1, 2,
-    3 e 4. Nesta etapa também foi utilizada validação cruzada para avaliar o modelo.
-
-    A tabela~\ref{tab:randaug} a seguir mostra os resultados dos experimentos. Apesar de não ter
-    trago benefícios significantes nas métricas, principalmente na AUC, o algoritmo diminuíu a
-    variação do desempenho da métrica AUC. Desta forma, é possível verificar que o \textit{Data
-    Augmentation} é uma ferramenta para lidar com o problema de sobreajsute\ref{sec:overfitting} dos modelos.
+    3 e 4. Nesta etapa também foi utilizada validação cruzada para avaliar o modelo. A
+    tabela~\ref{tab:randaug} a seguir mostra os resultados dos experimentos e os respectivos
+    hiperparâmetros associado a este experimento:
 
     \input{./tables/randaug.tex}
 
+    O \textit{RandAugment} trouxe uma variância menor nas métricas, principalmente na AUC. Dado isso,
+    é possível verificar que o \textit{DataAugmentation} é uma ferramenta para lidar
+    com o problema de sobreajsute~\ref{sec:overfitting} dos modelos quando o número de dados
+    disponíveis é pequeno e uma heterogeneidade irá trazer benefícios quanto a generalização do
+    modelo.
 
     \section{Explicabilidade}\label{sec:resultexp}
 
@@ -1705,13 +1702,199 @@
     verificar quais foram as partes cruciais das imagens, quanto os valores tabelados conténdo as
     medições e as características criadas e descritas na seção~\ref{sec:engineering}.
 
-    \subsection{Compara arquitetura 1 olho e dois olhos}
+    \subsection{Explicabilidade Visual}
 
-    \subsection{1 olho e 1 olho + tabular}
 
-    \subsection{Importância média das features tab}
 
-    \subsection{Caso positivo e negativo}
+    A fígura abaixo~\ref{fig:shapimageeye1} compara duas arquiteturas de modelos. A da esquerda
+    utlizando somente uma imagem e a da direita utilizando duas imagens. Na primeira foto, existe
+    uma concentração de pontos dentro dos círculos e também alguns pontos na linha inferior da
+    imagem. Isto se da ao fato que a arquitetura utilizando somente uma entrada com um modelo visual
+    deve lidar com os dois tipos de imagem citadas~\ref{fig:fundus2}. No entanto, o modelo da
+    direita reserva um modelo visual pra cada umas das imagens. No entanto, na segunda imagem os
+    dois modelos deram exatamente a mesma explicabilidade para a imagem do fundo do olho. Desta
+    forma, podemos perceber que o modelo utilizando uma imagem consegue se adaptar na utilização de
+    duas imagens de fundo de olho.
+
+    \begin{figure}[h]
+        \centering
+        \caption{Imagem com explicabilidade do modelo. Sendo o da esquerda o modelo utilizando
+        somente uma imagem e o da direita utilizando duas imagens. Foto distante.}
+        \label{fig:shapimageeye1}
+        \includegraphics[width=0.98\textwidth]{./img/shap_eye.png}
+        \small{Fonte: Elaborado pelo autor.}
+    \end{figure}
+
+
+    \begin{figure}[H]
+        \centering
+        \caption{Imagem com explicabilidade do modelo. Sendo o da esquerda o modelo utilizando
+        somente uma imagem e o da direita utilizando duas imagens. Foto próxima.}
+        \label{fig:shapimageeye2}
+        \includegraphics[width=0.98\textwidth]{./img/shap_eye2.png}
+        \small{Fonte: Elaborado pelo autor.}
+    \end{figure}
+
+    A segunda fígura~\ref{fig:shapimageeye2} de explicabilidade de imagem traz a explicabilidade
+    para imagens mais próximas do fundo do olho, sem a margem preta presente no primeiro
+    tipo~\ref{fig:shapimageeye1}. O primeiro modelo adaptou a explicabilidade para extrair
+    características desse tipo de imagem, formando círculos e uma pequena concentração arrendondada
+    no meio. Da mesma forma como na fígura anterior~\ref{fig:shapimageeye1}, o primeiro modelo possui
+    uma concentração na linha inferior também. Estas concentrações inferior se da ao fato que o
+    disco e copo ótico podem estar em qualquer posição da imagem, e para isto, o modelo precisa
+    analisar todos os cantos possíveis. Um ponto de atenção, é que o modelo utilizando duas imagens
+    como entrada, o da direita, praticamente não extraiu nenhum benefício da segunda foto. Isto
+    corrobora com os resultados obtidos nesta tabela~\ref{tab:aucdualoct}, onde o modelo de duas imagens nada acrescenta
+    para o desempenho da tarefa.
+
+    E por útlimo, podemos perceber que a explicabilidade e concentrada nas mesmas regiões tanto para
+    identificar a presença do glaucoma quanto a sua ausência. Isto é explicado pela mistura de
+    pontos azuis (diagnóstico negativo) e pontos vermelhos (diagnóstico positivo) se misturando na
+    área da imagem em geral.
+
+
+    \subsection{Importância das Características}
+
+    Nesta seção iremos avalair a importância de cada um das características utilizada pelo modelo,
+    inclusive aquelas que foram criadas atráves de engenharia de características. As análises a
+    seguir mostra quais foram os dados mais importantes para modelo quanto ao seu diagnósticos. Aleḿ
+    disso, será possível verificar como cada um das características influência na decisão do valor a
+    depender do seu valor.
+
+    \begin{figure}[H]
+        \centering
+        \caption{Imprtância das características calculada utilizando o melhor modelo usando OCT (AUC
+        = 0.99).}
+        \label{fig:shapimp}
+        \begin{subfigure}[ht]{0.48\textwidth}
+            \centering
+            \caption{Importância das características nos dados de treino do conjunto AC.}
+            \label{fig:shapimp1}
+            \includegraphics[width=0.98\textwidth]{./img/shap_train_importance.png}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}[ht]{0.48\textwidth}
+            \centering
+            \caption{Importância das características nos dados de teste AD.}
+            \label{fig:shapimp2}
+            \includegraphics[width=0.98\textwidth]{./img/shap_val_importance.png}
+        \end{subfigure}
+        \small{Fonte: Elaborado pelo autor.}
+    \end{figure}
+
+    A fígura~\ref{fig:shapimp} mostra, de cima para baixo, as características mais importantes para
+    os modelos. O gráfico da esquerda é do conjunto AC e o da direita do AD. As 3 primeiras
+    características, valor médio global (G), temporal superior (TS) e temporal inferior (TI) estão
+    nas mesmas posições para os dois conjuntos de dados. Isto mostra, que os dois conjunto de dados
+    possuem distribuição quanto a sua importância. Relativo as outras características, sua
+    imprtância mudam entre o conjunto de dados, no entanto, nenhuma mudança que seja significativa.
+    As fíguras~\ref{fig:shapimp1} e~\ref{fig:shapimp2} demostra que quando a mudança quanto a
+    importância a variação costuma ser de 1,2 ou 3 posições.
+
+    Ainda analisando a mesma fígura~\ref{fig:shapimp} que valores grande para TS/G/TI, ou seja, mais
+    presença de fibras na parte temporal e na média total esta associado a ausência do glaucoma.
+    Outro ponto importante é que os dados afirma que quanto mais avançado a idade maior as chances
+    de diagnosticar o glaucoma. Quanto ao gênero o modelo não trouxe nenhum tipo de relação
+    importante. Para as características criadas sintéticamente, T/TS mostra que quando a razão
+    aumenta, ou seja, quando o total de fibras na região temporal T diminuem, isto ocorre de forma
+    distribuída entre TS e TI, já que se TS diminuísse mais rápido que TI é provável que a razão
+    aumentaria diminuindo as chances do glaucoma. Para N/TI pode ser o oposto, ou seja, significa
+    que as fibras se degradam mais rápido na área temporal comparado a Nasal (N).
+
+    \begin{figure}[H]
+        \centering
+        \caption{Mapa de calor importância das características para os backbones presentes na etapa de
+        validação cruzada. As características estão ordenada de acordo com sua importância geral.}
+        \label{fig:heatmap_imp}
+        \includegraphics[width=0.98\textwidth]{./img/heatmap_imp.png}
+        \small{Fonte: Elaborado pelo autor.}
+    \end{figure}
+
+    O mapa de calor~\ref{fig:heatmap_imp} mostra que TS assume um papel importante em quase todos os
+    modelos. Ou seja, podemos dizer que esta característica é de fato importante para diagnóstico do
+    glaucoma pelo exame OCT e deve ser analisada com cuidado pelos profissionais. Em suma, toda as
+    características relacionada a área temporal, com exceão das criadas sinteticamente, ficaram
+    acima das características nasais, dando ainda mais relevância para esta região. A área TI
+    assumiu um papel importante quando se utiliza o \textit{backbone} do modelo Mobile. Outra
+    análise importante é que este mesmo \textit{backbone} trouxe importância para as caraterísticas
+    que envolve gênero e idade, que foi de certa forma irrelevante para os outros modelos. Algumas
+    outras características parece ser irrelevantes para qualquer modelo, como por
+    exemplo: TS/NI, T/NI, TS/NS, NS/NI, T/N, NS/N  e TS/TI. Para características não-sintéticas e
+    regionais, a menos relevante para a modelagem foi a área nasal geral (N).
+
+
+    \subsection{Análise de casos individuais}
+
+    Neste seção iremos avaliar casos individuais de decisão do modelo. Na primeira parte sera
+    analisado dois casos com glaucoma onde o modelo tomou a decisão certa em um e errou na outra.
+    Para isto, iremos o gráfico de cascata (\textit{waterfall}) do SHAP, onde a temos cada um dos
+    atributos do paciente e como cada um deste contribui em magnitude para a decisão do modelo de
+    acordo com os valores do atributo.
+
+    \begin{figure}[H]
+        \centering
+        \caption{Gráfico de cascata para casos com presença de glaucoma.}
+        \label{fig:wpos}
+        \begin{subfigure}[ht]{0.48\textwidth}
+            \centering
+            \caption{Decisão errada do modelo.}
+            \label{fig:wpos1}
+            \includegraphics[width=0.98\textwidth]{./img/case62.png}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}[ht]{0.48\textwidth}
+            \centering
+            \caption{Decisão correta do modelo.}
+            \label{fig:wpos2}
+            \includegraphics[width=0.98\textwidth]{./img/case105.png}
+        \end{subfigure}
+        \small{Fonte: Elaborado pelo autor.}
+    \end{figure}
+
+
+    A fígura~\ref{fig:wpos} possui dois gráficos de cascata, sendo o da direita o modelo tomou a
+    decisão correta e o da esquerda errada. O valor abaixo na fígura mostra o valor esperado $E[f(x)]$, ou
+    seja, a média de decisão do modelo. Para valores acima dessa média o modelo toma o diagnóstico
+    como positivo, caso contrário negativo. A saída do modelo é visto na parte superior do gráfico
+    $f(x)$. A média global G foi a característica que mais contribuí para decisão do modelo. Pela
+    distribuição da fígura~\ref{fig:dist_glaucoma} é possível verificarmos que valores de G entre 40
+    e 70 é composto grupo de pessoas que estão diagnósticado com o Glaucoma. O mesmo vale para TS e
+    para T, apesar da última estar no limiar entre a população com Glaucoma e sem Glaucoma. A idade
+    de 75 anos foi um fator também que contribui para o modelo diagnosticar como positivo. No
+    gráfico de cascata da esquerda, a característica mais importante foi NS com um valor de 155.
+    Este valor, dado a fígura~\ref{fig:dist_glaucoma}, está na cauda da população com Glaucoma e
+    uma concentração maior de casos com a ausência da doença, o que pode ter confundido o modelo.
+
+
+    \begin{figure}[H]
+        \centering
+        \caption{Gráfico de cascata para casos com ausência de glaucoma.}
+        \label{fig:wneg}
+        \begin{subfigure}[ht]{0.48\textwidth}
+            \centering
+            \caption{Decisão errada do modelo.}
+            \label{fig:wneg1}
+            \includegraphics[width=0.98\textwidth]{./img/case127.png}
+        \end{subfigure}
+        \hfill
+        \begin{subfigure}[ht]{0.48\textwidth}
+            \centering
+            \caption{Decisão correta do modelo.}
+            \label{fig:wneg2}
+            \includegraphics[width=0.98\textwidth]{./img/case7.png}
+        \end{subfigure}
+        \small{Fonte: Elaborado pelo autor.}
+    \end{figure}
+
+    Na fígura~\ref{fig:wneg1} o valor de TS e razão entre T/TS foram o que causaram distorção na
+    saída do modelo. Com a medição de TS igual a 12, a razão ficou 6 vezes maior entre T e TS. O
+    valor de TS pode ser um possível outlier, dado a fígura~\ref{fig:dist_glaucoma}, um problema de medição
+    ou apenas um erro esporádica na anotação dos dados. No entanto, de qualquer forma, o modelo foi
+    impactado por este valor e como consequência um diagnóstico positivo errado. Quanto ao
+    diagnóstico da imagem da direita~\ref{fig:wneg2}, é possível verificarmos que TI tem mais que o
+    dobro de fibra de N e utilizando dessa informação o modelo foi capaz de verificar a ausência do
+    glaucoma.
+
 
 
     \chapter{Conclusão}
@@ -1727,16 +1910,33 @@
     inferência. Dado isso, é possível que o modelo RegNet seja uma escolha sólida em tarefas de
     visão computacional que exige eficiência, eficácia e flexibilidade ao mesmo tempo.
 
-    O \textit{Rand Augmentation} não mostrou benefícios quanto ao desempenho do modelo ou ao menos
-    quanto sua variabilidade. No entanto, apesar de não ter sido um sucesso neste projeto, este tipo
-    de técnia não deve descartada já que aqui não foram testados todos as combinações de
-    hiperparâmetros e modelagens possíveis devido ao limitante computacional. Por outra lado, a
+    O \textit{Rand Augmentation} mostrou benefícios quanto a variabilidade dos resultados, sendo uma
+    ferramenta essencial para evitar o sobreajuste.. Por outra lado, a
     técnica de \textit{Learning Rate Decay} apresentou benefícios para os modelos, aumentando seu
-    desempenho quanto a métrica AUC.
+    desempenho quanto a métrica AUC e as outras métricas SP e SN, porém, aumentando também a
+    variabilidade do modelo quanto a estas métricas.
+
+    O modelo trouxe uma explicabilidade para corroborar com os resultados. A arquitetura que utiliza
+    somente uma imagem como entrada (SI) consegue extrar características de diferentes fotos de
+    fundo de olho, sem a necessidade de se ter um segundo modelo para processamento de uma segunda
+    imagem. As características G, T e TS foram as mais importantes para os modelos utilizando dados
+    clínicos tabulares. Alem disso, utilizando casos individuais, conseguimos observar como cada uma
+    das características pode desempenhar um papel fundamental na decisão do modelo, seja ela correta
+    ou não.
+
 
     %% Referências
     \bibliographystyle{plain}
     \bibliography{referencias}
+
+    \begin{apendices}
+
+        \chapter{Validação Cruzada Resultados}
+        \label{ap:crosscomplete}
+        A tabela a seguir mostra os resultados completos obtidos pela utilização do \textit{Learning
+        Decay} (LRD) comparado aos experimentos sem sua utlização (C).
+        \input{./tables/cross\_complete.tex}
+    \end{apendices}
 
 \end{document}
 

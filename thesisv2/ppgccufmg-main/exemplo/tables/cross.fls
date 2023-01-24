@@ -3,3 +3,5 @@ INPUT /nix/store/qqpazcyznf99j3cxdi68r08g81mg3s7c-texlive-combined-2021/share/te
 INPUT /nix/store/qqpazcyznf99j3cxdi68r08g81mg3s7c-texlive-combined-2021/share/texmf-var/web2c/pdftex/pdflatex.fmt
 INPUT /data/home/felipemarcelino/google_drive/comp_science/projects/glaucoma/thesisv2/ppgccufmg-main/exemplo/tables/cross.tex
 OUTPUT cross.log
+INPUT /nix/store/qqpazcyznf99j3cxdi68r08g81mg3s7c-texlive-combined-2021/share/texmf/fonts/map/fontname/texfonts.map
+INPUT /nix/store/qqpazcyznf99j3cxdi68r08g81mg3s7c-texlive-combined-2021/share/texmf/fonts/tfm/jknappen/ec/tcrm1000.tfm

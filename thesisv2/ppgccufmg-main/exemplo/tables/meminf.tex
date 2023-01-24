@@ -1,0 +1,29 @@
+\begin{table}[H]
+\centering
+    \caption{Tabela contendo desempenho do modelo. A memória é medida em megabytes (mb) e o tempo de
+    inferência em milisegundos (ms).}
+    \label{tab:meminf}
+\setlength{\extrarowheight}{0pt}
+\addtolength{\extrarowheight}{\aboverulesep}
+\addtolength{\extrarowheight}{\belowrulesep}
+\setlength{\aboverulesep}{0pt}
+\setlength{\belowrulesep}{0pt}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{>{\hspace{0pt}}m{0.173\linewidth}>{\hspace{0pt}}m{0.235\linewidth}>{\hspace{0pt}}m{0.25\linewidth}>{\hspace{0pt}}m{0.262\linewidth}}
+\toprule
+Backbone & Memória (mb) & Inferência (ms) & Tamanho Batch \\
+\rowcolor[rgb]{0.761,0.761,0.761} efficient & 3002 & 0.033 & 16 \\
+inception & 4747 & 0.041 & 16 \\
+\rowcolor[rgb]{0.761,0.761,0.761} mobile & 1662 & 0.019 & 16 \\
+regnet16x & 2405 & 0.022 & 16 \\
+\rowcolor[rgb]{0.761,0.761,0.761} regnet16y & 2812 & 0.024 & 16 \\
+regnet32x & 3600 & 0.024 & 16 \\
+\rowcolor[rgb]{0.761,0.761,0.761} regnet32y & 4182 & 0.027 & 16 \\
+regnetx & 1679 & 0.02 & 16 \\
+\rowcolor[rgb]{0.761,0.761,0.761} resnet & 3762 & 0.044 & 16 \\
+shuffle & 1057 & 0.022 & 16 \\
+\bottomrule
+\end{tabular}
+}
+    \small{Fonte: Elaborado pelo autor.}
+\end{table}
